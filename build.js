@@ -1,11 +1,29 @@
 var spawn= require("child_process").spawn,
 fs = require("fs"),
 archiver = require("archiver"),
-path = require("path");
+path = require("path"),
+packager = require("electron-packager");
 
-packager = spawn("./node_modules/.bin/electron-packager", [".", "installer", "--platform=linux,win32", "--arch=all", "--version=0.33.6", "--ignore=\".git|node_modules/(?!adm-zip)|builds|test\"", "--out=builds", "--overwrite"], {encoding: "utf8", stdio: "inherit"});
+var opts = {
+  dir: ".",
+  name: "installer",
+  platform: "linux,win32",
+  arch: "all",
+  version: "0.33.6",
+  ignore: ".git|node_modules/(?!adm-zip)|builds|test",
+  out: "builds",
+  overwrite: "true"
+};
 
-packager.on("close", zipBuilds);
+packager(opts, function done (err, appPath) {
+  if(!err) {
+    console.log("Done. Zipping builds.");
+    zipBuilds();
+  }
+  else {
+    console.log("Errors during build: ", err);
+  }
+});
 
 function zipBuilds() {
   console.log("zipping builds");
