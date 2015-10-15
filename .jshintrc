@@ -1,0 +1,21 @@
+{
+  "esnext": true,
+  "white": true,
+  "globals": {
+    "window": false,
+    "module": false,
+    "describe": false,
+    "document": false,
+    "chrome": false,
+    "setTimeout": false,
+    "setInterval": false,
+    "clearInterval": false,
+    "clearTimeout": false,
+    "require": false,
+    "console": false,
+    "process": false,
+    "driver": false,
+    "XMLHttpRequest": false,
+    "logger": false
+  }
+}

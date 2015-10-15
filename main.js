@@ -1,43 +1,24 @@
 var app = require("app"),
 ipc = require("ipc"),
-BrowserWindow = require("browser-window"),
-installer = require("./installer.js");
+installer = require("./installer.js"),
+ui = require("./ui/controller.js");
+
+global.log = require("./logger.js")();
 
 app.on("window-all-closed", ()=>{
-  if (process.platform != "darwin") {
     app.quit();
-  }
 });
+
+app.on("error", (err)=>{log.all(err);});
 
 app.on("ready", ()=>{
-  console.log("app-ready");
-  mainWindow = new BrowserWindow(
-  {
-    "width": 600,
-    "height": 600,
-    "center": true,
-    "fullscreen": false,
-    "skip-taskbar": true,
-    "frame": false,
-    "web-preferences": {
-      "preload": __dirname + "/main-onload.js",
-      "node-integration": false,
-      "web-security": false
-    }
-  });
-  mainWindow.loadUrl("file://" + __dirname + "/main.html");
-  mainWindow.on("closed", ()=>{
-    mainWindow = null;
+  log.debug("app ready event received");
+
+  ipc.on("ui-pong", (event)=>{
+    log.debug("UI PONG!");
+    log.setUIWindow(event.sender);
+    installer.begin();
   });
 
-  mainWindow.webContents.on("did-finish-load", ()=> {
-    mainWindow.webContents.send("first-ping");
-  });
+  ui.init();
 });
-
-ipc.on("ui-pong", (event)=>{
-  console.log("UI PONG!");
-  installer.begin((message)=>{event.sender.send("message", message);});
-});
-
-app.on("error", (err)=>{console.dir(err);});
