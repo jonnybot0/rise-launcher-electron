@@ -1,6 +1,7 @@
 var app = require("app"),
 ipc = require("ipc"),
 installer = require("./installer.js"),
+prereqs = require("./prereqs.js"),
 ui = require("./ui/controller.js");
 
 global.log = require("./logger.js")();
@@ -17,6 +18,11 @@ app.on("ready", ()=>{
   ipc.on("ui-pong", (event)=>{
     log.debug("UI PONG!");
     log.setUIWindow(event.sender);
+
+    if (!(prereqs.validatePlatform() && prereqs.validateOS())) {
+      log.all("Requirements are not met.  Attmpting to use previous installation.");
+    }
+
     installer.begin();
   });
 
