@@ -1,7 +1,7 @@
 var app = require("app"),
 ipc = require("ipc"),
 installer = require("./installer.js"),
-prereqs = require("./prereqs.js"),
+prereqs = require("./prereqs.js")(require("./common/platform.js")),
 ui = require("./ui/controller.js");
 
 global.log = require("./logger.js")();
