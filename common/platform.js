@@ -31,7 +31,7 @@ module.exports = {
           resolve(data);
         }
         else {
-          reject(err);
+          reject({ message: "Error reading file", error: err });
         }
       });
     });
@@ -43,7 +43,7 @@ module.exports = {
           resolve();
         }
         else {
-          reject(err);
+          reject({ message: "Error writing file", error: err });
         }
       });
     });

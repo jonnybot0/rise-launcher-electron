@@ -67,8 +67,8 @@ function getComponentsList() {
       resolve(resp.text());
     })
     .catch(function(err) {
-      log.debug(err);
-      reject(err);
+      log.all(err);
+      reject({ message: "Error getting components list", error: err});
     });
   });
 }
@@ -80,7 +80,7 @@ function getComponents() {
       var compsMap = config.parsePropertyList(list);
       var channel = getChannel(compsMap);
 
-      return getComponentsVersions()
+      getComponentsVersions()
       .then(buildComponentsResponse)
       .then(checkIfBrowserUpgradeable)
       .then(resolve)
