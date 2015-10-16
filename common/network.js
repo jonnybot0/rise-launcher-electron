@@ -1,3 +1,5 @@
+var fetch = require("node-fetch");
+
 module.exports = {
   httpFetch: function(dest, opts) {
     if (!opts) {
