@@ -1,14 +1,16 @@
 var platform = require("../common/platform.js"),
 network = require("../common/network.js"),
+config = require("../common/config.js"),
 component = require("../component.js"),
 assert = require("assert"),
+simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock;
 
 global.log = require("../logger.js")();
 
 describe("component", ()=>{
   beforeEach("setup mocks", ()=>{
-
+    simpleMock.restore();
   });
 
   it("returns forced stable channel", ()=>{
@@ -94,6 +96,48 @@ describe("component", ()=>{
     
     return component.isBrowserUpgradeable("test").then((result)=>{
       assert.equal(result, false);
+    });
+  });
+
+  it("returns version of Cache has not changed", ()=>{
+    var comps = { CacheVersionStable: "2.0" };
+
+    mock(config, "getVersion").resolveWith("2.0");
+    
+    return component.hasVersionChanged(comps, "Cache", "Stable").then((result)=>{
+      assert(!result.changed);
+    });
+  });
+
+  it("returns version of Cache has changed", ()=>{
+    var comps = { CacheVersionStable: "2.0" };
+
+    mock(config, "getVersion").resolveWith("2.1");
+    
+    return component.hasVersionChanged(comps, "Cache", "Stable").then((result)=>{
+      assert(result.changed);
+    });
+  });
+
+  it("returns processed components map", ()=>{
+    return platform.readTextFile("test/remote-components-lnx-32.cfg").then((data)=>{
+      mock(platform, "getOS").returnWith("linux");
+      mock(platform, "getArch").returnWith("32");
+      mock(component, "getComponentsList").resolveWith(data);
+      mock(component, "getChannel").returnWith("Stable");
+      mock(component, "hasVersionChanged").resolveWith(false);
+      mock(config, "getVersion", (componentName)=>{
+        return Promise.resolve({
+          "Installer": "2015.06.01.12.00",
+          "Browser": "44.0.2400.000",
+          "Cache": "2015.02.01.12.00",
+          "Java": "7.80",
+          "Player":"2015.01.01.12.00" }[componentName]);
+      });
+
+      return component.getComponents().then((comps)=>{
+        assert.equal(Object.keys(comps).length, 5);
+      });
     });
   });
 });
