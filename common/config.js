@@ -26,8 +26,36 @@ function getVersion(componentName) {
   });
 }
 
+function getDisplaySettingsFileName() {
+  return path.join(platform.getInstallDir(), "RiseDisplayNetworkII.ini");
+}
+
+function getDisplaySettings() {
+  return new Promise((resolve, reject)=>{
+    platform.readTextFile(getDisplaySettingsFileName())
+    .then((contents)=>{
+      resolve(parsePropertyList(contents));
+    })
+    .catch(()=>{
+      resolve({});
+    });
+  });
+}
+
+function parsePropertyList(list) {
+  var result = {};
+  list.split("\n").forEach((line)=>{
+    var vals = line.trim().split("=");
+    result[vals[0]] = vals[1];
+  });
+
+  return result;
+}
+
 module.exports = {
   getVerFilePrefix,
   getVersionFileName,
-  getVersion
+  getVersion,
+  getDisplaySettings,
+  parsePropertyList
 };

@@ -2,11 +2,16 @@ var platform = require("../../common/platform.js"),
 config = require("../../common/config.js"),
 path = require("path"),
 assert = require("assert"),
+simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock;
 
 describe("config", ()=>{
   beforeEach("setup mocks", ()=>{
     
+  });
+
+  afterEach("clean mocks", ()=>{
+    simpleMock.restore();
   });
 
   it("gets the file name prefix of a component", ()=>{

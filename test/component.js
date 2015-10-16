@@ -10,6 +10,10 @@ global.log = require("../logger.js")();
 
 describe("component", ()=>{
   beforeEach("setup mocks", ()=>{
+    
+  });
+
+  afterEach("clean mocks", ()=>{
     simpleMock.restore();
   });
 
@@ -125,11 +129,13 @@ describe("component", ()=>{
       mock(platform, "getArch").returnWith("32");
       mock(component, "getComponentsList").resolveWith(data);
       mock(component, "getChannel").returnWith("Stable");
-      mock(component, "hasVersionChanged").resolveWith(false);
+      mock(component, "isBrowserUpgradeable").resolveWith(false);
+      mock(component, "getLatestChannelProb").returnWith(50);
+      mock(config, "getDisplaySettings").resolveWith({ displayid: "test" });
       mock(config, "getVersion", (componentName)=>{
         return Promise.resolve({
           "Installer": "2015.06.01.12.00",
-          "Browser": "44.0.2400.000",
+          "Browser": "44.0.1200.000", // Changed, but will be versionChanged==false because of isBrowserUpgradeable
           "Cache": "2015.02.01.12.00",
           "Java": "7.80",
           "Player":"2015.01.01.12.00" }[componentName]);
@@ -137,6 +143,10 @@ describe("component", ()=>{
 
       return component.getComponents().then((comps)=>{
         assert.equal(Object.keys(comps).length, 5);
+
+        for(var key in comps) {
+          assert.equal(comps[key].versionChanged, false);
+        }
       });
     });
   });

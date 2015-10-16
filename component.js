@@ -73,31 +73,17 @@ function getComponentsList() {
   });
 }
 
-function parseComponentsList(list) {
-  var result = {};
-  list.split("\n").forEach((line)=>{
-    var vals = line.trim().split("=");
-    result[vals[0]] = vals[1];
-  });
-
-  return result;
-}
-
 function getComponents() {
   return new Promise((resolve, reject)=>{
     module.exports.getComponentsList()
     .then((list)=>{
-      var compsMap = parseComponentsList(list);
+      var compsMap = config.parsePropertyList(list);
       var channel = getChannel(compsMap);
-      var components = { Installer: { name: "Installer", url: compsMap.InstallerURL } };
+      var components = {};
       var promises = [];
 
+      // Check if versions have changed and get component url
       componentNames.forEach((name)=>{
-        components[name] = {
-          name: name,
-          url: compsMap[name + "URL" + channel]
-        };
-
         promises.push(hasVersionChanged(compsMap, name, channel));
       });
 
@@ -105,12 +91,32 @@ function getComponents() {
 
       Promise.all(promises).then((resps)=>{
         resps.forEach((resp)=>{
+          components[resp.name] = {};
+
           components[resp.name].versionChanged = resp.changed;
           components[resp.name].localVersion = resp.local;
           components[resp.name].remoteVersion = resp.remote;
+
+          if(resp.name === "Installer") {
+            components[resp.name].url = compsMap.InstallerURL;
+          }
+          else {
+            components[resp.name].url = compsMap[resp.name + "URL" + channel];
+          }
         });
 
-        resolve(components);
+        // Check if browser is upgradeable
+        config.getDisplaySettings().then((settings)=>{
+          if(settings.displayid) {
+            module.exports.isBrowserUpgradeable(settings.displayid).then((resp)=>{
+              components.Browser.versionChanged = components.Browser.versionChanged && resp;
+              resolve(components);
+            });
+          }
+          else {
+            resolve(components);
+          }
+        });
       })
       .catch((err)=>{
         reject(err);
@@ -131,6 +137,5 @@ module.exports = {
   isBrowserUpgradeable,
   hasVersionChanged,
   getComponentsList,
-  parseComponentsList,
   getComponents
 };
