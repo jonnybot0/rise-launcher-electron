@@ -17,6 +17,6 @@ module.exports = {
     return process.env[(module.exports.getOS() == "win32") ? "USERPROFILE" : "HOME"];
   },
   getUbuntuVer() {
-    ubuntuVer = spawnSync("lsb_release", ["-sr"]).stdout;
+    return spawnSync("lsb_release", ["-sr"]).stdout;
   }
 };
