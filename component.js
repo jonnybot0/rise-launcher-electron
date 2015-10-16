@@ -52,9 +52,9 @@ function hasVersionChanged(compsMap, componentName, channel) {
 
       resolve({
         name: componentName,
-        changed: localVersion.trim() !== remoteVersion, 
-        local: localVersion.trim(),
-        remote: remoteVersion 
+        versionChanged: localVersion.trim() !== remoteVersion, 
+        localVersion: localVersion.trim(),
+        remoteVersion: remoteVersion 
       });
     });
   });
@@ -79,48 +79,49 @@ function getComponents() {
     .then((list)=>{
       var compsMap = config.parsePropertyList(list);
       var channel = getChannel(compsMap);
-      var components = {};
-      var promises = [];
 
-      // Check if versions have changed and get component url
-      componentNames.forEach((name)=>{
-        promises.push(hasVersionChanged(compsMap, name, channel));
-      });
-
-      promises.push(hasVersionChanged(compsMap, "Installer", ""));
-
-      Promise.all(promises).then((resps)=>{
-        resps.forEach((resp)=>{
-          components[resp.name] = {};
-
-          components[resp.name].versionChanged = resp.changed;
-          components[resp.name].localVersion = resp.local;
-          components[resp.name].remoteVersion = resp.remote;
-
-          if(resp.name === "Installer") {
-            components[resp.name].url = compsMap.InstallerURL;
-          }
-          else {
-            components[resp.name].url = compsMap[resp.name + "URL" + channel];
-          }
-        });
-
-        // Check if browser is upgradeable
-        config.getDisplaySettings().then((settings)=>{
-          if(settings.displayid) {
-            module.exports.isBrowserUpgradeable(settings.displayid).then((resp)=>{
-              components.Browser.versionChanged = components.Browser.versionChanged && resp;
-              resolve(components);
-            });
-          }
-          else {
-            resolve(components);
-          }
-        });
-      })
+      return getComponentsVersions()
+      .then(buildComponentsResponse)
+      .then(checkIfBrowserUpgradeable)
+      .then(resolve)
       .catch((err)=>{
         reject(err);
       });
+
+      function getComponentsVersions() {
+        var promises = componentNames.map((name)=>{
+          return hasVersionChanged(compsMap, name, channel);
+        });
+
+        promises.push(hasVersionChanged(compsMap, "Installer", ""));
+
+        return Promise.all(promises);
+      }
+
+      function buildComponentsResponse(versions) {
+        var components = versions.reduce((map, version)=>{
+          map[version.name] = version;
+          map[version.name].url = compsMap[version.name + "URL" + (version.name !== "Installer" ? channel : "")];
+
+          return map;
+        }, {});
+
+        return Promise.resolve(components);
+      }
+
+      function checkIfBrowserUpgradeable(components) {
+        return config.getDisplaySettings().then((settings)=>{
+          if(settings.displayid) {
+            return module.exports.isBrowserUpgradeable(settings.displayid).then((resp)=>{
+              components.Browser.versionChanged = components.Browser.versionChanged && resp;
+              return components;
+            });
+          }
+          else {
+            return components;
+          }
+        });
+      }
     })
     .catch((err)=>{
       reject(err);

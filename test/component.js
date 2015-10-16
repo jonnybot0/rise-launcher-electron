@@ -119,7 +119,7 @@ describe("component", ()=>{
     mock(config, "getVersion").resolveWith("2.1");
     
     return component.hasVersionChanged(comps, "Cache", "Stable").then((result)=>{
-      assert(result.changed);
+      assert(result.versionChanged);
     });
   });
 
