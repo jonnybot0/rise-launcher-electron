@@ -1,4 +1,5 @@
-var spawnSync = require("child_process").spawnSync;
+var spawnSync = require("child_process").spawnSync,
+path = require("path");
 
 module.exports = {
   getCoreUrl() {
@@ -13,10 +14,13 @@ module.exports = {
   getArch() {
     return process.arch;
   },
-  getInstallDir() {
+  getHomeDir() {
     return process.env[(module.exports.getOS() == "win32") ? "USERPROFILE" : "HOME"];
   },
   getUbuntuVer() {
     return spawnSync("lsb_release", ["-sr"]).stdout;
+  },
+  getInstallDir() {
+    return path.join(module.exports.getHomeDir(), "rvplayer");
   }
 };
