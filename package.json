@@ -6,11 +6,16 @@
   "author": "Tyler Johnson <mail@tyler-johnson.ca> (http://github.com/tejohnso)",
   "license": "ISC",
   "devDependencies": {
+    "babel": "^5.8.23",
     "electron-packager": "^5.1.0",
     "electron-prebuilt": "^0.33.6"
   },
   "dependencies": {
     "adm-zip": "^0.4.7",
-    "archiver": "^0.15.1"
+    "archiver": "^0.15.1",
+    "simple-mock": "^0.4.1"
+  },
+  "scripts": {
+    "test": "mocha --compilers js:babel/register"
   }
 }
