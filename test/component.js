@@ -142,11 +142,43 @@ describe("component", ()=>{
       });
 
       return component.getComponents().then((comps)=>{
-        assert.equal(Object.keys(comps).length, 5);
-
-        for(var key in comps) {
-          assert.equal(comps[key].versionChanged, false);
-        }
+        assert.deepEqual(comps, {
+          "Browser": {
+            "localVersion": "44.0.1200.000",
+            "name": "Browser",
+            "remoteVersion": "44.0.2400.000",
+            "url": "http://install-versions.risevision.com/chrome-linux-32.zip",
+            "versionChanged": false
+          },
+          "Cache": {
+            "localVersion": "2015.02.01.12.00",
+            "name": "Cache",
+            "remoteVersion": "2015.02.01.12.00",
+            "url": "http://install-versions.risevision.com/RiseCache.zip",
+            "versionChanged": false
+          },
+          "Installer": {
+            "localVersion": "2015.06.01.12.00",
+            "name": "Installer",
+            "remoteVersion": "2015.06.01.12.00",
+            "url": "http://install-versions.risevision.com/rvplayer-installer.sh",
+            "versionChanged": false
+          },
+          "Java": {
+            "localVersion": "7.80",
+            "name": "Java",
+            "remoteVersion": "7.80",
+            "url": "http://install-versions.risevision.com/jre-7u80-linux-32.zip",
+            "versionChanged": false
+          },
+          "Player": {
+            "localVersion": "2015.01.01.12.00",
+            "name": "Player",
+            "remoteVersion": "2015.01.01.12.00",
+            "url": "http://install-versions.risevision.com/RisePlayer-2015-01-01-12-00.zip",
+            "versionChanged": false
+          }
+        });
       });
     });
   });
