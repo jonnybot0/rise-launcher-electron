@@ -1,9 +1,9 @@
 var prereqs, mockPlatform, assert = require("assert");
 
-global.log = require("../logger/logger.js")();
+global.log = require("../../logger/logger.js")();
 
 function setupMock(mockPlatform) {
-  prereqs = require("../prereqs.js")(mockPlatform);
+  prereqs = require("../../prereqs.js")(mockPlatform);
 }
 
 describe("prereqs", ()=>{

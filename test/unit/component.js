@@ -1,12 +1,12 @@
-var platform = require("../common/platform.js"),
-network = require("../common/network.js"),
-config = require("../common/config.js"),
-component = require("../component.js"),
+var platform = require("../../common/platform.js"),
+network = require("../../common/network.js"),
+config = require("../../common/config.js"),
+component = require("../../component.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock;
 
-global.log = require("../logger.js")();
+global.log = require("../../logger/logger.js")();
 
 describe("component", ()=>{
   beforeEach("setup mocks", ()=>{
@@ -124,7 +124,7 @@ describe("component", ()=>{
   });
 
   it("returns processed components map", ()=>{
-    return platform.readTextFile("test/remote-components-lnx-32.cfg").then((data)=>{
+    return platform.readTextFile("test/unit/remote-components-lnx-32.cfg").then((data)=>{
       mock(platform, "getOS").returnWith("linux");
       mock(platform, "getArch").returnWith("32");
       mock(component, "getComponentsList").resolveWith(data);

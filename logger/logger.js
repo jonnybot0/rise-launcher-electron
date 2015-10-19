@@ -13,8 +13,8 @@ module.exports = (externalLogger)=> {
     setUIWindow(win) {
       uiWindow = win;
     },
-    file(...msgs) {
-      msgs.forEach(msg=>{console.log(msg);});
+    file() {
+      Array.prototype.slice.call(arguments).forEach(msg=>{console.log(msg);});
     }
   };
 };
