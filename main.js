@@ -2,7 +2,8 @@ var app = require("app"),
 ipc = require("ipc"),
 installer = require("./installer.js"),
 prereqs = require("./prereqs.js")(require("./common/platform.js")),
-ui = require("./ui/controller.js");
+ui = require("./ui/controller.js"),
+messages = require("./ui/messages.json");
 
 global.log = require("./logger/logger.js")();
 
@@ -21,7 +22,7 @@ app.on("ready", ()=>{
     log.setUIWindow(event.sender);
 
     if (!(prereqs.validatePlatform() && prereqs.validateOS())) {
-      log.all("Requirements are not met.  Attmpting to use previous installation.");
+      log.all(messages.osRequirementsNotMet);
     }
 
     installer.begin();
