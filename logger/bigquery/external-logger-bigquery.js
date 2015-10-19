@@ -3,11 +3,11 @@ module.exports = (network)=>{
   refreshDate = 0,
   token = "";
 
-  function getDateForTableName() {
-    var date = new Date(),
-    year = date.getUTCFullYear(),
-    month = date.getUTCMonth() + 1,
-    day = date.getUTCDate();
+  function getDateForTableName(nowDate) {
+    var date = nowDate,
+    year = nowDate.getUTCFullYear(),
+    month = nowDate.getUTCMonth() + 1,
+    day = nowDate.getUTCDate();
 
     if (month < 10) {month = "0" + month;}
     if (day < 10) {day = "0" + day;}
@@ -15,30 +15,33 @@ module.exports = (network)=>{
     return "" + year + month + day;
   }
 
-  function refreshToken() {
-    if (new Date() - refreshDate < 3580000) {
+  function refreshToken(nowDate) {
+    if (nowDate - refreshDate < 3580000) {
       return Promise.resolve(token);
     }
 
     return network.httpFetch(config.refreshUrl, {method: "POST"})
     .then(resp=>{return resp.json();})
     .then(json=>{
-      refreshDate = new Date();
+      refreshDate = nowDate;
       token = json.access_token;
     });
   }
 
   return {
-    log(eventName, displayId, version, eventDetails) {
+    log(eventName, displayId, version, eventDetails, nowDate) {
       if (!eventName) {return;}
+      if (!nowDate || !Date.prototype.isPrototypeOf(nowDate)) {
+        nowDate = new Date();
+      }
 
-      return refreshToken().then(_=>{
+      return refreshToken(nowDate).then(_=>{
         var insertData = JSON.parse(JSON.stringify(config.insertSchema)),
         serviceUrl,
         headers; 
 
         serviceUrl = config.serviceUrl.replace
-        ("TABLE_ID", "events" + getDateForTableName());
+        ("TABLE_ID", "events" + getDateForTableName(nowDate));
 
         headers = {
           "Content-Type": "application/json",
@@ -50,7 +53,7 @@ module.exports = (network)=>{
         insertData.rows[0].json.display_id = displayId;
         insertData.rows[0].json.installer_version = version;
         if (eventDetails) {insertData.rows[0].json.event_details = eventDetails;}
-        insertData.rows[0].json.ts = new Date().toISOString();
+        insertData.rows[0].json.ts = nowDate.toISOString();
         insertData = JSON.stringify(insertData);
         return network.httpFetch(serviceUrl, {
           method: "POST",
