@@ -40,8 +40,9 @@ module.exports = (network)=>{
     if (new Date() - EXTERNAL_LOGGER_REFRESH_DATE < 3580000) {
       return Promise.resolve(EXTERNAL_LOGGER_TOKEN);
     }
-    return network.fetch(EXTERNAL_LOGGER_REFRESH_URL, {method: "POST"})
-    .then(resp=>{return resp.JSON();})
+
+    return network.httpFetch(EXTERNAL_LOGGER_REFRESH_URL, {method: "POST"})
+    .then(resp=>{return resp.json();})
     .then(json=>{return {token: json.access_token, refreshedAt: new Date()};});
   }
 
@@ -59,10 +60,10 @@ module.exports = (network)=>{
 
         EXTERNAL_LOGGER_REFRESH_DATE = refreshData.refreshedAt || EXTERNAL_LOGGER_REFRESH_DATE;
         EXTERNAL_LOGGER_TOKEN = refreshData.token || EXTERNAL_LOGGER_TOKEN;
-        headers = [
-          "Content-Type: application/json",
-          "Authorization: Bearer " + EXTERNAL_LOGGER_TOKEN
-        ];
+        headers = {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + EXTERNAL_LOGGER_TOKEN
+        };
 
         insertData.rows[0].insertId = Math.random().toString(36).substr(2).toUpperCase();
         insertData.rows[0].json.event = eventName;
@@ -71,7 +72,7 @@ module.exports = (network)=>{
         if (eventDetails) {insertData.rows[0].json.event_details = eventDetails;}
         insertData.rows[0].json.ts = new Date().toISOString();
         insertData = JSON.stringify(insertData);
-        return network.fetch(serviceUrl, {
+        return network.httpFetch(serviceUrl, {
           method: "POST",
           headers,
           body: insertData
