@@ -4,10 +4,11 @@ installer = require("./installer.js"),
 prereqs = require("./prereqs.js")(require("./common/platform.js")),
 ui = require("./ui/controller.js");
 
-global.log = require("./logger.js")();
+global.log = require("./logger/logger.js")();
 
 app.on("window-all-closed", ()=>{
-    app.quit();
+  log.debug("All windows closed. quitting...");
+  app.quit();
 });
 
 app.on("error", (err)=>{log.all(err);});
