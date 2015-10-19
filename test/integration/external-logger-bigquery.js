@@ -1,6 +1,6 @@
 "use strict";
 var assert = require("assert"),
-extlogger = require("../../logger/external-logger-bigquery.js")
+extlogger = require("../../logger/bigquery/external-logger-bigquery.js")
 (require("../../common/network.js"));
 
 global.log = require("../../logger/logger.js")();
