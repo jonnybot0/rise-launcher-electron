@@ -4,7 +4,7 @@ extlogger;
 
 describe("external logger bigquery", function() {
   it("exists", function() {
-    extlogger = require("../../logger/external-logger-bigquery.js")();
+    extlogger = require("../../logger/bigquery/external-logger-bigquery.js")();
     assert.ok(extlogger);
   });
 
@@ -12,7 +12,7 @@ describe("external logger bigquery", function() {
     var stub = mock.stub()
     .resolveWith({json() {return Promise.resolve({access_token: "test-token"});}})
     .resolveWith({});
-    extlogger = require("../../logger/external-logger-bigquery.js")
+    extlogger = require("../../logger/bigquery/external-logger-bigquery.js")
     ({httpFetch: stub});
 
     return extlogger.log("testEvent", "testId", "testVersion", "testDetails")
@@ -22,5 +22,20 @@ describe("external logger bigquery", function() {
       assert.ok(stub.lastCall.args[1].headers.Authorization === "Bearer test-token");
       assert.ok(JSON.parse(stub.lastCall.args[1].body).rows[0].json.event === "testEvent");
     });
+  });
+
+  it("doesn't refresh token if called recently", function() {
+    var stub = mock.stub()
+    .resolveWith({json() {return Promise.resolve({access_token: "test-token"});}})
+    .resolveWith({});
+    extlogger = require("../../logger/bigquery/external-logger-bigquery.js")
+    ({httpFetch: stub});
+
+    return extlogger.log("testEvent", "testId", "testVersion", "testDetails")
+    .then(()=>{
+      return extlogger.log("testEvent", "testId", "testVersion", "testDetails")
+    }).then(_=>{
+      assert.equal(stub.callCount, 3);
+    });;
   });
 });
