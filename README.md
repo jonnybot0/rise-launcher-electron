@@ -8,7 +8,8 @@ npm install
 
 ### Test
 ```
-mocha
+npm install -g istanbul mocha
+npm run test
 ```
 
 ### Build it
