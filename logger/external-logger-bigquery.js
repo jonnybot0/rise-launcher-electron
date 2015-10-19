@@ -46,7 +46,7 @@ module.exports = (network)=>{
   }
 
   return {
-    logExternal(eventName, displayId, version, eventDetails) {
+    log(eventName, displayId, version, eventDetails) {
       if (!eventName) {return;}
 
       return refreshToken().then((refreshData)=>{

@@ -1,5 +1,5 @@
-var platform = require("../../common/platform.js"),
-config = require("../../common/config.js"),
+var platform = require("../../../common/platform.js"),
+config = require("../../../common/config.js"),
 path = require("path"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
