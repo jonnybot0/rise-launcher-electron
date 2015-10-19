@@ -1,4 +1,5 @@
 node_modules/
 builds/
+coverage/
 *.zip
 *.jar
