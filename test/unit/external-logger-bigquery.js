@@ -38,4 +38,23 @@ describe("external logger bigquery", function() {
       assert.equal(stub.callCount, 3);
     });;
   });
+
+  it("refreshes token if not called recently", function() {
+    var stub = mock.stub()
+    .resolveWith({json() {return Promise.resolve({access_token: "test-token"});}})
+    .resolveWith({});
+    extlogger = require("../../logger/bigquery/external-logger-bigquery.js")
+    ({httpFetch: stub});
+
+    var now= new Date();
+    var hourAhead = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 1, now.getMinutes(), now.getSeconds());
+    console.log(hourAhead);
+
+    return extlogger.log("testEvent", "testId", "testVersion", "testDetails")
+    .then(()=>{
+      return extlogger.log("test2", "testId", "testVer", "testDet", hourAhead);
+    }).then(_=>{
+      assert.equal(stub.callCount, 4);
+    });;
+  });
 });
