@@ -17,6 +17,7 @@ module.exports = {
     var promises = components.map((c)=>{
       return network.downloadFile(c.url).then((localPath)=>{
         c.localPath = localPath;
+        return c;
       });
     });
 
@@ -26,7 +27,9 @@ module.exports = {
     var promises = components.filter((c)=>{
       return c.name !== "Installer";
     }).map((c)=>{
-      return module.exports.unzipFile(c.localPath, componentsZipInfo[c.name].extractTo);
+      return module.exports.unzipFile(c.localPath, componentsZipInfo[c.name].extractTo).then(()=>{
+        return c;
+      });
     });
 
     return Promise.all(promises);

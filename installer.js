@@ -1,19 +1,35 @@
-var downloader = require("./downloader.js");
+var component = require("./component.js"),
+downloader = require("./downloader.js");
 
 module.exports = {
   begin() {
     log.all("Beginning install");
     log.all("Fetching components list");
-    downloader.getComponentsList().then((result)=>{
-      log.all("list retrieved");
-      log.all("Components list retrieved");
-      var playerUrl = downloader.parseComponentsList(result).PlayerURLStable;
-      log.all("Downloading file from " + playerUrl);
-      log.all("Downloading file from " + playerUrl);
-      return downloader.downloadFile(playerUrl);
-    }).then(()=>{
-      log.all("File downloaded");
-      log.all("Done");
+
+    component.getComponents().then((compsMap)=>{
+      var components = component.getComponentNames().map((name)=>{ return compsMap[name]; });
+      var changedComponents = components.filter((c)=>{ return c.versionChanged; });
+      var changedNames = changedComponents.map((c)=>{ return c.name; });
+
+      log.all("Downloading components " + changedNames);
+
+      downloader.downloadComponents(changedComponents)
+      .then(()=>{
+        log.all("Extracting components" + changedNames);
+
+        return downloader.extractComponents(changedComponents);
+      })
+      .then(()=>{
+        log.all("Installing components" + changedNames);
+
+        return downloader.installComponents(changedComponents);
+      })
+      .then(()=>{
+        log.all("Installation finished");
+      })
+      .catch((err)=>{
+        log.all(err);
+      });
     });
   }
 };
