@@ -1,0 +1,12 @@
+ [Desktop Entry]
+ Encoding=UTF-8
+ Name=Rise Vision Player
+ Comment=
+ Icon=
+ Exec=%EXECPATH%
+ Terminal=false
+ Type=Application
+ Categories=
+ NotShowIn=KDE;
+ X-GNOME-Autostart-Delay=10
+ X-Ubuntu-Gettext-Domain=rvplayer
