@@ -87,9 +87,10 @@ describe("downloader", ()=>{
     });
   });
 
-  it("handles zip content for Chrome Linux", ()=>{
+  it("installs Chrome Linux", ()=>{
     mock(platform, "getOS").returnWith("linux");
     mock(platform, "moveFile").resolveWith();
+    mock(config, "saveVersion").resolveWith();
 
     return downloader.installComponent(components.Browser).then((component)=>{
       assert(platform.moveFile.called);
@@ -99,9 +100,10 @@ describe("downloader", ()=>{
     });
   });
 
-  it("handles zip content for Chrome Windows", ()=>{
+  it("installs Chrome Windows", ()=>{
     mock(platform, "getOS").returnWith("win32");
     mock(platform, "moveFile").resolveWith();
+    mock(config, "saveVersion").resolveWith();
 
     return downloader.installComponent(components.Browser).then((component)=>{
       assert(platform.moveFile.called);
@@ -111,8 +113,9 @@ describe("downloader", ()=>{
     });
   });
 
-  it("handles zip content for Rise Cache", ()=>{
+  it("installs Rise Cache", ()=>{
     mock(platform, "moveFile").resolveWith();
+    mock(config, "saveVersion").resolveWith();
 
     return downloader.installComponent(components.Cache).then((component)=>{
       assert(platform.moveFile.called);
@@ -122,8 +125,9 @@ describe("downloader", ()=>{
     });
   });
 
-  it("handles zip content for Java", ()=>{
+  it("installs Java", ()=>{
     mock(platform, "moveFile").resolveWith();
+    mock(config, "saveVersion").resolveWith();
 
     return downloader.installComponent(components.Java).then((component)=>{
       assert(platform.moveFile.called);
@@ -133,18 +137,22 @@ describe("downloader", ()=>{
     });
   });
 
-  it("handles zip content for Rise Player", ()=>{
+  it("installs Rise Player", ()=>{
     mock(platform, "moveFile").resolveWith();
+    mock(config, "saveVersion").resolveWith();
 
     return downloader.installComponent(components.Player).then((component)=>{
       assert(platform.moveFile.called);
       assert.equal(platform.moveFile.lastCall.args[0], path.join("temp", "RisePlayer.jar"));
       assert.equal(platform.moveFile.lastCall.args[1], path.join("install", "RisePlayer.jar"));
       assert.equal(component.destination, path.join("install", "RisePlayer.jar"));
+      
+      assert.equal(config.saveVersion.callCount, 1);
+      assert.equal(config.saveVersion.lastCall.args[1], "2015.01.01.12.00");
     });
   });
 
-  it("fails to handle zip content", ()=>{
+  it("fails to install a component", ()=>{
     mock(platform, "moveFile").rejectWith();
 
     return downloader.installComponent(components.Cache).catch((err)=>{

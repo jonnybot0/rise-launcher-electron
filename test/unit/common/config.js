@@ -34,11 +34,27 @@ describe("config", ()=>{
     });
   });
 
-  it("fails to reads a version and returns empty", ()=>{
+  it("fails to read a version and returns empty", ()=>{
     mock(platform, "readTextFile").rejectWith();
 
     return config.getVersion("test").then((version)=>{
       assert.equal(version, "");
+    });
+  });
+
+  it("writes a version correctly", ()=>{
+    mock(platform, "writeTextFile").resolveWith();
+
+    return config.saveVersion("test", "10").then(()=>{
+      assert(platform.writeTextFile.called);
+    });
+  });
+
+  it("fails to write a version correctly", ()=>{
+    mock(platform, "writeTextFile").rejectWith();
+
+    return config.saveVersion("test", "10").catch(()=>{
+      assert(platform.writeTextFile.called);
     });
   });
 });

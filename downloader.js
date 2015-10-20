@@ -1,5 +1,6 @@
 var platform = require("./common/platform.js"),
 network = require("./common/network.js"),
+config = require("./common/config.js"),
 fs = require("fs"),
 path = require("path"),
 log = require("./logger/logger.js")();
@@ -51,6 +52,9 @@ module.exports = {
 
       return platform.moveFile(source, destination).then(()=>{
         component.destination = destination;
+        return config.saveVersion(component.name, component.remoteVersion);
+      })
+      .then(()=>{
         return component;
       })
       .catch((err)=>{
