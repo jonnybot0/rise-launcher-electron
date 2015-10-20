@@ -1,7 +1,9 @@
-var fetch = require("node-fetch"),
+var platform = require("./platform.js"),
+fetch = require("node-fetch"),
 http = require("http"),
 urlParse = require("url").parse,
-pathSep = require("path").sep;
+path = require("path"),
+fs = require("fs");
 
 module.exports = {
   httpFetch: function(dest, opts) {
@@ -10,16 +12,23 @@ module.exports = {
 
   downloadFile(url) {
     return new Promise((resolve, reject)=>{
-      var path = pathJoin(platform.getTempDir(), urlParse(url).pathname.split(pathSep).pop()),
-      file = fs.createWriteStream(path);
-      
+      var tempPath = path.join(platform.getTempDir(), urlParse(url).pathname.split(path.sep).pop()),
+      file = fs.createWriteStream(tempPath);
+
       http.get(url, (res)=>{
+        if(res.statusCode === 404) {
+          reject({ message: "File not found", error: res.statusCode });
+        }
+        else if(res.statusCode < 200 || res.statusCode >= 300) {
+          reject({ message: "Error downloading file", error: res.statusCode });
+        }
+
         res.on("data", (data)=>{
           file.write(data);
         });
         res.on("end", ()=>{
           file.end();
-          resolve(path);
+          resolve(tempPath);
         });
       })
       .on("error", function(e) {
