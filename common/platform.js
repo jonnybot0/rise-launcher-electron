@@ -80,5 +80,15 @@ module.exports = {
         reject(err);
       }
     });
+  },
+  setFilePermissions(path, mode) {
+    return new Promise((resolve, reject)=>{
+      fs.chmod(path, mode, (err)=>{
+        if (err) {
+          return reject({message: "Error setting file permissions", error: err});
+        }
+        resolve();
+      });
+    });
   }
 };
