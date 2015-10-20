@@ -1,6 +1,9 @@
 var spawnSync = require("child_process").spawnSync,
 path = require("path"),
-fs = require("fs");
+os = require("os"),
+fs = require("fs-extra"),
+log = require("../logger/logger.js"),
+admzip = require("adm-zip");
 
 module.exports = {
   getCoreUrl() {
@@ -15,14 +18,20 @@ module.exports = {
   getArch() {
     return process.arch;
   },
+  isWindows() {
+    return module.exports.getOS() === "win32";
+  },
   getHomeDir() {
-    return process.env[(module.exports.getOS() == "win32") ? "LOCALAPPDATA" : "HOME"];
+    return process.env[module.exports.isWindows() ? "LOCALAPPDATA" : "HOME"];
   },
   getUbuntuVer() {
     return spawnSync("lsb_release", ["-sr"]).stdout;
   },
   getInstallDir() {
     return path.join(module.exports.getHomeDir(), "rvplayer");
+  },
+  getTempDir() {
+    return os.tmpdir();
   },
   readTextFile(path) {
     return new Promise((resolve, reject)=>{
@@ -46,6 +55,30 @@ module.exports = {
           reject({ message: "Error writing file", error: err });
         }
       });
+    });
+  },
+  moveFile(source, destination) {
+    return new Promise((resolve, reject)=>{
+      fs.move(source, destination, { clobber: true }, (err)=>{
+        if(!err) {
+          resolve(destination);
+        }
+        else {
+          reject(err);
+        }
+      });
+    });
+  },
+  extractZipTo(source, destination, overwrite) {
+    return new Promise((resolve, reject)=>{
+      try {
+        var zip = new admzip(source);
+        zip.extractAllTo(destination, overwrite);
+        resolve();
+      }
+      catch (err) {
+        reject(err);
+      }
     });
   }
 };

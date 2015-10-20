@@ -130,9 +130,8 @@ function getComponents() {
 }
 
 module.exports = {
-  getLatestChannelProb() {
-    return latestChannelProb;
-  },
+  getLatestChannelProb() { return latestChannelProb; },
+  getComponentNames() { return componentNames; },
   getComponentsUrl,
   getChannel,
   isBrowserUpgradeable,

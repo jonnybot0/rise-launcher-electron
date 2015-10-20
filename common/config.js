@@ -26,6 +26,10 @@ function getVersion(componentName) {
   });
 }
 
+function saveVersion(componentName, version) {
+  return platform.writeTextFile(getVersionFileName(componentName), version);
+}
+
 function getDisplaySettingsFileName() {
   return path.join(platform.getInstallDir(), "RiseDisplayNetworkII.ini");
 }
@@ -56,6 +60,7 @@ module.exports = {
   getVerFilePrefix,
   getVersionFileName,
   getVersion,
+  saveVersion,
   getDisplaySettings,
   parsePropertyList
 };

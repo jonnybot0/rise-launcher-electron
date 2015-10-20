@@ -1,74 +1,74 @@
-var fs = require("fs"),
-http = require("http"),
-urlParse = require("url").parse,
-pathSep = require("path").sep,
-pathJoin = require("path").join,
-componentsUrl = "http://storage.googleapis.com/install-versions.risevision.com/remote-components-platform-arch.cfg",
-admzip = require("adm-zip"),
-arch = process.platform.arch;
+var platform = require("./common/platform.js"),
+network = require("./common/network.js"),
+config = require("./common/config.js"),
+fs = require("fs"),
+path = require("path"),
+log = require("./logger/logger.js")();
 
-if (process.platform === "linux") {
-  componentsUrl = componentsUrl.replace("platform", "lnx");
-  componentsUrl = componentsUrl.replace("arch", arch === "x64" ? "64" : "32");
-} else {
-  componentsUrl = componentsUrl.replace("platform", "win");
-  componentsUrl = componentsUrl.replace("-arch", "");
-}
+var componentsZipInfo = {
+  "Browser": { extractTo: "", copy: "chromium" },
+  "Cache": { extractTo: "RiseCache", copy: "RiseCache" },
+  "Java": { extractTo: "JRE", copy: "JRE" },
+  "Player": { extractTo: "", copy: "RisePlayer.jar" }
+};
 
 module.exports = {
-  getComponentsList() {
-    return new Promise((resolve, reject)=>{
-      var componentsList = "";
-      console.log("fetching components from " + componentsUrl);
-      http.get(componentsUrl, (res)=>{
-        res.on("data", (data)=>{
-          componentsList += data;
-          console.log("data received");
-        });
-        res.on("end", ()=>{resolve(componentsList);});
-        res.on("error", (error)=>{
-          console.log(error);
-          reject(error);
-        });
-      });
-    });
-  },
-  parseComponentsList(list) {
-    var result = {};
-    list.split(require("os").EOL).forEach((line)=>{
-      var vals = line.split("=");
-      result[vals[0]] = vals[1];
-    });
-
-    return result;
-  },
-  downloadFile(url) {
-    return new Promise((resolve, reject)=>{
-      var path = pathJoin(__dirname, urlParse(url).pathname.split(pathSep).pop()),
-      file = fs.createWriteStream(path);
-
-      console.log("saving to " + path);
-      http.get(url, (res)=>{
-        res.on("data", (data)=>{
-          file.write(data);
-        });
-        res.on("end", ()=>{
-          file.end();
-          if (require("path").extname(path).toUpperCase() === ".ZIP") {
-            return resolve(unzipFile(path));
-          }
-          resolve();
-        });
+  downloadComponents(components) {
+    var promises = components.map((c)=>{
+      return network.downloadFile(c.url).then((localPath)=>{
+        c.localPath = localPath;
+        return c;
       });
     });
 
-    function unzipFile(path) {
-      return new Promise((resolve, reject)=>{
-        console.log("unzipping " + path);
-        var zip = new admzip(path);
-        zip.extractAllTo(__dirname, true);
-        resolve();
+    return Promise.all(promises);
+  },
+  extractComponents(components) {
+    var promises = components.filter((c)=>{
+      return c.name !== "Installer";
+    }).map((c)=>{
+      return module.exports.unzipFile(c.localPath, componentsZipInfo[c.name].extractTo).then(()=>{
+        return c;
+      });
+    });
+
+    return Promise.all(promises);
+  },
+  installComponents(components) {
+    var promises = components.map((c)=>{
+      return module.exports.installComponent(c);
+    });
+
+    return Promise.all(promises);
+  },
+  installComponent(component) {
+    if(component.name === "Installer") {
+      // Kill installer process
+    }
+    else {
+      var source = path.join(platform.getTempDir(), componentsZipInfo[component.name].copy);
+      var destination = path.join(platform.getInstallDir(), componentsZipInfo[component.name].copy);
+
+      if(component.name == "Browser" && platform.isWindows()) {
+        source = path.join(platform.getTempDir(), "chromium-win32");
+      }
+
+      return platform.moveFile(source, destination).then(()=>{
+        component.destination = destination;
+        return config.saveVersion(component.name, component.remoteVersion);
+      })
+      .then(()=>{
+        return component;
+      })
+      .catch((err)=>{
+        return Promise.reject({ message: "Error moving " + source + " to " + destination, error: err });
       });
     }
+  },
+  unzipFile(filePath, subdir) {
+    return platform.extractZipTo(filePath, path.join(platform.getTempDir(), subdir), true)
+    .catch((err)=>{
+      return Promise.reject({ message: "Error unzipping " + filePath, error: err });
+    });
   }
 };
