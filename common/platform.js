@@ -59,7 +59,7 @@ module.exports = {
   },
   moveFile(source, destination) {
     return new Promise((resolve, reject)=>{
-      fs.move(source, destination, (err)=>{
+      fs.move(source, destination, { clobber: true }, (err)=>{
         if(!err) {
           resolve(destination);
         }
