@@ -34,7 +34,7 @@ describe("external logger bigquery", function() {
     return extlogger.log("testEvent", "testId", "testVersion", "testDetails")
     .then(()=>{
       return extlogger.log("testEvent", "testId", "testVersion", "testDetails")
-    }).then(_=>{
+    }).then(()=>{
       assert.equal(stub.callCount, 3);
     });;
   });
@@ -48,12 +48,11 @@ describe("external logger bigquery", function() {
 
     var now= new Date();
     var hourAhead = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 1, now.getMinutes(), now.getSeconds());
-    console.log(hourAhead);
 
     return extlogger.log("testEvent", "testId", "testVersion", "testDetails")
     .then(()=>{
       return extlogger.log("test2", "testId", "testVer", "testDet", hourAhead);
-    }).then(_=>{
+    }).then(()=>{
       assert.equal(stub.callCount, 4);
     });;
   });

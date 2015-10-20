@@ -35,7 +35,7 @@ module.exports = (network)=>{
         nowDate = new Date();
       }
 
-      return refreshToken(nowDate).then(_=>{
+      return refreshToken(nowDate).then(()=>{
         var insertData = JSON.parse(JSON.stringify(config.insertSchema)),
         serviceUrl,
         headers; 
