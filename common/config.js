@@ -3,7 +3,7 @@ path = require("path");
 
 function getVerFilePrefix(componentName) {
   return {
-    "Installer": "installer",
+    "InstallerElectron": "installer",
     "Browser": "chromium",
     "Cache": "RiseCache",
     "Java": "java",

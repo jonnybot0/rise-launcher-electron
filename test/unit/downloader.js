@@ -27,11 +27,11 @@ describe("downloader", ()=>{
       "url": "http://install-versions.risevision.com/RiseCache.zip",
       "versionChanged": true
     },
-    "Installer": {
-      "localVersion": "2014.06.01.12.00",
-      "name": "Installer",
-      "remoteVersion": "2015.06.01.12.00",
-      "url": "http://install-versions.risevision.com/rvplayer-installer.sh",
+    "InstallerElectron": {
+      "localVersion": "2015.10.21.17.00",
+      "name": "InstallerElectron",
+      "remoteVersion": "2015.10.21.17.00",
+      "url": "http://install-versions.risevision.com/rvplayer-installer-lnx-32.zip",
       "versionChanged": true
     },
     "Java": {
@@ -58,6 +58,7 @@ describe("downloader", ()=>{
     mock(platform, "getTempDir").returnWith("temp");
     mock(platform, "getInstallDir").returnWith("install");
     mock(platform, "extractZipTo").resolveWith();
+    mock(platform, "startProcess").resolveWith();
   });
 
   afterEach("clean mocks", ()=>{
@@ -178,9 +179,9 @@ describe("downloader", ()=>{
     });
   });
 
-  it("extracts all components except Installer", ()=>{
+  it("extracts all components", ()=>{
     return downloader.extractComponents(componentsList).then(()=>{
-      assert.equal(platform.extractZipTo.callCount, 4);
+      assert.equal(platform.extractZipTo.callCount, 5);
     });
   });
 

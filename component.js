@@ -5,7 +5,7 @@ latestChannelProb = Math.round(Math.random() * 100),
 componentNames = [ "Browser", "Cache", "Java", "Player" ];
 
 function getComponentsUrl() {
-  var componentsUrl = "http://storage.googleapis.com/install-versions.risevision.com/remote-components-platform-arch.cfg";
+  var componentsUrl = "http://storage.googleapis.com/install-versions.risevision.com/electron-remote-components-platform-arch.cfg";
 
   if (platform.getOS() === "linux") {
     componentsUrl = componentsUrl.replace("platform", "lnx");
@@ -93,7 +93,7 @@ function getComponents() {
           return hasVersionChanged(compsMap, name, channel);
         });
 
-        promises.push(hasVersionChanged(compsMap, "Installer", ""));
+        promises.push(hasVersionChanged(compsMap, "InstallerElectron", ""));
 
         return Promise.all(promises);
       }
@@ -101,7 +101,7 @@ function getComponents() {
       function buildComponentsResponse(versions) {
         var components = versions.reduce((map, version)=>{
           map[version.name] = version;
-          map[version.name].url = compsMap[version.name + "URL" + (version.name !== "Installer" ? channel : "")];
+          map[version.name].url = compsMap[version.name + "URL" + (version.name !== "InstallerElectron" ? channel : "")];
 
           return map;
         }, {});

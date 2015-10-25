@@ -51,21 +51,21 @@ describe("component", ()=>{
   it("returns Windows components url", ()=>{
     mock(platform, "getOS").returnWith("win32");
 
-    assert.equal(component.getComponentsUrl(), "http://storage.googleapis.com/install-versions.risevision.com/remote-components-win.cfg");
+    assert.equal(component.getComponentsUrl(), "http://storage.googleapis.com/install-versions.risevision.com/electron-remote-components-win.cfg");
   });
 
   it("returns Linux 32bit components url", ()=>{
     mock(platform, "getOS").returnWith("linux");
     mock(platform, "getArch").returnWith("x32");
 
-    assert.equal(component.getComponentsUrl(), "http://storage.googleapis.com/install-versions.risevision.com/remote-components-lnx-32.cfg");
+    assert.equal(component.getComponentsUrl(), "http://storage.googleapis.com/install-versions.risevision.com/electron-remote-components-lnx-32.cfg");
   });
 
   it("returns Linux 64bit components url", ()=>{
     mock(platform, "getOS").returnWith("linux");
     mock(platform, "getArch").returnWith("x64");
 
-    assert.equal(component.getComponentsUrl(), "http://storage.googleapis.com/install-versions.risevision.com/remote-components-lnx-64.cfg");
+    assert.equal(component.getComponentsUrl(), "http://storage.googleapis.com/install-versions.risevision.com/electron-remote-components-lnx-64.cfg");
   });
 
   it("returns browser is upgradeable because of new install", ()=>{
@@ -134,7 +134,7 @@ describe("component", ()=>{
       mock(config, "getDisplaySettings").resolveWith({ displayid: "test" });
       mock(config, "getVersion", (componentName)=>{
         return Promise.resolve({
-          "Installer": "2015.06.01.12.00",
+          "InstallerElectron": "2015.10.21.17.00",
           "Browser": "44.0.1200.000", // Changed, but will be versionChanged==false because of isBrowserUpgradeable
           "Cache": "2015.02.01.12.00",
           "Java": "7.80",
@@ -157,11 +157,11 @@ describe("component", ()=>{
             "url": "http://install-versions.risevision.com/RiseCache.zip",
             "versionChanged": false
           },
-          "Installer": {
-            "localVersion": "2015.06.01.12.00",
-            "name": "Installer",
-            "remoteVersion": "2015.06.01.12.00",
-            "url": "http://install-versions.risevision.com/rvplayer-installer.sh",
+          "InstallerElectron": {
+            "localVersion": "2015.10.21.17.00",
+            "name": "InstallerElectron",
+            "remoteVersion": "2015.10.21.17.00",
+            "url": "http://install-versions.risevision.com/rvplayer-installer-lnx-32.zip",
             "versionChanged": false
           },
           "Java": {
