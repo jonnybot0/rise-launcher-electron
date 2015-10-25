@@ -1,8 +1,8 @@
-var spawnSync = require("child_process").spawnSync,
+var childProcess = require("child_process"),
 path = require("path"),
 os = require("os"),
 fs = require("fs-extra"),
-log = require("../logger/logger.js"),
+log = require("../logger/logger.js")(),
 admzip = require("adm-zip");
 
 module.exports = {
@@ -25,13 +25,23 @@ module.exports = {
     return process.env[module.exports.isWindows() ? "LOCALAPPDATA" : "HOME"];
   },
   getUbuntuVer() {
-    return spawnSync("lsb_release", ["-sr"]).stdout;
+    return childProcess.spawnSync("lsb_release", ["-sr"]).stdout;
   },
   getInstallDir() {
-    return path.join(module.exports.getHomeDir(), "rvplayer");
+    return path.join(module.exports.getHomeDir(), "rvplayer2");
   },
   getTempDir() {
     return os.tmpdir();
+  },
+  getInstallerName() {
+    return module.exports.isWindows() ? "installer.exe" : "installer";
+  },
+  startProcess(command, args) {
+    childProcess.spawn(command, args, {
+      cwd: path.dirname(command),
+      stdio: "ignore",
+      detached: true
+    }).unref();
   },
   readTextFile(path) {
     return new Promise((resolve, reject)=>{
@@ -53,6 +63,18 @@ module.exports = {
         }
         else {
           reject({ message: "Error writing file", error: err });
+        }
+      });
+    });
+  },
+  copyFile(source, destination) {
+    return new Promise((resolve, reject)=>{
+      fs.copy(source, destination, { clobber: true }, (err)=>{
+        if(!err) {
+          resolve(destination);
+        }
+        else {
+          reject(err);
         }
       });
     });

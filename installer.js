@@ -1,35 +1,62 @@
 var component = require("./component.js"),
-downloader = require("./downloader.js");
+downloader = require("./downloader.js"),
+controller = require("./ui/controller.js"),
+yargs = require("yargs"),
+options = yargs.parse(process.argv.slice(1));
 
 module.exports = {
   begin() {
     log.all("Beginning install");
-    log.all("Fetching components list");
+    
+    module.exports.checkInstallerUpdateStatus().
+    then(()=>{
+      log.all("Fetching components list");
 
-    component.getComponents().then((compsMap)=>{
-      var components = component.getComponentNames().map((name)=>{ return compsMap[name]; });
-      var changedComponents = components.filter((c)=>{ return c.versionChanged; });
-      var changedNames = changedComponents.map((c)=>{ return c.name; });
+      return component.getComponents().then((compsMap)=>{
+        var components = component.getComponentNames().map((name)=>{ return compsMap[name]; });
+        var changedComponents = components.filter((c)=>{ return c.versionChanged; });
+        var changedNames = changedComponents.map((c)=>{ return c.name; });
+        
+        if(compsMap.InstallerElectron.versionChanged) {
+          log.all("Upgrading installer");
 
-      log.all("Downloading components " + changedNames);
+          changedComponents = [compsMap.InstallerElectron];
+          changedNames = ["Installer"];
+        }
 
-      downloader.downloadComponents(changedComponents)
-      .then(()=>{
-        log.all("Extracting components" + changedNames);
+        log.all("Downloading " + changedNames);
 
-        return downloader.extractComponents(changedComponents);
-      })
-      .then(()=>{
-        log.all("Installing components" + changedNames);
+        downloader.downloadComponents(changedComponents)
+        .then(()=>{
+          log.all("Extracting " + changedNames);
 
-        return downloader.installComponents(changedComponents);
-      })
-      .then(()=>{
-        log.all("Installation finished");
+          return downloader.extractComponents(changedComponents);
+        })
+        .then(()=>{
+          log.all("Installing " + changedNames);
+
+          return downloader.installComponents(changedComponents);
+        })
+        .then(()=>{
+          if(compsMap.InstallerElectron.versionChanged) {
+            controller.close();
+          }
+          else {
+            log.all("Installation finished");
+          }
+        });
       })
       .catch((err)=>{
         log.all(err);
       });
     });
+  },
+  checkInstallerUpdateStatus() {
+    if(options.update) {
+      return downloader.updateInstaller(options.path, options.version);
+    }
+    else {
+      return Promise.resolve();
+    }
   }
 };
