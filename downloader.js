@@ -51,7 +51,7 @@ module.exports = {
         source = path.join(platform.getTempDir(), "chromium-win32");
       }
 
-      return platform.moveFile(source, destination).then(()=>{
+      return platform.copyFolderRecursive(source, destination).then(()=>{
         component.destination = destination;
         return config.saveVersion(component.name, component.remoteVersion);
       })
@@ -59,7 +59,7 @@ module.exports = {
         return component;
       })
       .catch((err)=>{
-        return Promise.reject({ message: "Error moving " + source + " to " + destination, error: err });
+        return Promise.reject({ message: "Error copying " + source + " to " + destination, error: err });
       });
     }
   },
@@ -70,7 +70,7 @@ module.exports = {
     platform.startProcess(installerExePath, ["--update", "--version", component.remoteVersion, "--path", installerPkgTempPath]);
   },
   updateInstaller(installerPkgTempPath, version) {
-    return platform.copyFile(installerPkgTempPath, path.join(platform.getInstallDir(), componentsZipInfo.InstallerElectron.copy))
+    return platform.copyFolderRecursive(installerPkgTempPath, path.join(platform.getInstallDir(), componentsZipInfo.InstallerElectron.copy))
     .then(()=>{
       return config.saveVersion("InstallerElectron", version);
     });

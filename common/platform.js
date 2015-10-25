@@ -1,7 +1,8 @@
 var childProcess = require("child_process"),
 path = require("path"),
 os = require("os"),
-fs = require("fs-extra"),
+fs = require("original-fs"),
+ncp = require("./ncp.js"),
 log = require("../logger/logger.js")(),
 admzip = require("adm-zip");
 
@@ -67,23 +68,11 @@ module.exports = {
       });
     });
   },
-  copyFile(source, destination) {
+  copyFolderRecursive(source, target) {
     return new Promise((resolve, reject)=>{
-      fs.copy(source, destination, { clobber: true }, (err)=>{
+      ncp(source, target, { clobber: true }, (err)=>{
         if(!err) {
-          resolve(destination);
-        }
-        else {
-          reject(err);
-        }
-      });
-    });
-  },
-  moveFile(source, destination) {
-    return new Promise((resolve, reject)=>{
-      fs.move(source, destination, { clobber: true }, (err)=>{
-        if(!err) {
-          resolve(destination);
+          resolve();
         }
         else {
           reject(err);
