@@ -9,8 +9,8 @@ var opts = {
   name: "installer",
   platform: "linux,win32",
   arch: "all",
-  version: "0.33.6",
-  ignore: ".git|node_modules/(?!adm-zip)|builds|test",
+  version: "0.33.9",
+  ignore: ".git|builds|test",
   out: "builds",
   overwrite: "true"
 };
