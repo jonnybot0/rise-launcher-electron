@@ -1,5 +1,6 @@
 var component = require("./component.js"),
 downloader = require("./downloader.js"),
+launcher = require("./launcher.js"),
 controller = require("./ui/controller.js"),
 yargs = require("yargs"),
 options = yargs.parse(process.argv.slice(1));
@@ -26,7 +27,7 @@ module.exports = {
 
         log.all("Downloading " + changedNames);
 
-        downloader.downloadComponents(changedComponents)
+        return downloader.downloadComponents(changedComponents)
         .then(()=>{
           log.all("Extracting " + changedNames);
 
@@ -43,6 +44,8 @@ module.exports = {
           }
           else {
             log.all("Installation finished");
+
+            return launcher.launch();
           }
         });
       })

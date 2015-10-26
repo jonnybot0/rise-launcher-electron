@@ -37,6 +37,13 @@ module.exports = {
   getInstallerName() {
     return module.exports.isWindows() ? "installer.exe" : "installer";
   },
+  waitFor(milliseconds) {
+    return new Promise((resolve, reject)=>{
+      setTimeout(function() {
+        resolve();
+      }, milliseconds);
+    });
+  },
   startProcess(command, args) {
     childProcess.spawn(command, args, {
       cwd: path.dirname(command),
