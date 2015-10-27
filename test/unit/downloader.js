@@ -90,62 +90,62 @@ describe("downloader", ()=>{
 
   it("installs Chrome Linux", ()=>{
     mock(platform, "getOS").returnWith("linux");
-    mock(platform, "moveFile").resolveWith();
+    mock(platform, "copyFolderRecursive").resolveWith();
     mock(config, "saveVersion").resolveWith();
 
     return downloader.installComponent(components.Browser).then((component)=>{
-      assert(platform.moveFile.called);
-      assert.equal(platform.moveFile.lastCall.args[0], path.join("temp", "chromium"));
-      assert.equal(platform.moveFile.lastCall.args[1], path.join("install", "chromium"));
+      assert(platform.copyFolderRecursive.called);
+      assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "chromium"));
+      assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "chromium"));
       assert.equal(component.destination, path.join("install", "chromium"));
     });
   });
 
   it("installs Chrome Windows", ()=>{
     mock(platform, "getOS").returnWith("win32");
-    mock(platform, "moveFile").resolveWith();
+    mock(platform, "copyFolderRecursive").resolveWith();
     mock(config, "saveVersion").resolveWith();
 
     return downloader.installComponent(components.Browser).then((component)=>{
-      assert(platform.moveFile.called);
-      assert.equal(platform.moveFile.lastCall.args[0], path.join("temp", "chromium-win32"));
-      assert.equal(platform.moveFile.lastCall.args[1], path.join("install", "chromium"));
+      assert(platform.copyFolderRecursive.called);
+      assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "chromium-win32"));
+      assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "chromium"));
       assert.equal(component.destination, path.join("install", "chromium"));
     });
   });
 
   it("installs Rise Cache", ()=>{
-    mock(platform, "moveFile").resolveWith();
+    mock(platform, "copyFolderRecursive").resolveWith();
     mock(config, "saveVersion").resolveWith();
 
     return downloader.installComponent(components.Cache).then((component)=>{
-      assert(platform.moveFile.called);
-      assert.equal(platform.moveFile.lastCall.args[0], path.join("temp", "RiseCache"));
-      assert.equal(platform.moveFile.lastCall.args[1], path.join("install", "RiseCache"));
+      assert(platform.copyFolderRecursive.called);
+      assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "RiseCache"));
+      assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "RiseCache"));
       assert.equal(component.destination, path.join("install", "RiseCache"));
     });
   });
 
   it("installs Java", ()=>{
-    mock(platform, "moveFile").resolveWith();
+    mock(platform, "copyFolderRecursive").resolveWith();
     mock(config, "saveVersion").resolveWith();
 
     return downloader.installComponent(components.Java).then((component)=>{
-      assert(platform.moveFile.called);
-      assert.equal(platform.moveFile.lastCall.args[0], path.join("temp", "JRE"));
-      assert.equal(platform.moveFile.lastCall.args[1], path.join("install", "JRE"));
+      assert(platform.copyFolderRecursive.called);
+      assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "JRE"));
+      assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "JRE"));
       assert.equal(component.destination, path.join("install", "JRE"));
     });
   });
 
   it("installs Rise Player", ()=>{
-    mock(platform, "moveFile").resolveWith();
+    mock(platform, "copyFolderRecursive").resolveWith();
     mock(config, "saveVersion").resolveWith();
 
     return downloader.installComponent(components.Player).then((component)=>{
-      assert(platform.moveFile.called);
-      assert.equal(platform.moveFile.lastCall.args[0], path.join("temp", "RisePlayer.jar"));
-      assert.equal(platform.moveFile.lastCall.args[1], path.join("install", "RisePlayer.jar"));
+      assert(platform.copyFolderRecursive.called);
+      assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "RisePlayer.jar"));
+      assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "RisePlayer.jar"));
       assert.equal(component.destination, path.join("install", "RisePlayer.jar"));
       
       assert.equal(config.saveVersion.callCount, 1);
@@ -154,10 +154,10 @@ describe("downloader", ()=>{
   });
 
   it("fails to install a component", ()=>{
-    mock(platform, "moveFile").rejectWith();
+    mock(platform, "copyFolderRecursive").rejectWith();
 
     return downloader.installComponent(components.Cache).catch((err)=>{
-      assert(platform.moveFile.called);
+      assert(platform.copyFolderRecursive.called);
       assert(err.message);
     });
   });
@@ -171,10 +171,10 @@ describe("downloader", ()=>{
   });
 
   it("fails to install components", ()=>{
-    mock(platform, "moveFile").rejectWith();
+    mock(platform, "copyFolderRecursive").rejectWith();
 
     return downloader.installComponents(componentsList).catch((err)=>{
-      assert(platform.moveFile.called);
+      assert(platform.copyFolderRecursive.called);
       assert(err.message);
     });
   });

@@ -23,6 +23,7 @@ function startPlayer() {
 }
 
 module.exports = {
+  replaceAll,
   getJavaPath,
   startCache,
   startPlayer,

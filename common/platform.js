@@ -1,7 +1,7 @@
 var childProcess = require("child_process"),
 path = require("path"),
 os = require("os"),
-fs = require("original-fs"),
+fs = require(process.versions.electron ? "original-fs" : "fs"),
 ncp = require("./ncp.js"),
 log = require("../logger/logger.js")(),
 admzip = require("adm-zip");
