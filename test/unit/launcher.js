@@ -1,4 +1,5 @@
 var platform = require("../../common/platform.js"),
+network = require("../../common/network.js"),
 launcher = require("../../launcher.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
@@ -37,6 +38,19 @@ describe("launcher", ()=>{
     mock(platform, "getInstallDir").returnWith("test");
     mock(platform, "startProcess").returnWith();
     mock(platform, "waitFor").resolveWith();
+    mock(network, "httpFetch").resolveWith();
+
+    return launcher.launch().then(()=>{
+      assert.equal(platform.startProcess.callCount, 2);
+      assert.equal(platform.waitFor.callCount, 2);
+    });
+  });
+
+  it("launches Cache and Player even when stopping them fails", ()=>{
+    mock(platform, "getInstallDir").returnWith("test");
+    mock(platform, "startProcess").returnWith();
+    mock(platform, "waitFor").resolveWith();
+    mock(network, "httpFetch").rejectWith();
 
     return launcher.launch().then(()=>{
       assert.equal(platform.startProcess.callCount, 2);

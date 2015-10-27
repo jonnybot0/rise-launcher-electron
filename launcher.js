@@ -1,4 +1,5 @@
-var platform = require("./common/platform"),
+var platform = require("./common/platform.js"),
+network = require("./common/network.js"),
 path = require("path");
 
 function replaceAll(string, search, replace) {
@@ -14,8 +15,22 @@ function getJavaPath() {
   }
 }
 
+function stopCache() {
+  return network.httpFetch("http://localhost:9494/shutdown")
+  .catch((err)=>{
+    return Promise.resolve();
+  });
+}
+
 function startCache() {
   platform.startProcess(getJavaPath(), ["-jar", path.join(platform.getInstallDir(), "RiseCache", "RiseCache.jar")]);
+}
+
+function stopPlayer() {
+  return network.httpFetch("http://localhost:9449/shutdown")
+  .catch((err)=>{
+    return Promise.resolve();
+  });
 }
 
 function startPlayer() {
@@ -25,14 +40,22 @@ function startPlayer() {
 module.exports = {
   replaceAll,
   getJavaPath,
+  stopCache,
   startCache,
+  stopPlayer,
   startPlayer,
   launch() {
-    return platform.waitFor(2000)
+    return module.exports.stopCache()
+    .then(()=>{
+      return platform.waitFor(2000);
+    })
     .then(()=>{
       log.all("Starting cache");
       startCache();
 
+      return module.exports.stopPlayer();
+    })
+    .then(()=>{
       return platform.waitFor(2000);
     })
     .then(()=>{
