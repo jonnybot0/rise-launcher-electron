@@ -13,7 +13,11 @@ module.exports = {
   downloadFile(url) {
     return new Promise((resolve, reject)=>{
       var tempPath = path.join(platform.getTempDir(), urlParse(url).pathname.split(path.sep).pop()),
-      file = fs.createWriteStream(tempPath);
+      file = fs.createWriteStream(tempPath);  
+
+      file.on("error", (err)=>{
+        reject({ message: "Error creating temporary download file", error: err });
+      });
 
       http.get(url, (res)=>{
         if(res.statusCode === 404) {
@@ -30,10 +34,14 @@ module.exports = {
           file.end();
           resolve(tempPath);
         });
+        res.on("error", function(e) {
+          file.end();
+          reject({ message: "Response error downloading file" + e.message, error: e });
+        });
       })
       .on("error", function(e) {
         file.end();
-        reject({ message: "Error downloading file" + e.message, error: e });
+        reject({ message: "Request error downloading file" + e.message, error: e });
       });
     });
   }

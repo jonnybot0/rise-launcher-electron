@@ -15,9 +15,13 @@ var componentsZipInfo = {
 module.exports = {
   downloadComponents(components) {
     var promises = components.map((c)=>{
-      return network.downloadFile(c.url).then((localPath)=>{
+      return network.downloadFile(c.url)
+      .then((localPath)=>{
         c.localPath = localPath;
         return c;
+      })
+      .catch((err)=>{
+        return Promise.reject({ message: "Error downloading " + c.url, error: err });
       });
     });
 
@@ -41,14 +45,18 @@ module.exports = {
   },
   installComponent(component) {
     if(component.name === "InstallerElectron") {
-      module.exports.startInstallerUpdate(component);
+      return module.exports.startInstallerUpdate(component);
     }
     else {
       var source = path.join(platform.getTempDir(), componentsZipInfo[component.name].copy);
       var destination = path.join(platform.getInstallDir(), componentsZipInfo[component.name].copy);
 
-      if(component.name == "Browser" && platform.isWindows()) {
-        source = path.join(platform.getTempDir(), "chromium-win32");
+      if(component.name === "Browser") {
+        source = path.join(platform.getTempDir(), platform.isWindows() ? "chrome-win32" : "chrome-linux");
+      }
+      else if(component.name === "Java" && !platform.isWindows()) {
+        source = source + "/jre";
+        destination = destination.replace("JRE", "jre");
       }
 
       return platform.copyFolderRecursive(source, destination).then(()=>{
@@ -67,7 +75,10 @@ module.exports = {
     var installerPkgTempPath = path.join(platform.getTempDir(), componentsZipInfo.InstallerElectron.copy);
     var installerExePath = path.join(installerPkgTempPath, platform.getInstallerName());
 
-    platform.startProcess(installerExePath, ["--update", "--version", component.remoteVersion, "--path", installerPkgTempPath]);
+    return platform.setFilePermissions(installerExePath, 0755)
+    .then(()=>{
+      platform.startProcess(installerExePath, ["--update", "--version", component.remoteVersion, "--path", installerPkgTempPath]);
+    });
   },
   updateInstaller(installerPkgTempPath, version) {
     return platform.copyFolderRecursive(installerPkgTempPath, path.join(platform.getInstallDir(), componentsZipInfo.InstallerElectron.copy))
