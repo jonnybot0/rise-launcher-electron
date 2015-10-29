@@ -91,13 +91,14 @@ describe("downloader", ()=>{
   it("installs Chrome Linux", ()=>{
     mock(platform, "getOS").returnWith("linux");
     mock(platform, "copyFolderRecursive").resolveWith();
+    mock(platform, "setFilePermissions").resolveWith();
     mock(config, "saveVersion").resolveWith();
 
     return downloader.installComponent(components.Browser).then((component)=>{
       assert(platform.copyFolderRecursive.called);
-      assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "chromium"));
-      assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "chromium"));
-      assert.equal(component.destination, path.join("install", "chromium"));
+      assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "chrome-linux"));
+      assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "chrome-linux"));
+      assert.equal(component.destination, path.join("install", "chrome-linux"));
     });
   });
 
@@ -108,7 +109,7 @@ describe("downloader", ()=>{
 
     return downloader.installComponent(components.Browser).then((component)=>{
       assert(platform.copyFolderRecursive.called);
-      assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "chromium-win32"));
+      assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "chrome-win32"));
       assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "chromium"));
       assert.equal(component.destination, path.join("install", "chromium"));
     });
