@@ -16,7 +16,7 @@ function getJavaPath() {
 }
 
 function stopCache() {
-  return network.httpFetch("http://localhost:9494/shutdown")
+  return network.httpFetch("http://localhost:9494/shutdown", { timeout: 500 })
   .catch((err)=>{
     return Promise.resolve();
   });
@@ -27,7 +27,7 @@ function startCache() {
 }
 
 function stopPlayer() {
-  return network.httpFetch("http://localhost:9449/shutdown")
+  return network.httpFetch("http://localhost:9449/shutdown", { timeout: 500 })
   .catch((err)=>{
     return Promise.resolve();
   });
@@ -52,6 +52,7 @@ module.exports = {
     .then(()=>{
       log.all("Starting cache");
       startCache();
+      log.all("Cache started");
 
       return module.exports.stopPlayer();
     })
@@ -61,6 +62,7 @@ module.exports = {
     .then(()=>{
       log.all("Starting Player");
       startPlayer();
+      log.all("Player started");
     });
   }
 };
