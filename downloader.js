@@ -53,6 +53,8 @@ module.exports = {
 
       if(component.name === "Browser") {
         source = path.join(platform.getTempDir(), platform.isWindows() ? "chrome-win32" : "chrome-linux");
+        destination = path.join(platform.getInstallDir(), platform.isWindows() ? "chromium" : "chrome-linux");
+
       }
       else if(component.name === "Java" && !platform.isWindows()) {
         source = source + "/jre";
@@ -62,6 +64,14 @@ module.exports = {
       return platform.copyFolderRecursive(source, destination).then(()=>{
         component.destination = destination;
         return config.saveVersion(component.name, component.remoteVersion);
+      })
+      .then(()=>{
+        if(!platform.isWindows() && component.name === "Browser") {
+          return platform.setFilePermissions(destination + "/chrome", 0755);
+        }
+        else if(!platform.isWindows() && component.name === "Java") {
+          return platform.setFilePermissions(destination + "/bin/java", 0755);
+        }
       })
       .then(()=>{
         return component;
