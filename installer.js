@@ -28,7 +28,7 @@ module.exports = {
         log.all("Installation finished");
       })
       .catch((err)=>{
-        log.all(err);
+        log.all("Error: " + require("util").inspect(err));
       });
     });
   }
