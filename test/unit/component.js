@@ -48,15 +48,23 @@ describe("component", ()=>{
     assert.equal(component.getChannel(comps), "Latest");
   });
 
-  it("returns Windows components url", ()=>{
+  it("returns Windows 32bit components url", ()=>{
     mock(platform, "getOS").returnWith("win32");
+    mock(platform, "getArch").returnWith("ia32");
 
-    assert.equal(component.getComponentsUrl(), "http://storage.googleapis.com/install-versions.risevision.com/electron-remote-components-win.cfg");
+    assert.equal(component.getComponentsUrl(), "http://storage.googleapis.com/install-versions.risevision.com/electron-remote-components-win-32.cfg");
+  });
+
+  it("returns Windows 64bit components url", ()=>{
+    mock(platform, "getOS").returnWith("win32");
+    mock(platform, "getArch").returnWith("x64");
+
+    assert.equal(component.getComponentsUrl(), "http://storage.googleapis.com/install-versions.risevision.com/electron-remote-components-win-64.cfg");
   });
 
   it("returns Linux 32bit components url", ()=>{
     mock(platform, "getOS").returnWith("linux");
-    mock(platform, "getArch").returnWith("x32");
+    mock(platform, "getArch").returnWith("ia32");
 
     assert.equal(component.getComponentsUrl(), "http://storage.googleapis.com/install-versions.risevision.com/electron-remote-components-lnx-32.cfg");
   });
