@@ -8,7 +8,7 @@ options = yargs.parse(process.argv.slice(1));
 module.exports = {
   begin() {
     log.all("Beginning install");
-    
+
     module.exports.checkInstallerUpdateStatus().
     then(()=>{
       log.all("Fetching components list");
@@ -40,12 +40,14 @@ module.exports = {
         })
         .then(()=>{
           if(compsMap.InstallerElectron.versionChanged) {
-            controller.close();
+            process.exit();
           }
           else {
             log.all("Installation finished");
 
-            return launcher.launch();
+            return launcher.launch().then(()=>{
+              process.exit();
+            });
           }
         });
       })
