@@ -103,10 +103,27 @@ module.exports = {
     return new Promise((resolve, reject)=>{
       fs.chmod(path, mode, (err)=>{
         if (err) {
-          return reject({message: "Error setting file permissions", error: err});
+          reject({ message: "Error setting file permissions", error: err });
         }
+        else {
         resolve();
+        }
       });
+    });
+  },
+  mkdir(path) {
+    return new Promise((resolve, reject)=>{
+      try {
+        fs.mkdirSync(path);
+        resolve();
+      } catch(e) {
+        if (e.code !== "EEXIST") {
+          reject({ message: "Error creating directory", error: e });
+        }
+        else {
+          resolve();
+        }
+      }
     });
   }
 };
