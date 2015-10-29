@@ -1,4 +1,4 @@
-var spawn= require("child_process").spawn,
+var spawnSync= require("child_process").spawnSync,
 fs = require("fs"),
 archiver = require("archiver"),
 path = require("path"),
@@ -14,6 +14,8 @@ var opts = {
   out: "builds",
   overwrite: "true"
 };
+
+spawnSync("npm", ["install"], {stdio: "inherit", encoding: "utf8"});
 
 packager(opts, function done (err, appPath) {
   if(!err) {
