@@ -13,13 +13,14 @@ module.exports = {
   downloadFile(url) {
     return new Promise((resolve, reject)=>{
       var tempPath = path.join(platform.getTempDir(), urlParse(url).pathname.split(path.sep).pop()),
-      file = fs.createWriteStream(tempPath);  
+      file = fs.createWriteStream(tempPath),
+      dataReceived = false;
 
       file.on("error", (err)=>{
         reject({ message: "Error creating temporary download file", error: err });
       });
 
-      http.get(url, (res)=>{
+      var req = http.get(url, (res)=>{
         if(res.statusCode === 404) {
           reject({ message: "File not found", error: res.statusCode });
         }
@@ -28,6 +29,8 @@ module.exports = {
         }
 
         res.on("data", (data)=>{
+          dataReceived = true;
+          
           file.write(data);
         });
         res.on("end", ()=>{
@@ -38,8 +41,19 @@ module.exports = {
           file.end();
           reject({ message: "Response error downloading file" + e.message, error: e });
         });
-      })
-      .on("error", function(e) {
+      });
+
+      req.on("socket", function (socket) {
+        socket.setTimeout(2000);  
+        socket.on("timeout", function() {
+          if(!dataReceived) {
+            req.abort();
+            reject({ message: "Request timed out", error: url });
+          }
+        });
+      });
+
+      req.on("error", function(e) {
         file.end();
         reject({ message: "Request error downloading file" + e.message, error: e });
       });
