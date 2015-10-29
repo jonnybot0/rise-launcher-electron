@@ -9,8 +9,8 @@ var opts = {
   name: "installer",
   platform: "linux,win32",
   arch: "all",
-  version: "0.33.6",
-  ignore: ".git|node_modules/(?!adm-zip)|builds|test",
+  version: "0.33.9",
+  ignore: ".git|builds|test",
   out: "builds",
   overwrite: "true"
 };
@@ -29,11 +29,13 @@ packager(opts, function done (err, appPath) {
 
 function zipBuilds() {
   console.log("zipping builds");
-  zipBuild("linux-x64");
-  zipBuild("win32-x64");
+  zipBuild("linux-ia32", "lnx-32");
+  zipBuild("linux-x64", "lnx-64");
+  zipBuild("win32-ia32", "win-32");
+  zipBuild("win32-x64", "win-64");
 
-  function zipBuild(platform) {
-    var output = fs.createWriteStream(path.join(__dirname, "builds", "installer-" + platform + ".zip")),
+  function zipBuild(platform, zipName) {
+    var output = fs.createWriteStream(path.join(__dirname, "builds", "rvplayer-installer-" + zipName + ".zip")),
     archive = archiver("zip");
 
     output.on("close", function() {
@@ -47,7 +49,7 @@ function zipBuilds() {
     archive.pipe(output);
 
     archive
-    .directory(path.join(__dirname, "builds", "installer-" + platform), "installer-" + platform)
+    .directory(path.join(__dirname, "builds", "installer-" + platform), "Installer")
     .finalize();
   }
 }

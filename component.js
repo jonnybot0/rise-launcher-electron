@@ -5,15 +5,10 @@ latestChannelProb = Math.round(Math.random() * 100),
 componentNames = [ "Browser", "Cache", "Java", "Player" ];
 
 function getComponentsUrl() {
-  var componentsUrl = "http://storage.googleapis.com/install-versions.risevision.com/remote-components-platform-arch.cfg";
+  var componentsUrl = "http://storage.googleapis.com/install-versions.risevision.com/electron-remote-components-platform-arch.cfg";
 
-  if (platform.getOS() === "linux") {
-    componentsUrl = componentsUrl.replace("platform", "lnx");
-    componentsUrl = componentsUrl.replace("arch", platform.getArch() === "x64" ? "64" : "32");
-  } else {
-    componentsUrl = componentsUrl.replace("platform", "win");
-    componentsUrl = componentsUrl.replace("-arch", "");
-  }
+  componentsUrl = componentsUrl.replace("platform", platform.isWindows() ? "win" : "lnx");
+  componentsUrl = componentsUrl.replace("arch", platform.getArch() === "x64" ? "64" : "32");
 
   return componentsUrl;
 }
@@ -64,7 +59,12 @@ function getComponentsList() {
   return new Promise((resolve, reject)=>{
     network.httpFetch(getComponentsUrl())
     .then(function(resp) {
-      resolve(resp.text());
+      if (resp.status >= 200 && resp.status < 300) {
+        resolve(resp.text());
+      }
+      else {
+        reject({ message: "Component list request rejected with code: " + resp.status, error: resp });
+      }
     })
     .catch(function(err) {
       log.all(err);
@@ -93,7 +93,7 @@ function getComponents() {
           return hasVersionChanged(compsMap, name, channel);
         });
 
-        promises.push(hasVersionChanged(compsMap, "Installer", ""));
+        promises.push(hasVersionChanged(compsMap, "InstallerElectron", ""));
 
         return Promise.all(promises);
       }
@@ -101,7 +101,7 @@ function getComponents() {
       function buildComponentsResponse(versions) {
         var components = versions.reduce((map, version)=>{
           map[version.name] = version;
-          map[version.name].url = compsMap[version.name + "URL" + (version.name !== "Installer" ? channel : "")];
+          map[version.name].url = compsMap[version.name + "URL" + (version.name !== "InstallerElectron" ? channel : "")];
 
           return map;
         }, {});
@@ -111,7 +111,7 @@ function getComponents() {
 
       function checkIfBrowserUpgradeable(components) {
         return config.getDisplaySettings().then((settings)=>{
-          if(settings.displayid) {
+          if(settings.displayid && components.Browser.localVersion) {
             return module.exports.isBrowserUpgradeable(settings.displayid).then((resp)=>{
               components.Browser.versionChanged = components.Browser.versionChanged && resp;
               return components;

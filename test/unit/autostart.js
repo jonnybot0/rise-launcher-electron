@@ -4,13 +4,13 @@ autostart;
 
 describe("autostart", ()=>{
   it("exists", ()=>{
-    autostart = require("../../autostart.js");
+    autostart = require("../../autostart/autostart.js");
     assert.ok(autostart);
   });
   it("saves windows file", ()=>{
     var writeFileStub = mock.stub().resolveWith(true);
     var homeDirStub = mock.stub().returnWith("/home/testuser");
-    var autostart = require("../../autostart.js")({
+    var autostart = require("../../autostart/autostart.js")({
       writeTextFile: writeFileStub,
       getHomeDir: homeDirStub
     });
@@ -25,7 +25,7 @@ describe("autostart", ()=>{
     var readFileStub = mock.stub().resolveWith("fake\nautostart\nfile");
     var setFilePermissionsStub = mock.stub().resolveWith(true);
     var homeDirStub = mock.stub().returnWith("/home/testuser");
-    var autostart = require("../../autostart.js")({
+    var autostart = require("../../autostart/autostart.js")({
       readTextFile: readFileStub,
       writeTextFile: writeFileStub,
       setFilePermissions: setFilePermissionsStub,

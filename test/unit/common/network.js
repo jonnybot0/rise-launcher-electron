@@ -14,7 +14,8 @@ describe("config", ()=>{
     mock(platform, "getTempDir").returnWith("test");
     mock(fs, "createWriteStream").returnWith({
       write() {},
-      end() {}
+      end() {},
+      on() {}
     });
   });
 

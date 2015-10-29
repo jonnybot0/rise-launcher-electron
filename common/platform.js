@@ -1,9 +1,10 @@
-var spawnSync = require("child_process").spawnSync,
+var childProcess = require("child_process"),
 path = require("path"),
 os = require("os"),
-fs = require("fs-extra"),
-log = require("../logger/logger.js"),
-admzip = require("adm-zip");
+fs = require(process.versions.electron ? "original-fs" : "fs"),
+ncp = require("ncp"),
+admzip = require("adm-zip"),
+log = require("../logger/logger.js")();
 
 module.exports = {
   getCoreUrl() {
@@ -25,13 +26,30 @@ module.exports = {
     return process.env[module.exports.isWindows() ? "LOCALAPPDATA" : "HOME"];
   },
   getUbuntuVer() {
-    return spawnSync("lsb_release", ["-sr"]).stdout;
+    return childProcess.spawnSync("lsb_release", ["-sr"]).stdout;
   },
   getInstallDir() {
-    return path.join(module.exports.getHomeDir(), "rvplayer");
+    return path.join(module.exports.getHomeDir(), "rvplayer2");
   },
   getTempDir() {
     return os.tmpdir();
+  },
+  getInstallerName() {
+    return module.exports.isWindows() ? "installer.exe" : "installer";
+  },
+  waitFor(milliseconds) {
+    return new Promise((resolve, reject)=>{
+      setTimeout(function() {
+        resolve();
+      }, milliseconds);
+    });
+  },
+  startProcess(command, args) {
+    childProcess.spawn(command, args, {
+      cwd: path.dirname(command),
+      stdio: "ignore",
+      detached: true
+    }).unref();
   },
   readTextFile(path) {
     return new Promise((resolve, reject)=>{
@@ -57,11 +75,11 @@ module.exports = {
       });
     });
   },
-  moveFile(source, destination) {
+  copyFolderRecursive(source, target) {
     return new Promise((resolve, reject)=>{
-      fs.move(source, destination, { clobber: true }, (err)=>{
+      ncp(source, target, { clobber: true }, (err)=>{
         if(!err) {
-          resolve(destination);
+          resolve();
         }
         else {
           reject(err);

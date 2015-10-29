@@ -13,9 +13,14 @@ module.exports = {
   downloadFile(url) {
     return new Promise((resolve, reject)=>{
       var tempPath = path.join(platform.getTempDir(), urlParse(url).pathname.split(path.sep).pop()),
-      file = fs.createWriteStream(tempPath);
+      file = fs.createWriteStream(tempPath),
+      dataReceived = false;
 
-      http.get(url, (res)=>{
+      file.on("error", (err)=>{
+        reject({ message: "Error creating temporary download file", error: err });
+      });
+
+      var req = http.get(url, (res)=>{
         if(res.statusCode === 404) {
           reject({ message: "File not found", error: res.statusCode });
         }
@@ -24,16 +29,33 @@ module.exports = {
         }
 
         res.on("data", (data)=>{
+          dataReceived = true;
+          
           file.write(data);
         });
         res.on("end", ()=>{
           file.end();
           resolve(tempPath);
         });
-      })
-      .on("error", function(e) {
+        res.on("error", function(e) {
+          file.end();
+          reject({ message: "Response error downloading file" + e.message, error: e });
+        });
+      });
+
+      req.on("socket", function (socket) {
+        socket.setTimeout(2000);  
+        socket.on("timeout", function() {
+          if(!dataReceived) {
+            req.abort();
+            reject({ message: "Request timed out", error: url });
+          }
+        });
+      });
+
+      req.on("error", function(e) {
         file.end();
-        reject({ message: "Error downloading file" + e.message, error: e });
+        reject({ message: "Request error downloading file" + e.message, error: e });
       });
     });
   }

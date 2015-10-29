@@ -1,5 +1,7 @@
 BrowserWindow = require("browser-window");
 
+var mainWindow;
+
 module.exports = {
   init() {
     mainWindow = new BrowserWindow(
@@ -27,5 +29,8 @@ module.exports = {
       log.debug("received did finish load");
       mainWindow.webContents.send("first-ping");
     });
+  },
+  close() {
+    mainWindow.close();
   }
 };

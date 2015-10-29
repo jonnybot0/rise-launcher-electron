@@ -15,7 +15,7 @@ describe("config", ()=>{
   });
 
   it("gets the file name prefix of a component", ()=>{
-    assert.equal(config.getVerFilePrefix("Installer"), "installer");
+    assert.equal(config.getVerFilePrefix("InstallerElectron"), "installer");
     assert.equal(config.getVerFilePrefix("Browser"), "chromium");
     assert.equal(config.getVerFilePrefix("Cache"), "RiseCache");
     assert.equal(config.getVerFilePrefix("Java"), "java");
