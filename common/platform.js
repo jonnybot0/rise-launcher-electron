@@ -2,9 +2,9 @@ var childProcess = require("child_process"),
 path = require("path"),
 os = require("os"),
 fs = require(process.versions.electron ? "original-fs" : "fs"),
-ncp = require("./ncp.js"),
-log = require("../logger/logger.js")(),
-admzip = require("adm-zip");
+ncp = require("ncp"),
+admzip = require("adm-zip"),
+log = require("../logger/logger.js")();
 
 module.exports = {
   getCoreUrl() {
