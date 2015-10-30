@@ -1,6 +1,7 @@
 var component = require("./component.js"),
 downloader = require("./downloader.js"),
 launcher = require("./launcher.js"),
+platform = require("./common/platform.js"),
 controller = require("./ui/controller.js"),
 yargs = require("yargs"),
 options = yargs.parse(process.argv.slice(1));
@@ -8,9 +9,12 @@ options = yargs.parse(process.argv.slice(1));
 module.exports = {
   begin() {
     log.all("Beginning install");
-    
-    module.exports.checkInstallerUpdateStatus().
-    then(()=>{
+
+    module.exports.checkInstallerUpdateStatus()
+    .then(()=>{
+      return platform.mkdir(platform.getInstallDir());
+    })
+    .then(()=>{
       log.all("Fetching components list");
 
       return component.getComponents().then((compsMap)=>{
@@ -40,12 +44,14 @@ module.exports = {
         })
         .then(()=>{
           if(compsMap.InstallerElectron.versionChanged) {
-            controller.close();
+            process.exit();
           }
           else {
             log.all("Installation finished");
 
-            return launcher.launch();
+            return launcher.launch().then(()=>{
+              process.exit();
+            });
           }
         });
       })

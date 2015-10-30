@@ -29,8 +29,5 @@ module.exports = {
       log.debug("received did finish load");
       mainWindow.webContents.send("first-ping");
     });
-  },
-  close() {
-    mainWindow.close();
   }
 };
