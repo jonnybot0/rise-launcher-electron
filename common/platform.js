@@ -92,7 +92,7 @@ module.exports = {
     return new Promise((resolve, reject)=>{
       fs.createReadStream(source)
       .pipe(gunzip())
-      .pipe(tar.extract(destination))
+      .pipe(tar.extract(destination, {fs: require("original-fs")}))
       .on("finish", resolve)
       .on("error", (err)=>{
         reject(err);

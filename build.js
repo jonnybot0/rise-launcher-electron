@@ -2,7 +2,6 @@ var spawnSync= require("child_process").spawnSync,
 fs = require("fs"),
 archiver = require("archiver"),
 path = require("path"),
-gunzip = require("gunzip-maybe"),
 zlib = require("zlib"),
 tar = require("tar-fs"),
 packager = require("electron-packager");
@@ -59,29 +58,13 @@ function zipBuild(platform, zipName) {
 
   console.log("Zipping " + platform);
 
-  return renameFile(path.join(resources, "atom.asar"), path.join(resources, "atom.ren"))
-  .then(()=>{
-    return tarFolder(platform, zipName);
-  })
+  return tarFolder(platform, zipName)
   .then(()=>{
     return gzipTar(zipName);
   })
   .then(()=>{
     fs.unlinkSync(outputTar);
   });
-
-  function renameFile(oldName, newName) {
-    return new Promise((resolve, reject)=>{
-      fs.rename(oldName, newName, (err)=>{
-        if(!err) {
-          resolve();
-        }
-        else {
-          reject({ message: "Error renaming file", error: err });
-        }
-      });
-    });
-  }
 
   function tarFolder(platform, zipName) {
     return new Promise((resolve, reject)=>{

@@ -84,13 +84,8 @@ module.exports = {
   startInstallerUpdate(component) {
     var installerPkgTempPath = path.join(platform.getTempDir(), componentsZipInfo.InstallerElectron.copy);
     var installerExePath = path.join(installerPkgTempPath, platform.getInstallerName());
-    var atomRen = path.join(installerPkgTempPath, "resources", "atom.ren");
-    var atomAsar = path.join(installerPkgTempPath, "resources", "atom.asar");
 
-    return platform.renameFile(atomRen, atomAsar)
-    .then(()=>{
-      return platform.setFilePermissions(installerExePath, 0755);
-    })
+    return platform.setFilePermissions(installerExePath, 0755)
     .then(()=>{
       platform.startProcess(installerExePath, ["--update", "--version", component.remoteVersion, "--path", installerPkgTempPath]);
     });
