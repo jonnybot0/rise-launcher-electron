@@ -1,4 +1,5 @@
 var platform = require("./platform.js"),
+logger = require("../logger/logger.js")(),
 fetch = require("node-fetch"),
 http = require("http"),
 urlParse = require("url").parse,
@@ -19,6 +20,8 @@ module.exports = {
       file.on("error", (err)=>{
         reject({ message: "Error creating temporary download file", error: err });
       });
+
+      logger.debug("Downloading " + url);
 
       var req = http.get(url, (res)=>{
         if(res.statusCode === 404) {

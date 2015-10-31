@@ -3,7 +3,8 @@ path = require("path"),
 os = require("os"),
 fs = require(process.versions.electron ? "original-fs" : "fs"),
 ncp = require("ncp"),
-admzip = require("adm-zip"),
+gunzip = require("gunzip-maybe"),
+tar = require("tar-fs"),
 log = require("../logger/logger.js")();
 
 module.exports = {
@@ -89,14 +90,13 @@ module.exports = {
   },
   extractZipTo(source, destination, overwrite) {
     return new Promise((resolve, reject)=>{
-      try {
-        var zip = new admzip(source);
-        zip.extractAllTo(destination, overwrite);
-        resolve();
-      }
-      catch (err) {
+      fs.createReadStream(source)
+      .pipe(gunzip())
+      .pipe(tar.extract(destination, {fs: fs}))
+      .on("finish", resolve)
+      .on("error", (err)=>{
         reject(err);
-      }
+      });
     });
   },
   setFilePermissions(path, mode) {
@@ -125,5 +125,17 @@ module.exports = {
         }
       }
     });
-  }
+  },
+  renameFile(oldName, newName) {
+    return new Promise((resolve, reject)=>{
+      fs.rename(oldName, newName, (err)=>{
+        if(!err) {
+          resolve();
+        }
+        else {
+          reject({ message: "Error renaming file", error: err });
+        }
+      });
+    });
+  },
 };

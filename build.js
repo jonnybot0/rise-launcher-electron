@@ -2,6 +2,8 @@ var spawnSync= require("child_process").spawnSync,
 fs = require("fs"),
 archiver = require("archiver"),
 path = require("path"),
+zlib = require("zlib"),
+tar = require("tar-fs"),
 packager = require("electron-packager");
 
 var opts = {
@@ -17,10 +19,18 @@ var opts = {
 
 spawnSync("npm", ["install"], {stdio: "inherit", encoding: "utf8"});
 
+console.log("Generating builds");
+
 packager(opts, function done (err, appPath) {
   if(!err) {
-    console.log("Done. Zipping builds.");
-    zipBuilds();
+    console.log("Builds generated");
+
+    zipBuilds().then(()=>{
+      console.log("Done zipping builds");
+    })
+    .catch((err)=>{
+      console.log("Error zipping builds", err);
+    });
   }
   else {
     console.log("Errors during build: ", err);
@@ -28,28 +38,53 @@ packager(opts, function done (err, appPath) {
 });
 
 function zipBuilds() {
-  console.log("zipping builds");
-  zipBuild("linux-ia32", "lnx-32");
-  zipBuild("linux-x64", "lnx-64");
-  zipBuild("win32-ia32", "win-32");
-  zipBuild("win32-x64", "win-64");
+  var artifacts = [["linux-ia32", "lnx-32"], ["linux-x64", "lnx-64"], ["win32-ia32", "win-32"], ["win32-x64", "win-64"]];
+  //var artifacts = [["win32-x64", "win-64"]];
 
-  function zipBuild(platform, zipName) {
-    var output = fs.createWriteStream(path.join(__dirname, "builds", "rvplayer-installer-" + zipName + ".zip")),
-    archive = archiver("zip");
-
-    output.on("close", function() {
-      console.log("archiver finalized " + platform);
+  console.log("Zipping builds");
+  
+  return artifacts.reduce((prev, art)=>{
+    return prev.then(()=>{
+      return zipBuild(art[0], art[1]);
     });
+  }, Promise.resolve());
+}
 
-    archive.on("error", function(err) {
-        throw err;
+function zipBuild(platform, zipName) {
+  var input = path.join(__dirname, "builds", "installer-" + platform);
+  var resources = path.join(input, "resources");
+  var outputTar = path.join(__dirname, "builds", "rvplayer-installer-" + zipName + ".tar");
+  var outputGz = path.join(__dirname, "builds", "rvplayer-installer-" + zipName + ".tar.gz");
+
+  console.log("Zipping " + platform);
+
+  return tarFolder(platform, zipName)
+  .then(()=>{
+    return gzipTar(zipName);
+  })
+  .then(()=>{
+    fs.unlinkSync(outputTar);
+  });
+
+  function tarFolder(platform, zipName) {
+    return new Promise((resolve, reject)=>{
+      tar.pack(input)
+      .pipe(fs.createWriteStream(outputTar))
+      .on("close", resolve)
+      .on("error", reject);
     });
+  }
 
-    archive.pipe(output);
+  function gzipTar(zipName) {
+    var input = fs.createReadStream(outputTar);
+    var output = fs.createWriteStream(outputGz);
 
-    archive
-    .directory(path.join(__dirname, "builds", "installer-" + platform), "Installer")
-    .finalize();
+    return new Promise((resolve, reject)=>{
+      input
+      .pipe(zlib.createGzip())
+      .pipe(output)
+      .on("close", resolve)
+      .on("error", reject);
+    });
   }
 }

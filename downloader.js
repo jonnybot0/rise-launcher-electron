@@ -7,7 +7,7 @@ path = require("path");
 var componentsZipInfo = {
   "Browser": { extractTo: "", copy: "chromium" },
   "Cache": { extractTo: "RiseCache", copy: "RiseCache" },
-  "InstallerElectron": { extractTo: "", copy: "Installer" },
+  "InstallerElectron": { extractTo: "Installer", copy: "Installer" },
   "Java": { extractTo: "JRE", copy: "JRE" },
   "Player": { extractTo: "", copy: "RisePlayer.jar" }
 };
