@@ -12,9 +12,7 @@
     "mocha": "^2.3.3"
   },
   "dependencies": {
-    "adm-zip": "git://github.com/Rise-Vision/adm-zip.git",
     "ncp": "git://github.com/Rise-Vision/ncp.git",
-    "archiver": "^0.15.1",
     "node-fetch": "1.3.3",
     "yargs": "3.28.0",
     "gunzip-maybe": "^1.2.1",
