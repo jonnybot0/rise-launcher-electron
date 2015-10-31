@@ -17,7 +17,7 @@
     "yargs": "3.28.0",
     "gunzip-maybe": "^1.2.1",
     "tar-fs": "^1.8.1",
-    "windows-shortcuts": "0.1.1"
+    "windows-shortcuts": "git://github.com/Rise-Vision/windows-shortcuts.git"
   },
   "scripts": {
     "test": "istanbul cover node_modules/mocha/bin/_mocha -- --recursive test/unit"
