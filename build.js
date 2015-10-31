@@ -3,7 +3,7 @@ fs = require("fs"),
 archiver = require("archiver"),
 path = require("path"),
 gunzip = require("gunzip-maybe"),
-gzip = require("zlib").createGzip(),
+zlib = require("zlib"),
 tar = require("tar-fs"),
 packager = require("electron-packager");
 
@@ -20,10 +20,18 @@ var opts = {
 
 spawnSync("npm", ["install"], {stdio: "inherit", encoding: "utf8"});
 
+console.log("Generating builds");
+
 packager(opts, function done (err, appPath) {
   if(!err) {
-    console.log("Done. Zipping builds.");
-    zipBuilds();
+    console.log("Builds generated");
+
+    zipBuilds().then(()=>{
+      console.log("Done zipping builds");
+    })
+    .catch((err)=>{
+      console.log("Error zipping builds", err);
+    });
   }
   else {
     console.log("Errors during build: ", err);
@@ -31,20 +39,16 @@ packager(opts, function done (err, appPath) {
 });
 
 function zipBuilds() {
-  //var artifacts = [["linux-ia32", "lnx-32"], ["linux-x64", "lnx-64"], ["win32-ia32", "win-32"], ["win32-x64", "win-64"]];
-  var artifacts = [["win32-x64", "win-64"]];
+  var artifacts = [["linux-ia32", "lnx-32"], ["linux-x64", "lnx-64"], ["win32-ia32", "win-32"], ["win32-x64", "win-64"]];
+  //var artifacts = [["win32-x64", "win-64"]];
 
-  console.log("zipping builds");
+  console.log("Zipping builds");
   
-  Promise.all(artifacts.map((art)=>{
-    return zipBuild(art[0], art[1]);
-  }))
-  .then(()=>{
-    console.log("Builds zipped");
-  })
-  .catch((err)=>{
-    console.log("Error zipping builds", err);
-  });
+  return artifacts.reduce((prev, art)=>{
+    return prev.then(()=>{
+      return zipBuild(art[0], art[1]);
+    });
+  }, Promise.resolve());
 }
 
 function zipBuild(platform, zipName) {
@@ -52,6 +56,8 @@ function zipBuild(platform, zipName) {
   var resources = path.join(input, "resources");
   var outputTar = path.join(__dirname, "builds", "rvplayer-installer-" + zipName + ".tar");
   var outputGz = path.join(__dirname, "builds", "rvplayer-installer-" + zipName + ".tar.gz");
+
+  console.log("Zipping " + platform);
 
   return renameFile(path.join(resources, "atom.asar"), path.join(resources, "atom.ren"))
   .then(()=>{
@@ -92,7 +98,7 @@ function zipBuild(platform, zipName) {
 
     return new Promise((resolve, reject)=>{
       input
-      .pipe(gzip)
+      .pipe(zlib.createGzip())
       .pipe(output)
       .on("close", resolve)
       .on("error", reject);
