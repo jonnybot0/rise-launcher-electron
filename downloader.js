@@ -7,7 +7,7 @@ path = require("path");
 var componentsZipInfo = {
   "Browser": { extractTo: "", copy: "chromium" },
   "Cache": { extractTo: "RiseCache", copy: "RiseCache" },
-  "InstallerElectron": { extractTo: "", copy: "Installer" },
+  "InstallerElectron": { extractTo: "Installer", copy: "Installer" },
   "Java": { extractTo: "JRE", copy: "JRE" },
   "Player": { extractTo: "", copy: "RisePlayer.jar" }
 };
@@ -84,8 +84,13 @@ module.exports = {
   startInstallerUpdate(component) {
     var installerPkgTempPath = path.join(platform.getTempDir(), componentsZipInfo.InstallerElectron.copy);
     var installerExePath = path.join(installerPkgTempPath, platform.getInstallerName());
+    var atomRen = path.join(installerPkgTempPath, "resources", "atom.ren");
+    var atomAsar = path.join(installerPkgTempPath, "resources", "atom.asar");
 
-    return platform.setFilePermissions(installerExePath, 0755)
+    return platform.renameFile(atomRen, atomAsar)
+    .then(()=>{
+      return platform.setFilePermissions(installerExePath, 0755);
+    })
     .then(()=>{
       platform.startProcess(installerExePath, ["--update", "--version", component.remoteVersion, "--path", installerPkgTempPath]);
     });
