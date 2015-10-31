@@ -1,47 +1,71 @@
-var assert = require("assert"),
-mock = require("simple-mock"),
+var autostart = require("../../autostart/autostart.js"),
+platform = require("../../common/platform.js"),
+assert = require("assert"),
+simpleMock = require("simple-mock"),
+mock = require("simple-mock").mock,
 autostart;
 
 describe("autostart", ()=>{
+  afterEach("clean mocks", ()=>{
+    simpleMock.restore();
+  });
+
   it("exists", ()=>{
-    autostart = require("../../autostart/autostart.js");
     assert.ok(autostart);
   });
-  it("saves windows file", ()=>{
-    var writeFileStub = mock.stub().resolveWith(true);
-    var homeDirStub = mock.stub().returnWith("/home/testuser");
-    var autostart = require("../../autostart/autostart.js")({
-      writeTextFile: writeFileStub,
-      getHomeDir: homeDirStub
-    });
 
-    autostart.createWindowsAutostart()
+  it("creates the correct autostart file (Windows)", ()=>{
+    mock(autostart, "createWindowsAutostart").resolveWith();
+    mock(autostart, "createUbuntuAutostart").resolveWith();
+    mock(platform, "isWindows").returnWith(true);
+
+    return autostart.createAutostart()
     .then(()=>{
-      assert.ok(stub.callCount = 1);
+      assert.ok(autostart.createWindowsAutostart.callCount === 1);
+      assert.ok(autostart.createUbuntuAutostart.callCount === 0);
     });
   });
-  it("saves ubuntu file", ()=>{
-    var writeFileStub = mock.stub().resolveWith(true);
-    var readFileStub = mock.stub().resolveWith("fake\nautostart\nfile");
-    var setFilePermissionsStub = mock.stub().resolveWith(true);
-    var homeDirStub = mock.stub().returnWith("/home/testuser");
-    var getInstallerPathStub = mock.stub().returnWith("/home/testuser/rvplayer2/Installer/installer");
-    var autostart = require("../../autostart/autostart.js")({
-      readTextFile: readFileStub,
-      writeTextFile: writeFileStub,
-      setFilePermissions: setFilePermissionsStub,
-      getHomeDir: homeDirStub,
-      getInstallerPath: getInstallerPathStub
-    });
 
+  it("creates the correct autostart file (Linux)", ()=>{
+    mock(autostart, "createWindowsAutostart").resolveWith();
+    mock(autostart, "createUbuntuAutostart").resolveWith();
+    mock(platform, "isWindows").returnWith(false);
+
+    return autostart.createAutostart()
+    .then(()=>{
+      assert.ok(autostart.createWindowsAutostart.callCount === 0);
+      assert.ok(autostart.createUbuntuAutostart.callCount === 1);
+    });
+  });
+
+  it("creates Windows autostart file", ()=>{
+    var exePath = "C:\\Users\\rvuser\\AppData\\Local\\rvplayer2\\Installer\\installer.exe";
+
+    mock(platform, "getInstallerPath").returnWith(exePath);
+    mock(autostart, "createWindowsShortcut").resolveWith();
+
+    return autostart.createWindowsAutostart()
+    .then(()=>{
+      assert.ok(autostart.createWindowsShortcut.callCount === 1);
+      assert.ok(autostart.createWindowsShortcut.lastCall.args[1] === exePath);
+    });
+  });
+
+  it("creates Ubuntu autostart file", ()=>{
     var expectedAutoStartPath = "/home/testuser/.config/autostart/rvplayer.desktop";
+
+    mock(platform, "writeTextFile").resolveWith(true);
+    mock(platform, "readTextFile").resolveWith("fake\nautostart\nfile");
+    mock(platform, "setFilePermissions").resolveWith(true);
+    mock(platform, "getHomeDir").returnWith("/home/testuser");
+    mock(platform, "getInstallerPath").returnWith("/home/testuser/rvplayer2/Installer/installer");
 
     return autostart.createUbuntuAutostart()
     .then(()=>{
-      assert.ok(writeFileStub.callCount === 1);
-      assert.ok(setFilePermissionsStub.callCount === 1);
-      assert.ok(getInstallerPathStub.callCount === 1);
-      assert.ok(setFilePermissionsStub.lastCall.args[0] === expectedAutoStartPath);
+      assert.ok(platform.writeTextFile.callCount === 1);
+      assert.ok(platform.setFilePermissions.callCount === 1);
+      assert.ok(platform.getInstallerPath.callCount === 1);
+      assert.equal(platform.setFilePermissions.lastCall.args[0], expectedAutoStartPath);
     });
   });
 });
