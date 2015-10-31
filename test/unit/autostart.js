@@ -25,11 +25,13 @@ describe("autostart", ()=>{
     var readFileStub = mock.stub().resolveWith("fake\nautostart\nfile");
     var setFilePermissionsStub = mock.stub().resolveWith(true);
     var homeDirStub = mock.stub().returnWith("/home/testuser");
+    var getInstallerPathStub = mock.stub().returnWith("/home/testuser/rvplayer2/Installer/installer");
     var autostart = require("../../autostart/autostart.js")({
       readTextFile: readFileStub,
       writeTextFile: writeFileStub,
       setFilePermissions: setFilePermissionsStub,
-      getHomeDir: homeDirStub
+      getHomeDir: homeDirStub,
+      getInstallerPath: getInstallerPathStub
     });
 
     var expectedAutoStartPath = "/home/testuser/.config/autostart/rvplayer.desktop";
@@ -38,6 +40,7 @@ describe("autostart", ()=>{
     .then(()=>{
       assert.ok(writeFileStub.callCount === 1);
       assert.ok(setFilePermissionsStub.callCount === 1);
+      assert.ok(getInstallerPathStub.callCount === 1);
       assert.ok(setFilePermissionsStub.lastCall.args[0] === expectedAutoStartPath);
     });
   });
