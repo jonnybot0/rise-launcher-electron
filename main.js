@@ -25,6 +25,7 @@ app.on("ready", ()=>{
   ipc.on("ui-pong", (event)=>{
     log.debug("UI PONG!");
     log.setUIWindow(event.sender);
+    event.sender.send("version", require("./version"));
 
     if (!(prereqs.validatePlatform() && prereqs.validateOS())) {
       log.all(messages.osRequirementsNotMet);

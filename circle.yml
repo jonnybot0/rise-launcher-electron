@@ -1,0 +1,5 @@
+#Update version.json with a new version number
+#node build
+#Upload installer executables at install-versions.risevision.com
+#Update .cfg files with the new version number
+#Upload .cfg files

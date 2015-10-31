@@ -41,7 +41,7 @@ function isBrowserUpgradeable(displayId) {
 
 function hasVersionChanged(compsMap, componentName, channel) {
   return new Promise((resolve, reject)=>{
-    config.getVersion(componentName)
+    config.getComponentVersion(componentName)
     .then((localVersion)=>{
       var remoteVersion = compsMap[componentName + "Version" + channel];
 

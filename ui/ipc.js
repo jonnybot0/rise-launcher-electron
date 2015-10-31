@@ -8,4 +8,8 @@ ipc.on("message", (message)=> {
   dom.appendMessage(message);
 });
 
+ipc.on("version", (version)=> {
+  dom.setVersion(version);
+});
+
 window.sendMainClose = function() {ipc.send("close");}

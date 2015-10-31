@@ -3,6 +3,7 @@ downloader = require("./downloader.js"),
 launcher = require("./launcher.js"),
 platform = require("./common/platform.js"),
 controller = require("./ui/controller.js"),
+thisInstallerVersion = require("./version.json"),
 yargs = require("yargs"),
 options = yargs.parse(process.argv.slice(1));
 

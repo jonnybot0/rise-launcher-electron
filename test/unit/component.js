@@ -4,6 +4,7 @@ config = require("../../common/config.js"),
 component = require("../../component.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
+thisInstallerVersion = require("../../version.json"),
 mock = require("simple-mock").mock;
 
 global.log = require("../../logger/logger.js")();
@@ -140,9 +141,9 @@ describe("component", ()=>{
       mock(component, "isBrowserUpgradeable").resolveWith(false);
       mock(component, "getLatestChannelProb").returnWith(50);
       mock(config, "getDisplaySettings").resolveWith({ displayid: "test" });
-      mock(config, "getVersion", (componentName)=>{
+      mock(config, "getComponentVersion", (componentName)=>{
         return Promise.resolve({
-          "InstallerElectron": "2015.10.21.17.00",
+          "InstallerElectron": thisInstallerVersion,
           "Browser": "44.0.1200.000", // Changed, but will be versionChanged==false because of isBrowserUpgradeable
           "Cache": "2015.02.01.12.00",
           "Java": "7.80",
@@ -166,11 +167,11 @@ describe("component", ()=>{
             "versionChanged": false
           },
           "InstallerElectron": {
-            "localVersion": "2015.10.21.17.00",
+            "localVersion": thisInstallerVersion,
             "name": "InstallerElectron",
             "remoteVersion": "2015.10.21.17.00",
             "url": "http://install-versions.risevision.com/rvplayer-installer-lnx-32.zip",
-            "versionChanged": false
+            "versionChanged": true
           },
           "Java": {
             "localVersion": "7.80",
