@@ -1,22 +1,24 @@
 var platform = require("../common/platform.js"),
+thisInstallerVersion = require("../version.json"),
 path = require("path");
 
 function getVerFilePrefix(componentName) {
   return {
-    "InstallerElectron": "installer",
     "Browser": "chromium",
     "Cache": "RiseCache",
     "Java": "java",
     "Player":"RisePlayer" }[componentName];
 }
 
-function getVersionFileName(componentName) {
+function getComponentVersionFileName(componentName) {
   return path.join(platform.getInstallDir(), getVerFilePrefix(componentName) + ".ver");
 }
 
-function getVersion(componentName) {
+function getComponentVersion(componentName) {
   return new Promise((resolve, reject)=>{
-    platform.readTextFile(getVersionFileName(componentName))
+    if (componentName === "InstallerElectron") {return resolve(thisInstallerVersion);}
+
+    platform.readTextFile(getComponentVersionFileName(componentName))
     .then((localVersion)=>{
       resolve(localVersion);
     })
@@ -27,7 +29,7 @@ function getVersion(componentName) {
 }
 
 function saveVersion(componentName, version) {
-  return platform.writeTextFile(getVersionFileName(componentName), version);
+  return platform.writeTextFile(getComponentVersionFileName(componentName), version);
 }
 
 function getDisplaySettingsFileName() {
@@ -58,8 +60,8 @@ function parsePropertyList(list) {
 
 module.exports = {
   getVerFilePrefix,
-  getVersionFileName,
-  getVersion,
+  getComponentVersionFileName,
+  getComponentVersion,
   saveVersion,
   getDisplaySettings,
   parsePropertyList

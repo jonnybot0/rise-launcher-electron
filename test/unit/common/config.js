@@ -15,7 +15,6 @@ describe("config", ()=>{
   });
 
   it("gets the file name prefix of a component", ()=>{
-    assert.equal(config.getVerFilePrefix("InstallerElectron"), "installer");
     assert.equal(config.getVerFilePrefix("Browser"), "chromium");
     assert.equal(config.getVerFilePrefix("Cache"), "RiseCache");
     assert.equal(config.getVerFilePrefix("Java"), "java");
@@ -23,13 +22,13 @@ describe("config", ()=>{
   });
 
   it("gets the version file name of a component", ()=>{
-    assert.equal(config.getVersionFileName("Player"), platform.getInstallDir() + path.sep + "RisePlayer.ver");
+    assert.equal(config.getComponentVersionFileName("Player"), platform.getInstallDir() + path.sep + "RisePlayer.ver");
   });
 
   it("reads a version correctly", ()=>{
     mock(platform, "readTextFile").resolveWith("10.0");
 
-    return config.getVersion("test").then((version)=>{
+    return config.getComponentVersion("test").then((version)=>{
       assert.equal(version, "10.0");
     });
   });
@@ -37,7 +36,7 @@ describe("config", ()=>{
   it("fails to read a version and returns empty", ()=>{
     mock(platform, "readTextFile").rejectWith();
 
-    return config.getVersion("test").then((version)=>{
+    return config.getComponentVersion("test").then((version)=>{
       assert.equal(version, "");
     });
   });
