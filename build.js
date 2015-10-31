@@ -1,6 +1,5 @@
 var spawnSync= require("child_process").spawnSync,
 fs = require("fs"),
-archiver = require("archiver"),
 path = require("path"),
 zlib = require("zlib"),
 tar = require("tar-fs"),

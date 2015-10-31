@@ -38,6 +38,9 @@ module.exports = {
   getInstallerName() {
     return module.exports.isWindows() ? "installer.exe" : "installer";
   },
+  getInstallerPath() {
+    return path.join(module.exports.getInstallDir(), "Installer", module.exports.getInstallerName());
+  },
   waitFor(milliseconds) {
     return new Promise((resolve, reject)=>{
       setTimeout(function() {

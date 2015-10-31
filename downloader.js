@@ -1,6 +1,7 @@
 var platform = require("./common/platform.js"),
 network = require("./common/network.js"),
 config = require("./common/config.js"),
+autostart = require("./autostart/autostart.js"),
 fs = require("fs"),
 path = require("path");
 
@@ -94,6 +95,9 @@ module.exports = {
     return platform.copyFolderRecursive(installerPkgTempPath, path.join(platform.getInstallDir(), componentsZipInfo.InstallerElectron.copy))
     .then(()=>{
       return config.saveVersion("InstallerElectron", version);
+    })
+    .then(()=>{
+      return autostart.createAutostart();
     });
   },
   unzipFile(filePath, subdir) {
