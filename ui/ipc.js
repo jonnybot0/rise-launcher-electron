@@ -7,3 +7,5 @@ ipc.on("first-ping", ()=> {
 ipc.on("message", (message)=> {
   dom.appendMessage(message);
 });
+
+window.sendMainClose = function() {ipc.send("close");}

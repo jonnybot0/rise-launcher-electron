@@ -3,7 +3,8 @@ ipc = require("ipc"),
 installer = require("./installer.js"),
 prereqs = require("./prereqs.js")(require("./common/platform.js")),
 ui = require("./ui/controller.js"),
-messages = require("./ui/messages.json");
+messages = require("./ui/messages.json"),
+mainWindow;
 
 global.log = require("./logger/logger.js")();
 
@@ -17,6 +18,10 @@ app.on("error", (err)=>{log.all(err);});
 app.on("ready", ()=>{
   log.debug("app ready event received");
 
+  ipc.on("close", ()=>{
+    mainWindow.close();
+  });
+
   ipc.on("ui-pong", (event)=>{
     log.debug("UI PONG!");
     log.setUIWindow(event.sender);
@@ -28,5 +33,5 @@ app.on("ready", ()=>{
     installer.begin();
   });
 
-  ui.init();
+  mainWindow = ui.init();
 });
