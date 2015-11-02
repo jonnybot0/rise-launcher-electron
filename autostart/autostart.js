@@ -11,7 +11,7 @@ module.exports = {
     }
   },
   createWindowsAutostart() {
-    var shortCutPath = "%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Rise Vision Player.lnk";
+    var shortCutPath = "%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Rise Vision Player.lnk";
 
     return module.exports.createWindowsShortcut(shortCutPath, platform.getInstallerPath());
   },
@@ -38,7 +38,7 @@ module.exports = {
 
     return platform.writeTextFile(autostartPath, fileText)
     .then(()=>{
-      return platform.setFilePermissions(autostartPath, 755);
+      return platform.setFilePermissions(autostartPath, 0755);
     });
   },
   createWindowsShortcut(lnkPath, exePath) {

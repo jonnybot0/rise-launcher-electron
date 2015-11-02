@@ -60,6 +60,7 @@ describe("downloader", ()=>{
     mock(platform, "getInstallDir").returnWith("install");
     mock(platform, "extractZipTo").resolveWith();
     mock(platform, "startProcess").resolveWith();
+    mock(platform, "setFilePermissions").resolveWith();
   });
 
   afterEach("clean mocks", ()=>{
@@ -89,7 +90,7 @@ describe("downloader", ()=>{
     });
   });
 
-  it("installs Chrome Linux", ()=>{
+  it("installs Chrome on Linux", ()=>{
     mock(platform, "getOS").returnWith("linux");
     mock(platform, "copyFolderRecursive").resolveWith();
     mock(platform, "setFilePermissions").resolveWith();
@@ -103,7 +104,7 @@ describe("downloader", ()=>{
     });
   });
 
-  it("installs Chrome Windows", ()=>{
+  it("installs Chrome on Windows", ()=>{
     mock(platform, "getOS").returnWith("win32");
     mock(platform, "copyFolderRecursive").resolveWith();
     mock(config, "saveVersion").resolveWith();
@@ -128,7 +129,8 @@ describe("downloader", ()=>{
     });
   });
 
-  it("installs Java", ()=>{
+  it("installs Java on Windows", ()=>{
+    mock(platform, "isWindows").returnWith(true);
     mock(platform, "copyFolderRecursive").resolveWith();
     mock(config, "saveVersion").resolveWith();
 
@@ -137,6 +139,19 @@ describe("downloader", ()=>{
       assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "JRE"));
       assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "JRE"));
       assert.equal(component.destination, path.join("install", "JRE"));
+    });
+  });
+
+  it("installs Java on Linux", ()=>{
+    mock(platform, "isWindows").returnWith(false);
+    mock(platform, "copyFolderRecursive").resolveWith();
+    mock(config, "saveVersion").resolveWith();
+
+    return downloader.installComponent(components.Java).then((component)=>{
+      assert(platform.copyFolderRecursive.called);
+      assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "JRE", "jre"));
+      assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "jre"));
+      assert.equal(component.destination, path.join("install", "jre"));
     });
   });
 
