@@ -29,6 +29,8 @@ function getComponentVersion(componentName) {
 }
 
 function saveVersion(componentName, version) {
+  if (componentName === "InstallerElectron") {return Promise.resolve();}
+
   return platform.writeTextFile(getComponentVersionFileName(componentName), version);
 }
 
