@@ -109,10 +109,19 @@ module.exports = {
           reject({ message: "Error setting file permissions", error: err });
         }
         else {
-        resolve();
+          resolve();
         }
       });
     });
+  },
+  fileExists(path) {
+    try {
+      fs.lstatSync(path);
+      return true;
+    }
+    catch(e) {
+      return false;
+    }
   },
   mkdir(path) {
     return new Promise((resolve, reject)=>{
