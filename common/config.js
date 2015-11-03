@@ -2,7 +2,7 @@ var platform = require("../common/platform.js"),
 thisInstallerVersion = require("../version.json"),
 path = require("path");
 
-function getComponentInfo(componentName) {
+function getComponents() {
   return {
     "Browser": {
       verFileName: "chromium", extractTo: "", copy: "chromium"
@@ -19,7 +19,11 @@ function getComponentInfo(componentName) {
     "Player": {
       verFileName: "RisePlayer", extractTo: "", copy: "RisePlayer.jar"
     }
-  }[componentName];
+  };
+}
+
+function getComponentInfo(componentName) {
+  return getComponents()[componentName];
 }
 
 function getVerFilePrefix(componentName) {

@@ -4,7 +4,6 @@ launcher = require("./launcher.js"),
 platform = require("./common/platform.js"),
 config = require("./common/config.js"),
 autostart = require("./autostart/autostart.js"),
-controller = require("./ui/controller.js"),
 thisInstallerVersion = require("./version.json"),
 path = require("path"),
 yargs = require("yargs"),
@@ -14,7 +13,7 @@ module.exports = {
   begin() {
     log.all("Beginning install");
 
-    module.exports.checkInstallerUpdateStatus()
+    return module.exports.checkInstallerUpdateStatus()
     .then(()=>{
       return platform.mkdir(platform.getInstallDir());
     })
@@ -69,6 +68,7 @@ module.exports = {
       })
       .catch((err)=>{
         log.all("Error: " + require("util").inspect(err));
+        return Promise.reject(err);
       });
     });
   },
@@ -84,12 +84,9 @@ module.exports = {
     return platform.fileExists(platform.getInstallerPath());
   },
   startInstallerUpdate() {
-    var installerPkgTempPath = path.join(platform.getTempDir(), config.getComponentInfo("InstallerElectron").copy);
-    var installerExePath = path.join(installerPkgTempPath, platform.getInstallerName());
-
-    return platform.setFilePermissions(installerExePath, 0755)
+    return platform.setFilePermissions(platform.getInstallerPath(), 0755)
     .then(()=>{
-      platform.startProcess(installerExePath, ["--update", "--path", installerPkgTempPath]);
+      platform.startProcess(platform.getInstallerPath(), ["--update", "--path", platform.getInstallerDir()]);
     });
   },
   updateInstaller(installerPkgTempPath) {

@@ -21,7 +21,7 @@ module.exports = {
   },
   extractComponents(components) {
     var promises = components.map((c)=>{
-      return module.exports.unzipFile(c.localPath, config.getComponentsZipInfo(c.name).extractTo).then(()=>{
+      return module.exports.unzipFile(c.localPath, config.getComponentInfo(c.name).extractTo).then(()=>{
         return c;
       });
     });
@@ -37,8 +37,8 @@ module.exports = {
   },
   installComponent(component) {
     if(component.name !== "InstallerElectron") {
-      var source = path.join(platform.getTempDir(), config.getComponentsZipInfo(c.name).copy);
-      var destination = path.join(platform.getInstallDir(), config.getComponentsZipInfo(c.name).copy);
+      var source = path.join(platform.getTempDir(), config.getComponentInfo(component.name).copy);
+      var destination = path.join(platform.getInstallDir(), config.getComponentInfo(component.name).copy);
 
       if(component.name === "Browser") {
         source = path.join(platform.getTempDir(), platform.isWindows() ? "chrome-win32" : "chrome-linux");
@@ -46,7 +46,7 @@ module.exports = {
 
       }
       else if(component.name === "Java" && !platform.isWindows()) {
-        source = source + "/jre";
+        source = source + path.sep + "jre";
         destination = destination.replace("JRE", "jre");
       }
 
