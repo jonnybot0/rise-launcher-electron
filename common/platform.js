@@ -38,8 +38,11 @@ module.exports = {
   getInstallerName() {
     return module.exports.isWindows() ? "installer.exe" : "installer";
   },
+  getInstallerDir() {
+    return path.join(module.exports.getInstallDir(), "Installer");
+  },
   getInstallerPath() {
-    return path.join(module.exports.getInstallDir(), "Installer", module.exports.getInstallerName());
+    return path.join(module.exports.getInstallerDir(), module.exports.getInstallerName());
   },
   waitFor(milliseconds) {
     return new Promise((resolve, reject)=>{

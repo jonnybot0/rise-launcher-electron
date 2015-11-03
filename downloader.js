@@ -1,17 +1,8 @@
 var platform = require("./common/platform.js"),
 network = require("./common/network.js"),
 config = require("./common/config.js"),
-autostart = require("./autostart/autostart.js"),
 fs = require("fs"),
 path = require("path");
-
-var componentsZipInfo = {
-  "Browser": { extractTo: "", copy: "chromium" },
-  "Cache": { extractTo: "RiseCache", copy: "RiseCache" },
-  "InstallerElectron": { extractTo: "Installer", copy: "Installer" },
-  "Java": { extractTo: "JRE", copy: "JRE" },
-  "Player": { extractTo: "", copy: "RisePlayer.jar" }
-};
 
 module.exports = {
   downloadComponents(components) {
@@ -30,7 +21,7 @@ module.exports = {
   },
   extractComponents(components) {
     var promises = components.map((c)=>{
-      return module.exports.unzipFile(c.localPath, componentsZipInfo[c.name].extractTo).then(()=>{
+      return module.exports.unzipFile(c.localPath, config.getComponentsZipInfo(c.name).extractTo).then(()=>{
         return c;
       });
     });
@@ -45,12 +36,9 @@ module.exports = {
     return Promise.all(promises);
   },
   installComponent(component) {
-    if(component.name === "InstallerElectron") {
-      return module.exports.startInstallerUpdate(component);
-    }
-    else {
-      var source = path.join(platform.getTempDir(), componentsZipInfo[component.name].copy);
-      var destination = path.join(platform.getInstallDir(), componentsZipInfo[component.name].copy);
+    if(component.name !== "InstallerElectron") {
+      var source = path.join(platform.getTempDir(), config.getComponentsZipInfo(c.name).copy);
+      var destination = path.join(platform.getInstallDir(), config.getComponentsZipInfo(c.name).copy);
 
       if(component.name === "Browser") {
         source = path.join(platform.getTempDir(), platform.isWindows() ? "chrome-win32" : "chrome-linux");
@@ -81,24 +69,6 @@ module.exports = {
         return Promise.reject({ message: "Error copying " + source + " to " + destination, error: err });
       });
     }
-  },
-  startInstallerUpdate(component) {
-    var installerPkgTempPath = path.join(platform.getTempDir(), componentsZipInfo.InstallerElectron.copy);
-    var installerExePath = path.join(installerPkgTempPath, platform.getInstallerName());
-
-    return platform.setFilePermissions(installerExePath, 0755)
-    .then(()=>{
-      platform.startProcess(installerExePath, ["--update", "--version", component.remoteVersion, "--path", installerPkgTempPath]);
-    });
-  },
-  updateInstaller(installerPkgTempPath, version) {
-    return platform.copyFolderRecursive(installerPkgTempPath, path.join(platform.getInstallDir(), componentsZipInfo.InstallerElectron.copy))
-    .then(()=>{
-      return config.saveVersion("InstallerElectron", version);
-    })
-    .then(()=>{
-      return autostart.createAutostart();
-    });
   },
   unzipFile(filePath, subdir) {
     return platform.extractZipTo(filePath, path.join(platform.getTempDir(), subdir), true)
