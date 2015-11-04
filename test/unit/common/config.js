@@ -28,7 +28,7 @@ describe("config", ()=>{
   it("reads a version correctly", ()=>{
     mock(platform, "readTextFile").resolveWith("10.0");
 
-    return config.getComponentVersion("test").then((version)=>{
+    return config.getComponentVersion("Browser").then((version)=>{
       assert.equal(version, "10.0");
     });
   });
@@ -36,7 +36,7 @@ describe("config", ()=>{
   it("fails to read a version and returns empty", ()=>{
     mock(platform, "readTextFile").rejectWith();
 
-    return config.getComponentVersion("test").then((version)=>{
+    return config.getComponentVersion("Browser").then((version)=>{
       assert.equal(version, "");
     });
   });
@@ -44,7 +44,7 @@ describe("config", ()=>{
   it("writes a version correctly", ()=>{
     mock(platform, "writeTextFile").resolveWith();
 
-    return config.saveVersion("test", "10").then(()=>{
+    return config.saveVersion("Browser", "10").then(()=>{
       assert(platform.writeTextFile.called);
     });
   });
@@ -52,7 +52,7 @@ describe("config", ()=>{
   it("fails to write a version correctly", ()=>{
     mock(platform, "writeTextFile").rejectWith();
 
-    return config.saveVersion("test", "10").catch(()=>{
+    return config.saveVersion("Browser", "10").catch(()=>{
       assert(platform.writeTextFile.called);
     });
   });

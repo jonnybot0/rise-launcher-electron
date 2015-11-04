@@ -2,12 +2,32 @@ var platform = require("../common/platform.js"),
 thisInstallerVersion = require("../version.json"),
 path = require("path");
 
-function getVerFilePrefix(componentName) {
+function getComponents() {
   return {
-    "Browser": "chromium",
-    "Cache": "RiseCache",
-    "Java": "java",
-    "Player":"RisePlayer" }[componentName];
+    "Browser": {
+      verFileName: "chromium", extractTo: "", copy: "chromium"
+    },
+    "Cache": {
+      verFileName: "RiseCache", extractTo: "RiseCache", copy: "RiseCache"
+    },
+    "InstallerElectron": {
+      verFileName: null, extractTo: "Installer", copy: "Installer"
+    },
+    "Java": {
+      verFileName: "java", extractTo: "JRE", copy: "JRE"
+    },
+    "Player": {
+      verFileName: "RisePlayer", extractTo: "", copy: "RisePlayer.jar"
+    }
+  };
+}
+
+function getComponentInfo(componentName) {
+  return getComponents()[componentName];
+}
+
+function getVerFilePrefix(componentName) {
+  return getComponentInfo(componentName).verFileName;
 }
 
 function getComponentVersionFileName(componentName) {
@@ -62,6 +82,7 @@ function parsePropertyList(list) {
 
 module.exports = {
   getVerFilePrefix,
+  getComponentInfo,
   getComponentVersionFileName,
   getComponentVersion,
   saveVersion,

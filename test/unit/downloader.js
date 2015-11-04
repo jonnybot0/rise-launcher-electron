@@ -1,12 +1,10 @@
 var platform = require("../../common/platform.js"),
 network = require("../../common/network.js"),
 config = require("../../common/config.js"),
-autostart = require("../../autostart/autostart.js"),
 downloader = require("../../downloader.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 path = require("path"),
-fs = require("fs"),
 mock = require("simple-mock").mock;
 
 global.log = require("../../logger/logger.js")();
@@ -167,23 +165,6 @@ describe("downloader", ()=>{
       
       assert.equal(config.saveVersion.callCount, 1);
       assert.equal(config.saveVersion.lastCall.args[1], "2015.01.01.12.00");
-    });
-  });
-
-  it("updates the Installer", ()=>{
-    mock(platform, "copyFolderRecursive").resolveWith();
-    mock(config, "saveVersion").resolveWith();
-    mock(autostart, "createAutostart").resolveWith();
-
-    return downloader.updateInstaller("testPath", "1.2").then(()=>{
-      assert(platform.copyFolderRecursive.called);
-      assert.equal(platform.copyFolderRecursive.lastCall.args[0], "testPath");
-      assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "Installer"));
-      
-      assert.equal(config.saveVersion.callCount, 1);
-      assert.equal(config.saveVersion.lastCall.args[1], "1.2");
-
-      assert.equal(autostart.createAutostart.callCount, 1);
     });
   });
 

@@ -39,21 +39,15 @@ function isBrowserUpgradeable(displayId) {
   }
 }
 
-function isInstallerDeployed() {
-  return platform.fileExists(platform.getInstallerPath());
-}
-
 function hasVersionChanged(compsMap, componentName, channel) {
   return new Promise((resolve, reject)=>{
     config.getComponentVersion(componentName)
     .then((localVersion)=>{
       var remoteVersion = compsMap[componentName + "Version" + channel];
-      var installerNotDeployed = (componentName === "InstallerElectron" && !isInstallerDeployed());
-      var versionChanged = localVersion.trim() !== remoteVersion || installerNotDeployed;
 
       resolve({
         name: componentName,
-        versionChanged: versionChanged,
+        versionChanged: localVersion.trim() !== remoteVersion,
         localVersion: localVersion.trim(),
         remoteVersion: remoteVersion 
       });

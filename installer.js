@@ -2,8 +2,10 @@ var component = require("./component.js"),
 downloader = require("./downloader.js"),
 launcher = require("./launcher.js"),
 platform = require("./common/platform.js"),
-controller = require("./ui/controller.js"),
+config = require("./common/config.js"),
+autostart = require("./autostart/autostart.js"),
 thisInstallerVersion = require("./version.json"),
+path = require("path"),
 yargs = require("yargs"),
 options = yargs.parse(process.argv.slice(1));
 
@@ -11,7 +13,7 @@ module.exports = {
   begin() {
     log.all("Beginning install");
 
-    module.exports.checkInstallerUpdateStatus()
+    return module.exports.checkInstallerUpdateStatus()
     .then(()=>{
       return platform.mkdir(platform.getInstallDir());
     })
@@ -22,8 +24,11 @@ module.exports = {
         var components = component.getComponentNames().map((name)=>{ return compsMap[name]; });
         var changedComponents = components.filter((c)=>{ return c.versionChanged; });
         var changedNames = changedComponents.map((c)=>{ return c.name; });
+        var installerVersionChanged = compsMap.InstallerElectron.versionChanged;
+        var installerDeployed = module.exports.isInstallerDeployed();
+        var runningInstallerDir = module.exports.getRunningInstallerDir();
         
-        if(compsMap.InstallerElectron.versionChanged) {
+        if(installerVersionChanged) {
           log.all("Upgrading installer");
 
           changedComponents = [compsMap.InstallerElectron];
@@ -44,29 +49,59 @@ module.exports = {
           return downloader.installComponents(changedComponents);
         })
         .then(()=>{
-          if(compsMap.InstallerElectron.versionChanged) {
-            process.exit();
-          }
-          else {
-            log.all("Installation finished");
-
-            return launcher.launch().then(()=>{
+          if(installerVersionChanged) {
+            module.exports.startInstallerUpdate().then(()=>{
               process.exit();
             });
           }
+          else if(!installerDeployed) {
+            return module.exports.updateInstaller(runningInstallerDir);
+          }
+        })
+        .then(()=>{
+          log.all("Installation finished");
+
+          return launcher.launch().then(()=>{
+            process.exit();
+          });
         });
       })
       .catch((err)=>{
         log.all("Error: " + require("util").inspect(err));
+        return Promise.reject(err);
       });
     });
   },
   checkInstallerUpdateStatus() {
     if(options.update) {
-      return downloader.updateInstaller(options.path, options.version);
+      return module.exports.updateInstaller(options.path);
     }
     else {
       return Promise.resolve();
     }
+  },
+  isInstallerDeployed() {
+    return platform.fileExists(platform.getInstallerPath());
+  },
+  startInstallerUpdate() {
+    return platform.setFilePermissions(platform.getInstallerPath(), 0755)
+    .then(()=>{
+      platform.startProcess(platform.getInstallerPath(), ["--update", "--path", platform.getInstallerDir()]);
+    });
+  },
+  updateInstaller(installerPkgTempPath) {
+    return platform.copyFolderRecursive(installerPkgTempPath, path.join(platform.getInstallDir(), config.getComponentInfo("InstallerElectron").copy))
+    .then(()=>{
+      return autostart.createAutostart();
+    });
+  },
+  getRunningInstallerDir() {
+    var currPath = __dirname.split(path.sep);
+
+    if(currPath[currPath.length - 2] === "resources" && currPath[currPath.length - 1] === "app") {
+      currPath = currPath.slice(0, currPath.length - 2);
+    }
+
+    return path.join.apply(null, currPath);
   }
 };
