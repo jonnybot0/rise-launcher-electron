@@ -11,7 +11,7 @@ module.exports = (platform)=>{
       osVer = platform.getUbuntuVer();
 
       if (!osVer) {
-        log.all("Could not determine os release.");
+        log.error(messages.unknownOS);
         return false;
       }
 

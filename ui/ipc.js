@@ -8,6 +8,10 @@ ipc.on("message", (message)=> {
   dom.appendMessage(message);
 });
 
+ipc.on("errorMessage", (detail)=> {
+  dom.appendError(detail);
+});
+
 ipc.on("version", (version)=> {
   dom.setVersion(version);
 });
