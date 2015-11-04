@@ -1,7 +1,10 @@
-module.exports = (network)=>{
+module.exports = (network, platform)=>{
   var config = require("./config.json"),
   refreshDate = 0,
-  token = "";
+  token = "",
+  displaySettings = {},
+  os = platform.getOS() + " " + platform.getArch(),
+  installerVersion = require("../../version.json");
 
   function getDateForTableName(nowDate) {
     var date = nowDate,
@@ -29,7 +32,10 @@ module.exports = (network)=>{
   }
 
   return {
-    log(eventName, displayId, version, eventDetails, nowDate) {
+    setDisplaySettings(settings) {
+      displaySettings = settings;
+    },
+    log(eventName, eventDetails, nowDate) {
       if (!eventName) {return;}
       if (!nowDate || !Date.prototype.isPrototypeOf(nowDate)) {
         nowDate = new Date();
@@ -50,8 +56,9 @@ module.exports = (network)=>{
 
         insertData.rows[0].insertId = Math.random().toString(36).substr(2).toUpperCase();
         insertData.rows[0].json.event = eventName;
-        insertData.rows[0].json.display_id = displayId;
-        insertData.rows[0].json.installer_version = version;
+        insertData.rows[0].json.display_id = displaySettings.displayid;
+        insertData.rows[0].json.installer_version = installerVersion;
+        insertData.rows[0].json.os = os;
         if (eventDetails) {insertData.rows[0].json.event_details = eventDetails;}
         insertData.rows[0].json.ts = nowDate.toISOString();
         insertData = JSON.stringify(insertData);
