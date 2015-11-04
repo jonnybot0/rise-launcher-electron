@@ -11,14 +11,14 @@ options = yargs.parse(process.argv.slice(1));
 
 module.exports = {
   begin() {
-    log.all("Beginning install");
+    log.all("beginning install");
 
     return module.exports.checkInstallerUpdateStatus()
     .then(()=>{
       return platform.mkdir(platform.getInstallDir());
     })
     .then(()=>{
-      log.all("Fetching components list");
+      log.all("fetching components list");
 
       return component.getComponents().then((compsMap)=>{
         var components = component.getComponentNames().map((name)=>{ return compsMap[name]; });
@@ -28,23 +28,23 @@ module.exports = {
         var installerDeployed = module.exports.isInstallerDeployed();
         var runningInstallerDir = module.exports.getRunningInstallerDir();
         
-        if(installerVersionChanged) {
-          log.all("Upgrading installer");
+        if(compsMap.InstallerElectron.versionChanged) {
+          log.all("upgrading installer");
 
           changedComponents = [compsMap.InstallerElectron];
-          changedNames = ["Installer"];
+          changedNames = ["installer"];
         }
 
-        log.all("Downloading " + changedNames);
+        log.all("downloading components", changedNames);
 
         return downloader.downloadComponents(changedComponents)
         .then(()=>{
-          log.all("Extracting " + changedNames);
+          log.all("extracting", changedNames);
 
           return downloader.extractComponents(changedComponents);
         })
         .then(()=>{
-          log.all("Installing " + changedNames);
+          log.all("installing ", changedNames);
 
           return downloader.installComponents(changedComponents);
         })
@@ -59,7 +59,7 @@ module.exports = {
           }
         })
         .then(()=>{
-          log.all("Installation finished");
+          log.all("install complete");
 
           return launcher.launch().then(()=>{
             process.exit();
