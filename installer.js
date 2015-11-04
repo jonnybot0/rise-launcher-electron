@@ -23,7 +23,7 @@ module.exports = {
       return component.getComponents().then((compsMap)=>{
         var components = component.getComponentNames().map((name)=>{ return compsMap[name]; });
         var changedComponents = components.filter((c)=>{ return c.versionChanged; });
-        var changedNames = changedComponents.map((c)=>{ return c.name; });
+        var changedNames = changedComponents.map((c)=>{ return c.name; }).toString();
         var installerVersionChanged = compsMap.InstallerElectron.versionChanged;
         var installerDeployed = module.exports.isInstallerDeployed();
         var runningInstallerDir = module.exports.getRunningInstallerDir();
@@ -44,7 +44,7 @@ module.exports = {
           return downloader.extractComponents(changedComponents);
         })
         .then(()=>{
-          log.all("installing ", changedNames);
+          log.all("installing", changedNames);
 
           return downloader.installComponents(changedComponents);
         })
@@ -67,7 +67,7 @@ module.exports = {
         });
       })
       .catch((err)=>{
-        log.all("Error: " + require("util").inspect(err));
+        log.all("error", require("util").inspect(err));
         return Promise.reject(err);
       });
     });
