@@ -102,6 +102,6 @@ module.exports = {
       currPath = currPath.slice(0, currPath.length - 2);
     }
 
-    return path.join.apply(null, currPath);
+    return path.sep + path.join.apply(null, currPath);
   }
 };
