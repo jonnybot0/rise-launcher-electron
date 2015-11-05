@@ -32,7 +32,7 @@ module.exports = {
           log.all("upgrading installer");
 
           changedComponents = [compsMap.InstallerElectron];
-          changedNames = ["installer"];
+          changedNames = "installer";
         }
 
         log.all("downloading components", changedNames);

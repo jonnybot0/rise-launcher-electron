@@ -11,7 +11,7 @@ module.exports = (externalLogger)=> {
       if (uiWindow) {uiWindow.send("errorMessage", detail);}
     },
     all(evt, detail) {
-      console.log(evt, detail);
+      console.log(evt, detail ? detail : "");
       if (uiWindow) {uiWindow.send("message", detail ? evt + ": " + detail : evt);}
       if (externalLogger) {externalLogger.log(evt, detail);}
     },

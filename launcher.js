@@ -50,9 +50,8 @@ module.exports = {
       return platform.waitFor(2000);
     })
     .then(()=>{
-      log.all("Starting cache");
+      log.all("cache start");
       startCache();
-      log.all("Cache started");
 
       return module.exports.stopPlayer();
     })
@@ -60,9 +59,11 @@ module.exports = {
       return platform.waitFor(2000);
     })
     .then(()=>{
-      log.all("Starting Player");
+      log.all("player start");
       startPlayer();
-      log.all("Player started");
+    })
+    .then(()=>{
+      return platform.waitFor(2000);
     });
   }
 };
