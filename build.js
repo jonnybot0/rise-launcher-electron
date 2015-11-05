@@ -42,7 +42,6 @@ packager(opts, function done (err, appPath) {
 
 function zipBuilds() {
   var artifacts = [["linux-ia32", "lnx-32"], ["linux-x64", "lnx-64"], ["win32-ia32", "win-32"], ["win32-x64", "win-64"]];
-  //var artifacts = [["win32-x64", "win-64"]];
 
   console.log("Zipping builds");
   
@@ -95,9 +94,15 @@ function zipBuild(platform, zipName) {
 function createSelfExtractingInstallers() {
   console.log("Generating self extracting installers");
 
-  //["linux-ia32", "lnx-32"], ["linux-x64", "lnx-64"], ["win32-ia32", "win-32"], ["win32-x64", "win-64"]
+  createLinux("linux-ia32", "lnx-32");
+  createLinux("linux-x64", "lnx-64");
   createWindows("win32-ia32", "win-32");
   createWindows("win32-x64", "win-64");
+
+  function createLinux(platform, fileName) {
+    console.log("Generating self extracting installer for " + platform);
+    execSync("makeself builds/installer-" + platform + "/ builds/installer-" + fileName + ".sh \"Rise Player\" ./installer");
+  }
 
   function createWindows(platform, fileName) {
     var configFileData =
