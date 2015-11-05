@@ -58,6 +58,12 @@ function getDisplaySettingsFileName() {
   return path.join(platform.getInstallDir(), "RiseDisplayNetworkII.ini");
 }
 
+function getDisplaySettingsSync() {
+  var textFileString = platform.readTextFileSync(getDisplaySettingsFileName());
+  if (textFileString.length === 0) {return {};}
+  return parsePropertyList(textFileString);
+}
+
 function getDisplaySettings() {
   return new Promise((resolve, reject)=>{
     platform.readTextFile(getDisplaySettingsFileName())
@@ -87,5 +93,6 @@ module.exports = {
   getComponentVersion,
   saveVersion,
   getDisplaySettings,
+  getDisplaySettingsSync,
   parsePropertyList
 };

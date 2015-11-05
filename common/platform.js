@@ -4,8 +4,7 @@ os = require("os"),
 fs = require(process.versions.electron ? "original-fs" : "fs"),
 ncp = require("ncp"),
 gunzip = require("gunzip-maybe"),
-tar = require("tar-fs"),
-log = require("../logger/logger.js")();
+tar = require("tar-fs");
 
 module.exports = {
   getCoreUrl() {
@@ -69,6 +68,17 @@ module.exports = {
         }
       });
     });
+  },
+  readTextFileSync(path) {
+    var stringContents = "";
+
+    try {
+      stringContents = fs.readFileSync(path, "utf8");
+    } catch (e) {
+      log.error("Could not read display settings file");
+    }
+
+    return stringContents;
   },
   writeTextFile(path, data) {
     return new Promise((resolve, reject)=>{

@@ -11,40 +11,40 @@ options = yargs.parse(process.argv.slice(1));
 
 module.exports = {
   begin() {
-    log.all("Beginning install");
+    log.all("beginning install");
 
     return module.exports.checkInstallerUpdateStatus()
     .then(()=>{
       return platform.mkdir(platform.getInstallDir());
     })
     .then(()=>{
-      log.all("Fetching components list");
+      log.all("fetching components list");
 
       return component.getComponents().then((compsMap)=>{
         var components = component.getComponentNames().map((name)=>{ return compsMap[name]; });
         var changedComponents = components.filter((c)=>{ return c.versionChanged; });
-        var changedNames = changedComponents.map((c)=>{ return c.name; });
+        var changedNames = changedComponents.map((c)=>{ return c.name; }).toString();
         var installerVersionChanged = compsMap.InstallerElectron.versionChanged;
         var installerDeployed = module.exports.isInstallerDeployed();
         var runningInstallerDir = module.exports.getRunningInstallerDir();
         
-        if(installerVersionChanged) {
-          log.all("Upgrading installer");
+        if(compsMap.InstallerElectron.versionChanged) {
+          log.all("upgrading installer");
 
           changedComponents = [compsMap.InstallerElectron];
-          changedNames = ["Installer"];
+          changedNames = "installer";
         }
 
-        log.all("Downloading " + changedNames);
+        log.all("downloading components", changedNames);
 
         return downloader.downloadComponents(changedComponents)
         .then(()=>{
-          log.all("Extracting " + changedNames);
+          log.all("extracting", changedNames);
 
           return downloader.extractComponents(changedComponents);
         })
         .then(()=>{
-          log.all("Installing " + changedNames);
+          log.all("installing", changedNames);
 
           return downloader.installComponents(changedComponents);
         })
@@ -59,7 +59,7 @@ module.exports = {
           }
         })
         .then(()=>{
-          log.all("Installation finished");
+          log.all("install complete");
 
           return launcher.launch().then(()=>{
             process.exit();
@@ -67,7 +67,7 @@ module.exports = {
         });
       })
       .catch((err)=>{
-        log.all("Error: " + require("util").inspect(err));
+        log.error("error", require("util").inspect(err));
         return Promise.reject(err);
       });
     });
@@ -102,6 +102,6 @@ module.exports = {
       currPath = currPath.slice(0, currPath.length - 2);
     }
 
-    return path.join.apply(null, currPath);
+    return path.sep + path.join.apply(null, currPath);
   }
 };

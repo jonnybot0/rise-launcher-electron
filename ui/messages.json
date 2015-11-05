@@ -1,3 +1,4 @@
 {
-  "osRequirementsNotMet": "Operating system requirements are not met. The installer requires windows or Ubuntu 14.04.  No update will be attempted.  Using previous installation."
+  "osRequirementsNotMet": "Operating system requirements are not met. The installer requires windows or Ubuntu 14.04.  No update will be attempted.  Using previous installation.",
+  "unknownOS": "Could not determine operating system release."
 }
