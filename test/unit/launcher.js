@@ -42,7 +42,7 @@ describe("launcher", ()=>{
 
     return launcher.launch().then(()=>{
       assert.equal(platform.startProcess.callCount, 2);
-      assert.equal(platform.waitFor.callCount, 2);
+      assert.equal(platform.waitFor.callCount, 3);
     });
   });
 
@@ -54,7 +54,7 @@ describe("launcher", ()=>{
 
     return launcher.launch().then(()=>{
       assert.equal(platform.startProcess.callCount, 2);
-      assert.equal(platform.waitFor.callCount, 2);
+      assert.equal(platform.waitFor.callCount, 3);
     });
   });
 });
