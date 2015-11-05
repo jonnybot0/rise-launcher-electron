@@ -3,8 +3,8 @@ machine:
     version: 4.1.0
 dependencies:
   pre:
-    - apt-get install makeself
-    - apt-get install p7zip-full
+    - sudo apt-get update; sudo apt-get install makeself p7zip-full;
+    - npm install -g istanbul
 deployment:
   staging:
     branch: /(feature|fix|chore).*/
