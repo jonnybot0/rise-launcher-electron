@@ -67,7 +67,7 @@ module.exports = {
         });
       })
       .catch((err)=>{
-        log.all("error", require("util").inspect(err));
+        log.error("error", require("util").inspect(err));
         return Promise.reject(err);
       });
     });

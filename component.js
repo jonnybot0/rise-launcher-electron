@@ -67,7 +67,7 @@ function getComponentsList() {
       }
     })
     .catch(function(err) {
-      log.all(err);
+      log.error(err);
       reject({ message: "Error getting components list", error: err});
     });
   });
