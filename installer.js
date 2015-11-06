@@ -70,17 +70,23 @@ module.exports = {
         log.error("error", require("util").inspect(err));
         return Promise.reject(err);
       });
+    })
+    .catch((err)=>{
+      log.error("error", require("util").inspect(err));
+      return Promise.reject(err);
     });
   },
   checkInstallerUpdateStatus() {
-    if(options.update) {
-      return module.exports.updateInstaller(options.path);
+    if(module.exports.getOptions().update) {
+      return module.exports.updateInstaller(module.exports.getOptions().path);
     }
     else {
       return Promise.resolve();
     }
   },
   isInstallerDeployed() {
+    console.log("platform.getInstallerPath()", platform.getInstallerPath());
+
     return platform.fileExists(platform.getInstallerPath());
   },
   startInstallerUpdate() {
@@ -103,5 +109,8 @@ module.exports = {
     }
 
     return path.sep + path.join.apply(null, currPath);
+  },
+  getOptions() {
+    return options;
   }
 };
