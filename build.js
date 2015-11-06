@@ -1,4 +1,5 @@
 var spawnSync= require("child_process").spawnSync,
+execSync= require("child_process").execSync,
 fs = require("fs"),
 path = require("path"),
 zlib = require("zlib"),
@@ -26,6 +27,9 @@ packager(opts, function done (err, appPath) {
 
     zipBuilds().then(()=>{
       console.log("Done zipping builds");
+
+      createSelfExtractingInstallers();
+      console.log("Done generating self extracting installers");
     })
     .catch((err)=>{
       console.log("Error zipping builds", err);
@@ -38,7 +42,6 @@ packager(opts, function done (err, appPath) {
 
 function zipBuilds() {
   var artifacts = [["linux-ia32", "lnx-32"], ["linux-x64", "lnx-64"], ["win32-ia32", "win-32"], ["win32-x64", "win-64"]];
-  //var artifacts = [["win32-x64", "win-64"]];
 
   console.log("Zipping builds");
   
@@ -85,5 +88,36 @@ function zipBuild(platform, zipName) {
       .on("close", resolve)
       .on("error", reject);
     });
+  }
+}
+
+function createSelfExtractingInstallers() {
+  console.log("Generating self extracting installers");
+
+  createLinux("linux-ia32", "lnx-32");
+  createLinux("linux-x64", "lnx-64");
+  createWindows("win32-ia32", "win-32");
+  createWindows("win32-x64", "win-64");
+
+  function createLinux(platform, fileName) {
+    console.log("Generating self extracting installer for " + platform);
+    execSync("makeself builds/installer-" + platform + "/ builds/installer-" + fileName + ".sh \"Rise Player\" ./installer");
+  }
+
+  function createWindows(platform, fileName) {
+    var configFileData =
+    ";!@Install@!UTF-8!" + "\n" +
+    "Title=\"Rise Vision Player\"" + "\n" +
+    "BeginPrompt=\"Do you want to install Rise Vision Player?\"" + "\n" +
+    "Directory=\"\"" +  "\n" +
+    "RunProgram=\"builds\\installer-" + platform + "\\installer.exe\"" + "\n" +
+    ";!@InstallEnd@!" + "\n";
+
+    console.log("Writing config file for " + platform);
+    fs.writeFileSync("builds/config.txt", configFileData);
+    console.log("Generating 7zip file for " + platform);
+    execSync("7z a -mx4 builds/installer-" + platform + ".7z builds/installer-" + platform + "/*");
+    console.log("Generating self extracting installer for " + platform);
+    execSync("cat external-deps/7zS.sfx builds/config.txt builds/installer-" + platform + ".7z > builds/installer-" + fileName + ".exe");
   }
 }

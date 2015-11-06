@@ -1,3 +1,16 @@
+machine:
+  node:
+    version: 4.1.0
+dependencies:
+  pre:
+    - sudo apt-get update; sudo apt-get install makeself p7zip-full;
+    - npm install -g istanbul
+deployment:
+  staging:
+    branch: /(feature|fix|chore).*/
+    commands:
+      - node build.js
+
 #Update version.json with a new version number
 #node build
 #Upload installer executables at install-versions.risevision.com
