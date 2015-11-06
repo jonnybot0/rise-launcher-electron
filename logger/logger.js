@@ -26,6 +26,9 @@ module.exports = (externalLogger)=> {
     },
     file() {
       Array.prototype.slice.call(arguments).forEach(msg=>{console.log(msg);});
+    },
+    ui(msg, id) {
+      if (uiWindow) {uiWindow.send(id ? "rewriteMessage" : "message", {msg, id});}
     }
   };
 };
