@@ -14,13 +14,15 @@ module.exports = {
     return new Promise((resolve, reject)=>{
       var tempPath = path.join(platform.getTempDir(), urlParse(url).pathname.split(path.sep).pop()),
       file = fs.createWriteStream(tempPath),
-      dataReceived = false;
+      fileName = urlParse(url).pathname,
+      progress = 0;
 
       file.on("error", (err)=>{
         reject({ message: "Error creating temporary download file", error: err });
       });
 
       log.debug("Downloading " + url);
+      log.ui(progress, fileName);
 
       var req = http.get(url, (res)=>{
         if(res.statusCode === 404) {
@@ -31,8 +33,8 @@ module.exports = {
         }
 
         res.on("data", (data)=>{
-          dataReceived = true;
-          
+          progress += data.length;
+          log.ui(progress, fileName);
           file.write(data);
         });
         res.on("end", ()=>{
@@ -48,7 +50,7 @@ module.exports = {
       req.on("socket", function (socket) {
         socket.setTimeout(2000);  
         socket.on("timeout", function() {
-          if(!dataReceived) {
+          if(!progress) {
             req.abort();
             reject({ message: "Request timed out", error: url });
           }

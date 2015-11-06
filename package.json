@@ -8,6 +8,7 @@
   "devDependencies": {
     "electron-packager": "^5.1.0",
     "electron-prebuilt": "^0.33.6",
+    "istanbul": "^0.4.0",
     "simple-mock": "^0.4.1",
     "mocha": "^2.3.3"
   },
