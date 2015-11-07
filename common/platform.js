@@ -75,7 +75,7 @@ module.exports = {
     try {
       stringContents = fs.readFileSync(path, "utf8");
     } catch (e) {
-      log.error("Could not read display settings file");
+      log.error("Could not read file");
     }
 
     return stringContents;
