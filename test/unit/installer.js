@@ -137,6 +137,22 @@ describe("installer", ()=>{
     });
   });
 
+  it("performs an installer update because it was not deployed", ()=>{
+    mock(installer, "checkInstallerUpdateStatus").resolveWith();
+    mock(installer, "isInstallerDeployed").returnWith(false);
+    mock(installer, "updateInstaller").resolveWith();
+    
+    return installer.begin().then(()=>{
+      assert(installer.checkInstallerUpdateStatus.called);
+      assert(installer.updateInstaller.called);
+      assert(component.getComponents.called);
+      assert(downloader.downloadComponents.called);
+      assert(downloader.extractComponents.called);
+      assert(launcher.launch.called);
+      assert(process.exit.called);
+    });
+  });
+
   it("performs an installer restart to overwrite current version", ()=>{
     components.InstallerElectron.versionChanged = true;
 
@@ -199,5 +215,21 @@ describe("installer", ()=>{
     return installer.begin().catch(()=>{
       assert(downloader.installComponents.called);
     });
+  });
+
+  it("gets a valid running installer directory", ()=>{
+    mock(installer, "getCwd").returnWith(path.join("test", "installer"));
+
+    var installerDir = installer.getRunningInstallerDir();
+
+    assert.equal(installerDir, path.join("test", "installer"));
+  });
+
+  it("gets a valid running installer directory when manually invoking node", ()=>{
+    mock(installer, "getCwd").returnWith(path.join("test", "installer", "resources", "app"));
+
+    var installerDir = installer.getRunningInstallerDir();
+
+    assert.equal(installerDir, path.join("test", "installer"));
   });
 });

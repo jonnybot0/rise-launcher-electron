@@ -102,13 +102,17 @@ module.exports = {
     });
   },
   getRunningInstallerDir() {
-    var currPath = __dirname.split(path.sep);
+    var currPath = module.exports.getCwd().split(path.sep);
+    var pathPrefix = module.exports.getCwd().startsWith(path.sep) ? path.sep : "";
 
     if(currPath[currPath.length - 2] === "resources" && currPath[currPath.length - 1] === "app") {
       currPath = currPath.slice(0, currPath.length - 2);
     }
 
-    return path.sep + path.join.apply(null, currPath);
+    return pathPrefix + path.join.apply(null, currPath);
+  },
+  getCwd() {
+    return __dirname;
   },
   getOptions() {
     return options;
