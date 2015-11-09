@@ -11,7 +11,7 @@ module.exports = (platform)=>{
       osVer = platform.getUbuntuVer();
 
       if (!osVer) {
-        log.error(messages.unknownOS);
+        log.error("Linux version not supported");
         return false;
       }
 
