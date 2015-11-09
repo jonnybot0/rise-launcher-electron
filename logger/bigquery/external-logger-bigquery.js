@@ -31,23 +31,25 @@ module.exports = (network, platform)=>{
     });
   }
 
-  return {
+  var mod = {
+    getDateForTableName,
+    refreshToken,
     setDisplaySettings(settings) {
       displaySettings = settings;
     },
     log(eventName, eventDetails, nowDate) {
-      if (!eventName) {return;}
+      if (!eventName) {return Promise.reject("eventName is required");}
       if (!nowDate || !Date.prototype.isPrototypeOf(nowDate)) {
         nowDate = new Date();
       }
 
-      return refreshToken(nowDate).then(()=>{
+      return mod.refreshToken(nowDate).then(()=>{
         var insertData = JSON.parse(JSON.stringify(config.insertSchema)),
         serviceUrl,
         headers; 
 
         serviceUrl = config.serviceUrl.replace
-        ("TABLE_ID", "events" + getDateForTableName(nowDate));
+        ("TABLE_ID", "events" + mod.getDateForTableName(nowDate));
 
         headers = {
           "Content-Type": "application/json",
@@ -73,4 +75,6 @@ module.exports = (network, platform)=>{
       });
     }
   };
+
+  return mod;
 };
