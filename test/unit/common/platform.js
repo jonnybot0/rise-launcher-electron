@@ -1,5 +1,6 @@
 var platform = require("../../../common/platform.js"),
 childProcess = require("child_process"),
+os = require("os"),
 path = require("path"),
 fs = require("fs"),
 assert = require("assert"),
@@ -13,6 +14,24 @@ describe("platform", ()=>{
 
   afterEach("clean mocks", ()=>{
     simpleMock.restore();
+  });
+
+  it("gets Ubuntu version", ()=>{
+    mock(childProcess, "spawnSync").returnWith({ stdout: {} });
+
+    platform.getUbuntuVer();
+
+    assert(childProcess.spawnSync.called);
+    assert.equal(childProcess.spawnSync.lastCall.args[0], "lsb_release");
+    assert.equal(childProcess.spawnSync.lastCall.args[1][0], "-sr");
+  });
+
+  it("gets temporary directory", ()=>{
+    mock(os, "tmpdir").returnWith("temp");
+
+    platform.getTempDir();
+
+    assert(os.tmpdir.called);
   });
 
   it("waits for 100ms to resolve the promise", ()=>{
@@ -51,6 +70,20 @@ describe("platform", ()=>{
     });
   });
 
+  it("synchronously reads a text file", ()=>{
+    mock(fs, "readFileSync").returnWith("text");
+
+    assert.equal(platform.readTextFileSync("file.txt"), "text");
+    assert(fs.readFileSync.called);
+  });
+
+  it("fails to synchronously reads a text file", ()=>{
+    mock(fs, "readFileSync").throwWith("error");
+
+    assert.equal(platform.readTextFileSync("file.txt"), "");
+    assert(fs.readFileSync.called);
+  });
+
   it("writes a text file", ()=>{
     mock(fs, "writeFile").callbackWith(null);
 
@@ -65,6 +98,24 @@ describe("platform", ()=>{
     return platform.writeTextFile("file.txt", "text").catch((err)=>{
       assert(fs.writeFile.called);
       assert.equal(err.error, "write error");
+    });
+  });
+
+  it("copies folder recursively", ()=>{
+    mock(platform, "getNCP").callbackWith(null);
+
+    return platform.copyFolderRecursive("folder1", "folder2").then((err)=>{
+      assert(platform.getNCP.called);
+      assert(!err);
+    });
+  });
+
+  it("fails to copy folder recursively", ()=>{
+    mock(platform, "getNCP").callbackWith("error");
+
+    return platform.copyFolderRecursive("folder1", "folder2").catch((err)=>{
+      assert(platform.getNCP.called);
+      assert.equal(err, "error");
     });
   });
 
