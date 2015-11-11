@@ -48,6 +48,12 @@ function getComponentVersion(componentName) {
   });
 }
 
+function getComponentVersionSync(componentName) {
+  if (componentName === "InstallerElectron") {return thisInstallerVersion;}
+
+  return platform.readTextFileSync(getComponentVersionFileName(componentName));
+}
+
 function saveVersion(componentName, version) {
   if (componentName === "InstallerElectron") {return Promise.resolve();}
 
@@ -91,6 +97,7 @@ module.exports = {
   getComponentInfo,
   getComponentVersionFileName,
   getComponentVersion,
+  getComponentVersionSync,
   saveVersion,
   getDisplaySettingsFileName,
   getDisplaySettings,
