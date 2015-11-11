@@ -13,8 +13,17 @@ function getComponentsUrl() {
   return componentsUrl;
 }
 
+function isTestingChannelRequested() {
+  var props = config.getDisplaySettingsSync();
+
+  return props.ForceTesting === "true";
+}
+
 function getChannel(components) {
-  if(components.ForceStable === "true" || module.exports.getLatestChannelProb() > Number(components.LatestRolloutPercent)) {
+  if(module.exports.isTestingChannelRequested()) {
+    return "Testing";
+  }
+  else if(components.ForceStable === "true" || module.exports.getLatestChannelProb() > Number(components.LatestRolloutPercent)) {
     return "Stable";
   }
   else {
@@ -133,6 +142,7 @@ module.exports = {
   getLatestChannelProb() { return latestChannelProb; },
   getComponentNames() { return componentNames; },
   getComponentsUrl,
+  isTestingChannelRequested,
   getChannel,
   isBrowserUpgradeable,
   hasVersionChanged,
