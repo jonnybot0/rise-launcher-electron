@@ -132,6 +132,45 @@ describe("component", ()=>{
     });
   });
 
+  it("returns version of Cache has changed", ()=>{
+    var comps = { CacheVersionStable: "2.0" };
+
+    mock(config, "getVersion").resolveWith("2.1");
+    
+    return component.hasVersionChanged(comps, "Cache", "Stable").then((result)=>{
+      assert(result.versionChanged);
+    });
+  });
+
+  it("returns the components list", ()=>{
+    mock(network, "httpFetch").resolveWith({
+      status: 200,
+      text() { return "content"; }
+    });
+    
+    return component.getComponentsList().then((result)=>{
+      assert.equal(result, "content");
+    });
+  });
+
+  it("fails to return the components list because of server response", ()=>{
+    mock(network, "httpFetch").resolveWith({
+      status: 404
+    });
+    
+    return component.getComponentsList().catch((err)=>{
+      assert(err.message);
+    });
+  });
+
+  it("fails to return the components list because of network error", ()=>{
+    mock(network, "httpFetch").rejectWith("error");
+    
+    return component.getComponentsList().catch((err)=>{
+      assert(err.message);
+    });
+  });
+
   it("returns processed components map", ()=>{
     return platform.readTextFile("test/unit/remote-components-lnx-32.cfg").then((data)=>{
       mock(platform, "getOS").returnWith("linux");
@@ -188,6 +227,92 @@ describe("component", ()=>{
             "versionChanged": false
           }
         });
+      });
+    });
+  });
+
+  it("returns processed components map updating browser", ()=>{
+    return platform.readTextFile("test/unit/remote-components-lnx-32.cfg").then((data)=>{
+      mock(platform, "getOS").returnWith("linux");
+      mock(platform, "getArch").returnWith("32");
+      mock(component, "getComponentsList").resolveWith(data);
+      mock(component, "getChannel").returnWith("Stable");
+      mock(component, "isBrowserUpgradeable").resolveWith(true);
+      mock(component, "getLatestChannelProb").returnWith(50);
+      mock(config, "getDisplaySettings").resolveWith({});
+      mock(config, "getComponentVersion", (componentName)=>{
+        return Promise.resolve({
+          "InstallerElectron": thisInstallerVersion,
+          "Browser": "44.0.1200.000", // Changed, but will be versionChanged==false because of isBrowserUpgradeable
+          "Cache": "2015.02.01.12.00",
+          "Java": "7.80",
+          "Player":"2015.01.01.12.00" }[componentName]);
+      });
+
+      return component.getComponents().then((comps)=>{
+        assert.deepEqual(comps, {
+          "Browser": {
+            "localVersion": "44.0.1200.000",
+            "name": "Browser",
+            "remoteVersion": "44.0.2400.000",
+            "url": "http://install-versions.risevision.com/chrome-linux-32.zip",
+            "versionChanged": true
+          },
+          "Cache": {
+            "localVersion": "2015.02.01.12.00",
+            "name": "Cache",
+            "remoteVersion": "2015.02.01.12.00",
+            "url": "http://install-versions.risevision.com/RiseCache.zip",
+            "versionChanged": false
+          },
+          "InstallerElectron": {
+            "localVersion": thisInstallerVersion,
+            "name": "InstallerElectron",
+            "remoteVersion": "2015.10.21.17.00",
+            "url": "http://install-versions.risevision.com/rvplayer-installer-lnx-32.zip",
+            "versionChanged": true
+          },
+          "Java": {
+            "localVersion": "7.80",
+            "name": "Java",
+            "remoteVersion": "7.80",
+            "url": "http://install-versions.risevision.com/jre-7u80-linux-32.zip",
+            "versionChanged": false
+          },
+          "Player": {
+            "localVersion": "2015.01.01.12.00",
+            "name": "Player",
+            "remoteVersion": "2015.01.01.12.00",
+            "url": "http://install-versions.risevision.com/RisePlayer-2015-01-01-12-00.zip",
+            "versionChanged": false
+          }
+        });
+      });
+    });
+  });
+
+  it("fails to return the components map after failing to get components list", ()=>{
+    return platform.readTextFile("test/unit/remote-components-lnx-32.cfg").then((data)=>{
+      mock(component, "getComponentsList").rejectWith("error");
+
+      return component.getComponents().catch((err)=>{
+        assert.equal(err, "error");
+      });
+    });
+  });
+
+  it("fails to return the components map", ()=>{
+    return platform.readTextFile("test/unit/remote-components-lnx-32.cfg").then((data)=>{
+      mock(platform, "getOS").returnWith("linux");
+      mock(platform, "getArch").returnWith("32");
+      mock(component, "getComponentsList").resolveWith(data);
+      mock(component, "getChannel").returnWith("Stable");
+      mock(component, "isBrowserUpgradeable").resolveWith(false);
+      mock(component, "getLatestChannelProb").returnWith(50);
+      mock(config, "getDisplaySettings").rejectWith("error");
+
+      return component.getComponents().catch((err)=>{
+        assert.equal(err, "error");
       });
     });
   });

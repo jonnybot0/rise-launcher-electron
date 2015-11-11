@@ -28,6 +28,8 @@ describe("config", ()=>{
       statusCode: 200,
       on(name, cb) {
         if(name === "end") { cb(); }
+        if(name === "data") { cb(""); }
+        if(name === "error") { cb("err"); }
       }
     });
 
@@ -37,9 +39,23 @@ describe("config", ()=>{
     });
   });
 
-  it("fails to download a file", ()=>{
+  it("fails to download a file because it was not found", ()=>{
     mock(http, "get").callbackWith({
       statusCode: 404,
+      on(name, cb) {
+        if(name === "end") { cb(); }
+      }
+    });
+
+    return network.downloadFile("http://install-versions.risevision.com/RiseCache.zip")
+    .catch((err)=>{
+      assert(err.message);
+    });
+  });
+
+  it("fails to download a file", ()=>{
+    mock(http, "get").callbackWith({
+      statusCode: 500,
       on(name, cb) {
         if(name === "end") { cb(); }
       }

@@ -75,7 +75,7 @@ module.exports = {
     try {
       stringContents = fs.readFileSync(path, "utf8");
     } catch (e) {
-      log.error("Could not read display settings file");
+      log.error("Could not read file");
     }
 
     return stringContents;
@@ -94,7 +94,7 @@ module.exports = {
   },
   copyFolderRecursive(source, target) {
     return new Promise((resolve, reject)=>{
-      ncp(source, target, { clobber: true }, (err)=>{
+      module.exports.getNCP(source, target, { clobber: true }, (err)=>{
         if(!err) {
           resolve();
         }
@@ -103,6 +103,9 @@ module.exports = {
         }
       });
     });
+  },
+  getNCP() {
+    return ncp;
   },
   extractZipTo(source, destination, overwrite) {
     return new Promise((resolve, reject)=>{

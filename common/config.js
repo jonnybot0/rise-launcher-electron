@@ -60,7 +60,7 @@ function getDisplaySettingsFileName() {
 
 function getDisplaySettingsSync() {
   var textFileString = platform.readTextFileSync(getDisplaySettingsFileName());
-  if (textFileString.length === 0) {return {};}
+  if (!textFileString || textFileString.length === 0) {return {};}
   return parsePropertyList(textFileString);
 }
 
@@ -92,6 +92,7 @@ module.exports = {
   getComponentVersionFileName,
   getComponentVersion,
   saveVersion,
+  getDisplaySettingsFileName,
   getDisplaySettings,
   getDisplaySettingsSync,
   parsePropertyList

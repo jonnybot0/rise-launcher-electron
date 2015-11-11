@@ -1,5 +1,6 @@
 var autostart = require("../../autostart/autostart.js"),
 platform = require("../../common/platform.js"),
+ws = require("windows-shortcuts"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock,
@@ -48,6 +49,25 @@ describe("autostart", ()=>{
     .then(()=>{
       assert.ok(autostart.createWindowsShortcut.callCount === 1);
       assert.ok(autostart.createWindowsShortcut.lastCall.args[1] === exePath);
+    });
+  });
+
+  it("creates a shortcut on Windows", ()=>{
+    mock(ws, "create").callbackWith();
+
+    return autostart.createWindowsShortcut()
+    .then(()=>{
+      assert.ok(ws.create.called);
+    });
+  });
+
+  it("fails to create a shortcut on Windows", ()=>{
+    mock(ws, "create").callbackWith("error");
+
+    return autostart.createWindowsShortcut()
+    .catch((err)=>{
+      assert.ok(ws.create.called);
+      assert.equal(err, "error");
     });
   });
 

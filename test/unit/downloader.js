@@ -66,25 +66,66 @@ describe("downloader", ()=>{
     simpleMock.restore();
   });
 
-  it("unzips a file", ()=>{
-    return downloader.unzipFile("file1.zip", "").then(()=>{
-      assert(platform.extractZipTo.called);
-      assert.equal(platform.extractZipTo.lastCall.args[1], "temp");
+  it("downloads all components", ()=>{
+    mock(network, "downloadFile").resolveWith("localPath");
+
+    return downloader.downloadComponents(componentsList).then(()=>{
+      assert.equal(network.downloadFile.callCount, 5);
+      assert.equal(componentsList[0].localPath, "localPath");
     });
   });
 
-  it("fails to unzip a file", ()=>{
-    mock(platform, "extractZipTo").rejectWith();
+  it("fails to download components", ()=>{
+    mock(network, "downloadFile").rejectWith();
 
-    return downloader.unzipFile("wrong-file1.zip", "").catch(()=>{
-      assert(platform.extractZipTo.called);
+    return downloader.downloadComponents(componentsList).catch(()=>{
+      assert(network.downloadFile.called);
     });
   });
 
-  it("unzips a file into a subdirectory", ()=>{
-    return downloader.unzipFile("file1.zip", "subdir").then(()=>{
+  it("extracts all components", ()=>{
+    return downloader.extractComponents(componentsList).then(()=>{
+      assert.equal(platform.extractZipTo.callCount, 5);
+    });
+  });
+
+  it("fails to extract components", ()=>{
+    mock(platform, "unzipFile").rejectWith();
+
+    return downloader.extractComponents(componentsList).catch((err)=>{
       assert(platform.extractZipTo.called);
-      assert.equal(platform.extractZipTo.lastCall.args[1], path.join("temp", "subdir"));
+      assert(err.message);
+    });
+  });
+
+  it("installs all components", ()=>{
+    mock(downloader, "installComponent").resolveWith();
+
+    return downloader.installComponents(componentsList).then(()=>{
+      assert.equal(downloader.installComponent.callCount, 5);
+    });
+  });
+
+  it("fails to install components", ()=>{
+    mock(platform, "copyFolderRecursive").rejectWith();
+
+    return downloader.installComponents(componentsList).catch((err)=>{
+      assert(platform.copyFolderRecursive.called);
+      assert(err.message);
+    });
+  });
+
+  it("does not do anything for InstallerElectron", ()=>{
+    mock(platform, "getOS").returnWith("linux");
+    mock(platform, "copyFolderRecursive").resolveWith();
+    mock(platform, "setFilePermissions").resolveWith();
+    mock(config, "saveVersion").resolveWith();
+
+    return downloader.installComponent(components.InstallerElectron).then((component)=>{
+      assert(!platform.getOS.called);
+      assert(!platform.copyFolderRecursive.called);
+      assert(!platform.setFilePermissions.called);
+      assert(!config.saveVersion.called);
     });
   });
 
@@ -99,6 +140,7 @@ describe("downloader", ()=>{
       assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "chrome-linux"));
       assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "chrome-linux"));
       assert.equal(component.destination, path.join("install", "chrome-linux"));
+      assert(platform.setFilePermissions.called);
     });
   });
 
@@ -112,31 +154,7 @@ describe("downloader", ()=>{
       assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "chrome-win32"));
       assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "chromium"));
       assert.equal(component.destination, path.join("install", "chromium"));
-    });
-  });
-
-  it("installs Rise Cache", ()=>{
-    mock(platform, "copyFolderRecursive").resolveWith();
-    mock(config, "saveVersion").resolveWith();
-
-    return downloader.installComponent(components.Cache).then((component)=>{
-      assert(platform.copyFolderRecursive.called);
-      assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "RiseCache"));
-      assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "RiseCache"));
-      assert.equal(component.destination, path.join("install", "RiseCache"));
-    });
-  });
-
-  it("installs Java on Windows", ()=>{
-    mock(platform, "isWindows").returnWith(true);
-    mock(platform, "copyFolderRecursive").resolveWith();
-    mock(config, "saveVersion").resolveWith();
-
-    return downloader.installComponent(components.Java).then((component)=>{
-      assert(platform.copyFolderRecursive.called);
-      assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "JRE"));
-      assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "JRE"));
-      assert.equal(component.destination, path.join("install", "JRE"));
+      assert(!platform.setFilePermissions.called);
     });
   });
 
@@ -150,6 +168,33 @@ describe("downloader", ()=>{
       assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "JRE", "jre"));
       assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "jre"));
       assert.equal(component.destination, path.join("install", "jre"));
+      assert(platform.setFilePermissions.called);
+    });
+  });
+
+  it("installs Java on Windows", ()=>{
+    mock(platform, "isWindows").returnWith(true);
+    mock(platform, "copyFolderRecursive").resolveWith();
+    mock(config, "saveVersion").resolveWith();
+
+    return downloader.installComponent(components.Java).then((component)=>{
+      assert(platform.copyFolderRecursive.called);
+      assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "JRE"));
+      assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "JRE"));
+      assert.equal(component.destination, path.join("install", "JRE"));
+      assert(!platform.setFilePermissions.called);
+    });
+  });
+
+  it("installs Rise Cache", ()=>{
+    mock(platform, "copyFolderRecursive").resolveWith();
+    mock(config, "saveVersion").resolveWith();
+
+    return downloader.installComponent(components.Cache).then((component)=>{
+      assert(platform.copyFolderRecursive.called);
+      assert.equal(platform.copyFolderRecursive.lastCall.args[0], path.join("temp", "RiseCache"));
+      assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "RiseCache"));
+      assert.equal(component.destination, path.join("install", "RiseCache"));
     });
   });
 
@@ -177,51 +222,25 @@ describe("downloader", ()=>{
     });
   });
 
-  it("installs all components", ()=>{
-    mock(downloader, "installComponent").resolveWith();
-
-    return downloader.installComponents(componentsList).then(()=>{
-      assert.equal(downloader.installComponent.callCount, 5);
-    });
-  });
-
-  it("fails to install components", ()=>{
-    mock(platform, "copyFolderRecursive").rejectWith();
-
-    return downloader.installComponents(componentsList).catch((err)=>{
-      assert(platform.copyFolderRecursive.called);
-      assert(err.message);
-    });
-  });
-
-  it("extracts all components", ()=>{
-    return downloader.extractComponents(componentsList).then(()=>{
-      assert.equal(platform.extractZipTo.callCount, 5);
-    });
-  });
-
-  it("fails to extract components", ()=>{
-    mock(platform, "unzipFile").rejectWith();
-
-    return downloader.extractComponents(componentsList).catch((err)=>{
+  it("unzips a file", ()=>{
+    return downloader.unzipFile("file1.zip", "").then(()=>{
       assert(platform.extractZipTo.called);
-      assert(err.message);
+      assert.equal(platform.extractZipTo.lastCall.args[1], "temp");
     });
   });
 
-  it("downloads all components", ()=>{
-    mock(network, "downloadFile").resolveWith();
+  it("fails to unzip a file", ()=>{
+    mock(platform, "extractZipTo").rejectWith();
 
-    return downloader.downloadComponents(componentsList).then(()=>{
-      assert.equal(network.downloadFile.callCount, 5);
+    return downloader.unzipFile("wrong-file1.zip", "").catch(()=>{
+      assert(platform.extractZipTo.called);
     });
   });
 
-  it("fails to download components", ()=>{
-    mock(network, "downloadFile").rejectWith();
-
-    return downloader.downloadComponents(componentsList).catch(()=>{
-      assert(network.downloadFile.called);
+  it("unzips a file into a subdirectory", ()=>{
+    return downloader.unzipFile("file1.zip", "subdir").then(()=>{
+      assert(platform.extractZipTo.called);
+      assert.equal(platform.extractZipTo.lastCall.args[1], path.join("temp", "subdir"));
     });
   });
 });

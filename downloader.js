@@ -43,7 +43,6 @@ module.exports = {
       if(component.name === "Browser") {
         source = path.join(platform.getTempDir(), platform.isWindows() ? "chrome-win32" : "chrome-linux");
         destination = path.join(platform.getInstallDir(), platform.isWindows() ? "chromium" : "chrome-linux");
-
       }
       else if(component.name === "Java" && !platform.isWindows()) {
         source = source + path.sep + "jre";
@@ -68,6 +67,9 @@ module.exports = {
       .catch((err)=>{
         return Promise.reject({ message: "Error copying " + source + " to " + destination, error: err });
       });
+    }
+    else {
+      return Promise.resolve(component);
     }
   },
   unzipFile(filePath, subdir) {

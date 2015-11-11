@@ -21,6 +21,19 @@ describe("external logger bigquery", function() {
     assert.ok(extlogger);
   });
 
+  it("formats the date correctly", function() {
+    assert.equal(extlogger.getDateForTableName(new Date(2015, 5, 3)), "20150603");
+    assert.equal(extlogger.getDateForTableName(new Date(2015, 11, 3)), "20151203");
+    assert.equal(extlogger.getDateForTableName(new Date(2015, 11, 30)), "20151230");
+  });
+
+  it("rejects the call if eventName is not provided", function() {
+    return extlogger.log()
+    .catch((err)=>{
+      assert(err);
+    });
+  });
+
   it("makes the post call", function() {
     return extlogger.log("testEvent", "testDetails")
     .then(()=>{
@@ -34,10 +47,10 @@ describe("external logger bigquery", function() {
   it("doesn't refresh token if called recently", function() {
     return extlogger.log("testEvent", "testDetails")
     .then(()=>{
-      return extlogger.log("testEvent", "testDetails")
+      return extlogger.log("testEvent", "testDetails");
     }).then(()=>{
       assert.equal(fetchStub.callCount, 3);
-    });;
+    });
   });
 
   it("refreshes token if not called recently", function() {
@@ -49,6 +62,18 @@ describe("external logger bigquery", function() {
       return extlogger.log("test2", "testDet", hourAhead);
     }).then(()=>{
       assert.equal(fetchStub.callCount, 4);
-    });;
+    });
+  });
+
+  it("rejects logging the event because token refresh failed", function() {
+    var mock = require("simple-mock").mock;
+
+    mock(extlogger, "refreshToken").rejectWith("error");
+
+    return extlogger.log("testEvent", "testDetails")
+    .catch((err)=>{
+      assert(extlogger.refreshToken.called);
+      assert(err);
+    });
   });
 });
