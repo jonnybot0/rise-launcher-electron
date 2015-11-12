@@ -11,11 +11,47 @@ global.log = require("../../logger/logger.js")();
 
 describe("component", ()=>{
   beforeEach("setup mocks", ()=>{
-    
+
   });
 
   afterEach("clean mocks", ()=>{
     simpleMock.restore();
+  });
+
+  it("checks the latest channel probability is in the [0, 100] range", ()=>{
+    var channelProb = component.getLatestChannelProb();
+
+    assert(channelProb >= 0);
+    assert(channelProb <= 100);
+  });
+
+  it("checks the testing channel has been requested", ()=>{
+    mock(platform, "readTextFileSync").returnWith("ForceTesting=true");
+
+    assert(component.isTestingChannelRequested());
+  });
+
+  it("checks the testing channel has been disabled", ()=>{
+    mock(platform, "readTextFileSync").returnWith("ForceTesting=false");
+
+    assert(!component.isTestingChannelRequested());
+  });
+
+  it("checks the testing channel has not been requested", ()=>{
+    mock(platform, "readTextFileSync").returnWith("");
+
+    assert(!component.isTestingChannelRequested());
+  });
+
+  it("returns forced testing channel", ()=>{
+    var comps = {
+      ForceStable: "false",
+      LatestRolloutPercent: "10"
+    };
+
+    mock(component, "isTestingChannelRequested").returnWith(true);
+
+    assert.equal(component.getChannel(comps), "Testing");
   });
 
   it("returns forced stable channel", ()=>{
@@ -117,7 +153,7 @@ describe("component", ()=>{
 
     mock(config, "getVersion").resolveWith("2.0");
     
-    return component.hasVersionChanged(comps, "Cache", "Stable").then((result)=>{
+    return component.updateVersionStatus(comps, "Cache", "Stable").then((result)=>{
       assert(!result.changed);
     });
   });
@@ -127,7 +163,7 @@ describe("component", ()=>{
 
     mock(config, "getVersion").resolveWith("2.1");
     
-    return component.hasVersionChanged(comps, "Cache", "Stable").then((result)=>{
+    return component.updateVersionStatus(comps, "Cache", "Stable").then((result)=>{
       assert(result.versionChanged);
     });
   });
@@ -137,7 +173,7 @@ describe("component", ()=>{
 
     mock(config, "getVersion").resolveWith("2.1");
     
-    return component.hasVersionChanged(comps, "Cache", "Stable").then((result)=>{
+    return component.updateVersionStatus(comps, "Cache", "Stable").then((result)=>{
       assert(result.versionChanged);
     });
   });
@@ -225,6 +261,133 @@ describe("component", ()=>{
             "remoteVersion": "2015.01.01.12.00",
             "url": "http://install-versions.risevision.com/RisePlayer-2015-01-01-12-00.zip",
             "versionChanged": false
+          }
+        });
+      });
+    });
+  });
+
+  it("returns processed components map staying on latest channel since Player matches its version", ()=>{
+    return platform.readTextFile("test/unit/remote-components-lnx-32.cfg").then((data)=>{
+      mock(platform, "getOS").returnWith("linux");
+      mock(platform, "getArch").returnWith("32");
+      mock(component, "getComponentsList").resolveWith(data);
+      mock(component, "isBrowserUpgradeable").resolveWith(false);
+      mock(component, "isTestingChannelRequested").returnWith(false);
+      mock(component, "getLatestChannelProb").returnWith(50);
+      mock(config, "getDisplaySettings").resolveWith({ displayid: "test" });
+      mock(config, "getComponentVersion", (componentName)=>{
+        return Promise.resolve({
+          "InstallerElectron": thisInstallerVersion,
+          "Browser": "44.0.3500.000",
+          "Cache": "2015.03.04.12.00",
+          "Java": "7.81",
+          "Player":"2015.01.15.12.00" }[componentName]);
+      });
+      mock(config, "getComponentVersionSync", (componentName)=>{
+        return {
+          "InstallerElectron": thisInstallerVersion,
+          "Browser": "44.0.3500.000",
+          "Cache": "2015.03.04.12.00",
+          "Java": "7.81",
+          "Player":"2015.01.15.12.00" }[componentName];
+      });
+
+      return component.getComponents().then((comps)=>{
+        assert.deepEqual(comps, {
+          "Browser": {
+            "localVersion": "44.0.3500.000",
+            "name": "Browser",
+            "remoteVersion": "44.0.3500.000",
+            "url": "http://install-versions.risevision.com/chrome-linux-32-latest.zip",
+            "versionChanged": false
+          },
+          "Cache": {
+            "localVersion": "2015.03.04.12.00",
+            "name": "Cache",
+            "remoteVersion": "2015.03.04.12.00",
+            "url": "http://install-versions.risevision.com/RiseCache-latest.zip",
+            "versionChanged": false
+          },
+          "InstallerElectron": {
+            "localVersion": thisInstallerVersion,
+            "name": "InstallerElectron",
+            "remoteVersion": "2015.10.21.17.00",
+            "url": "http://install-versions.risevision.com/rvplayer-installer-lnx-32.zip",
+            "versionChanged": true
+          },
+          "Java": {
+            "localVersion": "7.81",
+            "name": "Java",
+            "remoteVersion": "7.81",
+            "url": "http://install-versions.risevision.com/jre-7u81-linux-32.zip",
+            "versionChanged": false
+          },
+          "Player": {
+            "localVersion": "2015.01.15.12.00",
+            "name": "Player",
+            "remoteVersion": "2015.01.15.12.00",
+            "url": "http://install-versions.risevision.com/RisePlayer-2015-01-15-12-00.zip",
+            "versionChanged": false
+          }
+        });
+      });
+    });
+  });
+
+  it("returns processed components map for testing channel", ()=>{
+    return platform.readTextFile("test/unit/remote-components-lnx-32.cfg").then((data)=>{
+      mock(platform, "getOS").returnWith("linux");
+      mock(platform, "getArch").returnWith("32");
+      mock(component, "getComponentsList").resolveWith(data);
+      mock(component, "isTestingChannelRequested").returnWith(true);
+      mock(component, "isBrowserUpgradeable").resolveWith(true);
+      mock(config, "getDisplaySettings").resolveWith({ displayid: "test" });
+      mock(config, "getComponentVersion", (componentName)=>{
+        return Promise.resolve({
+          "InstallerElectron": thisInstallerVersion,
+          "Browser": "44.0.1200.000",
+          "Cache": "2015.04.05.12.00",
+          "Java": "7.80",
+          "Player":"2015.01.01.12.00" }[componentName]);
+      });
+
+      return component.getComponents().then((comps)=>{
+        assert.deepEqual(comps, {
+          "Browser": {
+            "localVersion": "44.0.1200.000",
+            "name": "Browser",
+            "remoteVersion": "46.0.2490.80",
+            "url": "http://install-versions.risevision.com/chrome-linux-32-testing.zip",
+            "versionChanged": true
+          },
+          "Cache": {
+            "localVersion": "2015.04.05.12.00",
+            "name": "Cache",
+            "remoteVersion": "2015.04.05.12.00",
+            "url": "http://install-versions.risevision.com/RiseCache-testing.zip",
+            "versionChanged": false
+          },
+          "InstallerElectron": {
+            "localVersion": thisInstallerVersion,
+            "name": "InstallerElectron",
+            "remoteVersion": "2015.10.21.17.00",
+            "url": "http://install-versions.risevision.com/rvplayer-installer-lnx-32.zip",
+            "versionChanged": true
+          },
+          "Java": {
+            "localVersion": "7.80",
+            "name": "Java",
+            "remoteVersion": "7.82",
+            "url": "http://install-versions.risevision.com/jre-7u82-linux-32.zip",
+            "versionChanged": true
+          },
+          "Player": {
+            "localVersion": "2015.01.01.12.00",
+            "name": "Player",
+            "remoteVersion": "2015.01.23.12.00",
+            "url": "http://install-versions.risevision.com/RisePlayer-2015-01-23-12-00.zip",
+            "versionChanged": true
           }
         });
       });

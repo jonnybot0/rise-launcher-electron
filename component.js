@@ -13,12 +13,28 @@ function getComponentsUrl() {
   return componentsUrl;
 }
 
+function isPlayerOnLatestChannelVersion(components) {
+  return config.getComponentVersionSync("Player") === components.PlayerVersionLatest;
+}
+
+function isTestingChannelRequested() {
+  var props = config.getDisplaySettingsSync();
+
+  return props.ForceTesting === "true";
+}
+
 function getChannel(components) {
-  if(components.ForceStable === "true" || module.exports.getLatestChannelProb() > Number(components.LatestRolloutPercent)) {
+  if(module.exports.isTestingChannelRequested()) {
+    return "Testing";
+  }
+  else if(components.ForceStable === "true") {
     return "Stable";
   }
-  else {
+  else if(module.exports.isPlayerOnLatestChannelVersion(components) || module.exports.getLatestChannelProb() < Number(components.LatestRolloutPercent)) {
     return "Latest";
+  }
+  else {
+    return "Stable";
   }
 }
 
@@ -39,7 +55,7 @@ function isBrowserUpgradeable(displayId) {
   }
 }
 
-function hasVersionChanged(compsMap, componentName, channel) {
+function updateVersionStatus(compsMap, componentName, channel) {
   return new Promise((resolve, reject)=>{
     config.getComponentVersion(componentName)
     .then((localVersion)=>{
@@ -90,10 +106,10 @@ function getComponents() {
 
       function getComponentsVersions() {
         var promises = componentNames.map((name)=>{
-          return hasVersionChanged(compsMap, name, channel);
+          return updateVersionStatus(compsMap, name, channel);
         });
 
-        promises.push(hasVersionChanged(compsMap, "InstallerElectron", ""));
+        promises.push(updateVersionStatus(compsMap, "InstallerElectron", ""));
 
         return Promise.all(promises);
       }
@@ -133,9 +149,11 @@ module.exports = {
   getLatestChannelProb() { return latestChannelProb; },
   getComponentNames() { return componentNames; },
   getComponentsUrl,
+  isTestingChannelRequested,
+  isPlayerOnLatestChannelVersion,
   getChannel,
   isBrowserUpgradeable,
-  hasVersionChanged,
+  updateVersionStatus,
   getComponentsList,
   getComponents
 };

@@ -34,6 +34,7 @@ describe("config", ()=>{
 
     return config.getComponentVersion("Browser").then((version)=>{
       assert.equal(version, "10.0");
+      assert(platform.readTextFile.called);
     });
   });
 
@@ -43,6 +44,20 @@ describe("config", ()=>{
     return config.getComponentVersion("InstallerElectron").then((version)=>{
       assert(!platform.readTextFile.called);
     });
+  });
+
+  it("reads a version correctly synchronously", ()=>{
+    mock(platform, "readTextFileSync").returnWith("10.0");
+
+    assert(config.getComponentVersionSync("Browser"), "10.0");
+    assert(platform.readTextFileSync.called);
+  });
+
+  it("does not read a file for Installer's version synchronously", ()=>{
+    mock(platform, "readTextFileSync").returnWith();
+
+    assert(config.getComponentVersionSync("InstallerElectron"));
+    assert(!platform.readTextFileSync.called);
   });
 
   it("fails to read a version and returns empty", ()=>{

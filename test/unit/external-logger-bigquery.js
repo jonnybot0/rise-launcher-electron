@@ -15,6 +15,7 @@ describe("external logger bigquery", function() {
 
     extlogger = require("../../logger/bigquery/external-logger-bigquery.js")
     ({httpFetch: fetchStub}, {getOS: osStub, getArch: archStub});
+    extlogger.setDisplaySettings("");
   });
 
   it("exists", function() {
@@ -36,6 +37,16 @@ describe("external logger bigquery", function() {
 
   it("makes the post call", function() {
     return extlogger.log("testEvent", "testDetails")
+    .then(()=>{
+      assert.ok(/datasets\/Installer_Events/.test(fetchStub.lastCall.args[0]));
+      assert.ok(/tables\/events[0-9]{8}/.test(fetchStub.lastCall.args[0]));
+      assert.ok(fetchStub.lastCall.args[1].headers.Authorization === "Bearer test-token");
+      assert.ok(JSON.parse(fetchStub.lastCall.args[1].body).rows[0].json.event === "testEvent");
+    });
+  });
+
+  it("makes the post call without details", function() {
+    return extlogger.log("testEvent")
     .then(()=>{
       assert.ok(/datasets\/Installer_Events/.test(fetchStub.lastCall.args[0]));
       assert.ok(/tables\/events[0-9]{8}/.test(fetchStub.lastCall.args[0]));
