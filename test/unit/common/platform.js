@@ -102,19 +102,19 @@ describe("platform", ()=>{
   });
 
   it("copies folder recursively", ()=>{
-    mock(platform, "getNCP").callbackWith(null);
+    mock(platform, "callNCP").callbackWith(null);
 
     return platform.copyFolderRecursive("folder1", "folder2").then((err)=>{
-      assert(platform.getNCP.called);
+      assert(platform.callNCP.called);
       assert(!err);
     });
   });
 
   it("fails to copy folder recursively", ()=>{
-    mock(platform, "getNCP").callbackWith("error");
+    mock(platform, "callNCP").callbackWith("error");
 
     return platform.copyFolderRecursive("folder1", "folder2").catch((err)=>{
-      assert(platform.getNCP.called);
+      assert(platform.callNCP.called);
       assert.equal(err, "error");
     });
   });

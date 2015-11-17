@@ -29,7 +29,7 @@ module.exports = {
     return childProcess.spawnSync("lsb_release", ["-sr"]).stdout;
   },
   getInstallDir() {
-    return path.join(module.exports.getHomeDir(), "rvplayer2");
+    return path.join(module.exports.getHomeDir(), "rvplayer");
   },
   getTempDir() {
     return os.tmpdir();
@@ -75,7 +75,7 @@ module.exports = {
     try {
       stringContents = fs.readFileSync(path, "utf8");
     } catch (e) {
-      log.error("Could not read file");
+      log.error("Could not read file " + path);
     }
 
     return stringContents;
@@ -94,7 +94,7 @@ module.exports = {
   },
   copyFolderRecursive(source, target) {
     return new Promise((resolve, reject)=>{
-      module.exports.getNCP(source, target, { clobber: true }, (err)=>{
+      module.exports.callNCP(source, target, { clobber: true }, (err)=>{
         if(!err) {
           resolve();
         }
@@ -104,8 +104,8 @@ module.exports = {
       });
     });
   },
-  getNCP() {
-    return ncp;
+  callNCP(source, target, options, cb) {
+    ncp(source, target, options, cb);
   },
   extractZipTo(source, destination, overwrite) {
     return new Promise((resolve, reject)=>{
