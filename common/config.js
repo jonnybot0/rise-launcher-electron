@@ -11,7 +11,7 @@ function getComponents() {
       verFileName: "RiseCache", extractTo: "RiseCache", copy: "RiseCache", deleteOnUpdate: false
     },
     "InstallerElectron": {
-      verFileName: null, extractTo: "Installer", copy: "Installer", deleteOnUpdate: true
+      verFileName: null, extractTo: "Installer", copy: "Installer", deleteOnUpdate: false
     },
     "Java": {
       verFileName: "java", extractTo: "JRE", copy: "JRE", deleteOnUpdate: true

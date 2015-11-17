@@ -59,6 +59,7 @@ describe("installer", ()=>{
     mock(platform, "startProcess").resolveWith();
     mock(platform, "setFilePermissions").resolveWith();
     mock(platform, "mkdir").resolveWith();
+    mock(platform, "deleteRecursively").resolveWith();
 
     mock(downloader, "downloadComponents").resolveWith();
     mock(downloader, "extractComponents").resolveWith();
@@ -108,6 +109,8 @@ describe("installer", ()=>{
 
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
+      assert(platform.mkdir.called);
+      assert(platform.deleteRecursively.called);
       assert(component.getComponents.called);
       assert(downloader.downloadComponents.called);
       assert(downloader.extractComponents.called);
@@ -129,6 +132,8 @@ describe("installer", ()=>{
 
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
+      assert(platform.mkdir.called);
+      assert(platform.deleteRecursively.called);
       assert(component.getComponents.called);
       assert(downloader.downloadComponents.called);
       assert(downloader.extractComponents.called);
@@ -148,6 +153,8 @@ describe("installer", ()=>{
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
       assert(installer.updateInstaller.called);
+      assert(platform.mkdir.called);
+      assert(platform.deleteRecursively.called);
       assert(component.getComponents.called);
       assert(downloader.downloadComponents.called);
       assert(downloader.extractComponents.called);

@@ -18,6 +18,9 @@ module.exports = {
       return platform.mkdir(platform.getInstallDir());
     })
     .then(()=>{
+      return platform.deleteRecursively(platform.getOldInstallerPath());
+    })
+    .then(()=>{
       log.all("fetching components list");
 
       return component.getComponents().then((compsMap)=>{

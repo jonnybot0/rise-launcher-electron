@@ -38,11 +38,17 @@ module.exports = {
   getInstallerName() {
     return module.exports.isWindows() ? "installer.exe" : "installer";
   },
+  getOldInstallerName() {
+    return module.exports.isWindows() ? "RiseVisionPlayer.exe" : "rvplayer";
+  },
   getInstallerDir() {
     return path.join(module.exports.getInstallDir(), "Installer");
   },
   getInstallerPath() {
     return path.join(module.exports.getInstallerDir(), module.exports.getInstallerName());
+  },
+  getOldInstallerPath() {
+    return path.join(module.exports.getInstallerDir(), module.exports.getOldInstallerName());
   },
   waitFor(milliseconds) {
     return new Promise((resolve, reject)=>{

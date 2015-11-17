@@ -101,7 +101,7 @@ describe("downloader", ()=>{
 
   it("removes previous versions of components", ()=>{
     return downloader.removePreviousVersions(componentsList).then(()=>{
-      assert.equal(platform.deleteRecursively.callCount, 4);
+      assert.equal(platform.deleteRecursively.callCount, 3);
     });
   });
 
