@@ -29,7 +29,7 @@ module.exports = {
     return childProcess.spawnSync("lsb_release", ["-sr"]).stdout;
   },
   getInstallDir() {
-    return path.join(module.exports.getHomeDir(), "rvplayer2");
+    return path.join(module.exports.getHomeDir(), "rvplayer");
   },
   getTempDir() {
     return os.tmpdir();
