@@ -5,19 +5,19 @@ path = require("path");
 function getComponents() {
   return {
     "Browser": {
-      verFileName: "chromium", extractTo: "", copy: "chromium"
+      verFileName: "chromium", extractTo: "", copy: "chromium", deleteOnUpdate: true
     },
     "Cache": {
-      verFileName: "RiseCache", extractTo: "RiseCache", copy: "RiseCache"
+      verFileName: "RiseCache", extractTo: "RiseCache", copy: "RiseCache", deleteOnUpdate: false
     },
     "InstallerElectron": {
-      verFileName: null, extractTo: "Installer", copy: "Installer"
+      verFileName: null, extractTo: "Installer", copy: "Installer", deleteOnUpdate: true
     },
     "Java": {
-      verFileName: "java", extractTo: "JRE", copy: "JRE"
+      verFileName: "java", extractTo: "JRE", copy: "JRE", deleteOnUpdate: true
     },
     "Player": {
-      verFileName: "RisePlayer", extractTo: "", copy: "RisePlayer.jar"
+      verFileName: "RisePlayer", extractTo: "", copy: "RisePlayer.jar", deleteOnUpdate: true
     }
   };
 }

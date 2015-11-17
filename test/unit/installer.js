@@ -63,7 +63,8 @@ describe("installer", ()=>{
     mock(downloader, "downloadComponents").resolveWith();
     mock(downloader, "extractComponents").resolveWith();
     mock(downloader, "installComponent").resolveWith();
-
+    mock(downloader, "removePreviousVersions").resolveWith();
+    
     mock(component, "getComponents").resolveWith(components);
 
     mock(launcher, "launch").resolveWith();
@@ -110,6 +111,7 @@ describe("installer", ()=>{
       assert(component.getComponents.called);
       assert(downloader.downloadComponents.called);
       assert(downloader.extractComponents.called);
+      assert(downloader.removePreviousVersions.called);
       assert(!downloader.installComponent.called);
       assert(launcher.launch.called);
       assert(process.exit.called);
@@ -130,6 +132,7 @@ describe("installer", ()=>{
       assert(component.getComponents.called);
       assert(downloader.downloadComponents.called);
       assert(downloader.extractComponents.called);
+      assert(downloader.removePreviousVersions.called);
       assert(downloader.installComponent.called);
       assert.equal(downloader.installComponent.callCount, 4);
       assert(launcher.launch.called);
@@ -148,6 +151,7 @@ describe("installer", ()=>{
       assert(component.getComponents.called);
       assert(downloader.downloadComponents.called);
       assert(downloader.extractComponents.called);
+      assert(downloader.removePreviousVersions.called);
       assert(launcher.launch.called);
       assert(process.exit.called);
     });

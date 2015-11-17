@@ -44,6 +44,11 @@ module.exports = {
           return downloader.extractComponents(changedComponents);
         })
         .then(()=>{
+          log.all("removing previous versions", changedNames);
+
+          return downloader.removePreviousVersions(changedComponents);
+        })
+        .then(()=>{
           log.all("installing", changedNames);
 
           return downloader.installComponents(changedComponents);

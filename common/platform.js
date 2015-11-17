@@ -3,6 +3,7 @@ path = require("path"),
 os = require("os"),
 fs = require(process.versions.electron ? "original-fs" : "fs"),
 ncp = require("ncp"),
+rimraf = require("rimraf"),
 gunzip = require("gunzip-maybe"),
 tar = require("tar-fs");
 
@@ -166,4 +167,19 @@ module.exports = {
       });
     });
   },
+  deleteRecursively(path) {
+    return new Promise((resolve, reject)=>{
+      module.exports.callRimraf(path, (err)=>{
+        if(!err) {
+          resolve();
+        }
+        else {
+          reject({ message: "Error recursively deleting path", error: err });
+        }
+      });
+    });
+  },
+  callRimraf(path, cb) {
+    rimraf(path, cb);
+  }
 };

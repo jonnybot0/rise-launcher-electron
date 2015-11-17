@@ -190,4 +190,22 @@ describe("platform", ()=>{
       assert.equal(err.error, "rename error");
     });
   });
+
+  it("deletes a folder recursively", ()=>{
+    mock(platform, "callRimraf").callbackWith(null);
+
+    return platform.deleteRecursively("folder1").then((err)=>{
+      assert(platform.callRimraf.called);
+      assert(!err);
+    });
+  });
+
+  it("fails to copy folder recursively", ()=>{
+    mock(platform, "callRimraf").callbackWith("error");
+
+    return platform.deleteRecursively("folder1").catch((err)=>{
+      assert(platform.callRimraf.called);
+      assert.equal(err.error, "error");
+    });
+  });
 });
