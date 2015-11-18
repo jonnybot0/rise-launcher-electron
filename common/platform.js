@@ -76,13 +76,18 @@ module.exports = {
       });
     });
   },
-  readTextFileSync(path) {
+  readTextFileSync(path, logError) {
     var stringContents = "";
 
     try {
       stringContents = fs.readFileSync(path, "utf8");
     } catch (e) {
-      log.error("Could not read file " + path);
+      if(logError) {
+        log.error("Could not read file " + path);
+      }
+      else {
+        log.debug("Could not read file " + path);
+      }
     }
 
     return stringContents;
