@@ -73,14 +73,10 @@ module.exports = {
             process.exit();
           });
         });
-      })
-      .catch((err)=>{
-        log.error("error", require("util").inspect(err));
-        return Promise.reject(err);
       });
     })
     .catch((err)=>{
-      log.error("error", require("util").inspect(err));
+      log.error(require("util").inspect(err));
       return Promise.reject(err);
     });
   },
