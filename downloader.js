@@ -28,6 +28,17 @@ module.exports = {
 
     return Promise.all(promises);
   },
+  removePreviousVersions(components) {
+    var promises = components.filter((c)=>{
+      return config.getComponentInfo(c.name).deleteOnUpdate;
+    }).map((c)=>{
+      var destination = path.join(platform.getInstallDir(), config.getComponentInfo(c.name).copy);
+
+      return platform.deleteRecursively(destination);
+    });
+
+    return Promise.all(promises);
+  },
   installComponents(components) {
     var promises = components.map((c)=>{
       return module.exports.installComponent(c);

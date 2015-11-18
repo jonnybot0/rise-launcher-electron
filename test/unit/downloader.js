@@ -59,6 +59,7 @@ describe("downloader", ()=>{
     mock(platform, "extractZipTo").resolveWith();
     mock(platform, "startProcess").resolveWith();
     mock(platform, "setFilePermissions").resolveWith();
+    mock(platform, "deleteRecursively").resolveWith();
   });
 
   afterEach("clean mocks", ()=>{
@@ -95,6 +96,21 @@ describe("downloader", ()=>{
     return downloader.extractComponents(componentsList).catch((err)=>{
       assert(platform.extractZipTo.called);
       assert(err.message);
+    });
+  });
+
+  it("removes previous versions of components", ()=>{
+    return downloader.removePreviousVersions(componentsList).then(()=>{
+      assert.equal(platform.deleteRecursively.callCount, 3);
+    });
+  });
+
+  it("fails to remove previous versions of components", ()=>{
+    mock(platform, "deleteRecursively").rejectWith("error");
+
+    return downloader.removePreviousVersions(componentsList).catch((err)=>{
+      assert(platform.deleteRecursively.called);
+      assert(err);
     });
   });
 

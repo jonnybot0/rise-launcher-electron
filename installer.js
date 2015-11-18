@@ -18,6 +18,9 @@ module.exports = {
       return platform.mkdir(platform.getInstallDir());
     })
     .then(()=>{
+      return platform.deleteRecursively(platform.getOldInstallerPath());
+    })
+    .then(()=>{
       log.all("fetching components list");
 
       return component.getComponents().then((compsMap)=>{
@@ -44,6 +47,11 @@ module.exports = {
           return downloader.extractComponents(changedComponents);
         })
         .then(()=>{
+          log.all("removing previous versions", changedNames);
+
+          return downloader.removePreviousVersions(changedComponents);
+        })
+        .then(()=>{
           log.all("installing", changedNames);
 
           return downloader.installComponents(changedComponents);
@@ -65,14 +73,10 @@ module.exports = {
             process.exit();
           });
         });
-      })
-      .catch((err)=>{
-        log.error("error", require("util").inspect(err));
-        return Promise.reject(err);
       });
     })
     .catch((err)=>{
-      log.error("error", require("util").inspect(err));
+      log.error(require("util").inspect(err));
       return Promise.reject(err);
     });
   },

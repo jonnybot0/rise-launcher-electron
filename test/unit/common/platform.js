@@ -79,9 +79,24 @@ describe("platform", ()=>{
 
   it("fails to synchronously reads a text file", ()=>{
     mock(fs, "readFileSync").throwWith("error");
+    mock(log, "debug").returnWith();
+    mock(log, "error").returnWith();
 
     assert.equal(platform.readTextFileSync("file.txt"), "");
     assert(fs.readFileSync.called);
+    assert(log.debug.called);
+    assert(!log.error.called);
+  });
+
+  it("fails to synchronously reads a text file and logs the error", ()=>{
+    mock(fs, "readFileSync").throwWith("error");
+    mock(log, "debug").returnWith();
+    mock(log, "error").returnWith();
+
+    assert.equal(platform.readTextFileSync("file.txt", true), "");
+    assert(fs.readFileSync.called);
+    assert(!log.debug.called);
+    assert(log.error.called);
   });
 
   it("writes a text file", ()=>{
@@ -188,6 +203,24 @@ describe("platform", ()=>{
     return platform.renameFile("file.txt", "newname.txt").catch((err)=>{
       assert(fs.rename.called);
       assert.equal(err.error, "rename error");
+    });
+  });
+
+  it("deletes a folder recursively", ()=>{
+    mock(platform, "callRimraf").callbackWith(null);
+
+    return platform.deleteRecursively("folder1").then((err)=>{
+      assert(platform.callRimraf.called);
+      assert(!err);
+    });
+  });
+
+  it("fails to copy folder recursively", ()=>{
+    mock(platform, "callRimraf").callbackWith("error");
+
+    return platform.deleteRecursively("folder1").catch((err)=>{
+      assert(platform.callRimraf.called);
+      assert.equal(err.error, "error");
     });
   });
 });

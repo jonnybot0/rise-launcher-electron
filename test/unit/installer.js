@@ -59,11 +59,13 @@ describe("installer", ()=>{
     mock(platform, "startProcess").resolveWith();
     mock(platform, "setFilePermissions").resolveWith();
     mock(platform, "mkdir").resolveWith();
+    mock(platform, "deleteRecursively").resolveWith();
 
     mock(downloader, "downloadComponents").resolveWith();
     mock(downloader, "extractComponents").resolveWith();
     mock(downloader, "installComponent").resolveWith();
-
+    mock(downloader, "removePreviousVersions").resolveWith();
+    
     mock(component, "getComponents").resolveWith(components);
 
     mock(launcher, "launch").resolveWith();
@@ -107,9 +109,12 @@ describe("installer", ()=>{
 
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
+      assert(platform.mkdir.called);
+      assert(platform.deleteRecursively.called);
       assert(component.getComponents.called);
       assert(downloader.downloadComponents.called);
       assert(downloader.extractComponents.called);
+      assert(downloader.removePreviousVersions.called);
       assert(!downloader.installComponent.called);
       assert(launcher.launch.called);
       assert(process.exit.called);
@@ -127,9 +132,12 @@ describe("installer", ()=>{
 
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
+      assert(platform.mkdir.called);
+      assert(platform.deleteRecursively.called);
       assert(component.getComponents.called);
       assert(downloader.downloadComponents.called);
       assert(downloader.extractComponents.called);
+      assert(downloader.removePreviousVersions.called);
       assert(downloader.installComponent.called);
       assert.equal(downloader.installComponent.callCount, 4);
       assert(launcher.launch.called);
@@ -145,9 +153,12 @@ describe("installer", ()=>{
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
       assert(installer.updateInstaller.called);
+      assert(platform.mkdir.called);
+      assert(platform.deleteRecursively.called);
       assert(component.getComponents.called);
       assert(downloader.downloadComponents.called);
       assert(downloader.extractComponents.called);
+      assert(downloader.removePreviousVersions.called);
       assert(launcher.launch.called);
       assert(process.exit.called);
     });

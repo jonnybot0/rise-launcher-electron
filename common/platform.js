@@ -3,6 +3,7 @@ path = require("path"),
 os = require("os"),
 fs = require(process.versions.electron ? "original-fs" : "fs"),
 ncp = require("ncp"),
+rimraf = require("rimraf"),
 gunzip = require("gunzip-maybe"),
 tar = require("tar-fs");
 
@@ -37,11 +38,17 @@ module.exports = {
   getInstallerName() {
     return module.exports.isWindows() ? "installer.exe" : "installer";
   },
+  getOldInstallerName() {
+    return module.exports.isWindows() ? "RiseVisionPlayer.exe" : "rvplayer";
+  },
   getInstallerDir() {
     return path.join(module.exports.getInstallDir(), "Installer");
   },
   getInstallerPath() {
     return path.join(module.exports.getInstallerDir(), module.exports.getInstallerName());
+  },
+  getOldInstallerPath() {
+    return path.join(module.exports.getInstallerDir(), module.exports.getOldInstallerName());
   },
   waitFor(milliseconds) {
     return new Promise((resolve, reject)=>{
@@ -69,13 +76,18 @@ module.exports = {
       });
     });
   },
-  readTextFileSync(path) {
+  readTextFileSync(path, logError) {
     var stringContents = "";
 
     try {
       stringContents = fs.readFileSync(path, "utf8");
     } catch (e) {
-      log.error("Could not read file " + path);
+      if(logError) {
+        log.error("Could not read file " + path);
+      }
+      else {
+        log.debug("Could not read file " + path);
+      }
     }
 
     return stringContents;
@@ -166,4 +178,19 @@ module.exports = {
       });
     });
   },
+  deleteRecursively(path) {
+    return new Promise((resolve, reject)=>{
+      module.exports.callRimraf(path, (err)=>{
+        if(!err) {
+          resolve();
+        }
+        else {
+          reject({ message: "Error recursively deleting path", error: err });
+        }
+      });
+    });
+  },
+  callRimraf(path, cb) {
+    rimraf(path, cb);
+  }
 };
