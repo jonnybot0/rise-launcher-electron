@@ -55,6 +55,24 @@ describe("external logger bigquery", function() {
     });
   });
 
+  it("logs using temp display id if no real display id set up", function() {
+    extlogger.setDisplaySettings({tempdisplayid: "temp id"});
+    return extlogger.log("testEvent")
+    .then(()=>{
+      var calledWithId = JSON.parse(fetchStub.lastCall.args[1].body).rows[0].json.display_id;
+      assert.equal(calledWithId, "temp id");
+    });
+  });
+
+  it("logs using real display id if it exists", function() {
+    extlogger.setDisplaySettings({displayid: "real id"});
+    return extlogger.log("testEvent")
+    .then(()=>{
+      var calledWithId = JSON.parse(fetchStub.lastCall.args[1].body).rows[0].json.display_id;
+      assert.equal(calledWithId, "real id");
+    });
+  });
+
   it("doesn't refresh token if called recently", function() {
     return extlogger.log("testEvent", "testDetails")
     .then(()=>{

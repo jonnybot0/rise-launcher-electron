@@ -125,6 +125,26 @@ describe("config", ()=>{
     assert.equal(settings.option1, "value1");
   });
 
+  it("synchronously returns temporary display id if real id doesn't exist", ()=>{
+    mock(platform, "readTextFileSync").returnWith("");
+
+    var settings = config.getDisplaySettingsSync();
+
+    assert(platform.readTextFileSync.called);
+    assert.equal(settings.displayid, undefined);
+    assert.equal(settings.tempdisplayid.substring(0, 2), "0.");
+  });
+
+  it("synchronously only returns real display id if it exists", ()=>{
+    mock(platform, "readTextFileSync").returnWith("displayid=A2F9");
+
+    var settings = config.getDisplaySettingsSync();
+
+    assert(platform.readTextFileSync.called);
+    assert.equal(settings.displayid, "A2F9");
+    assert.equal(settings.tempdisplayid, undefined);
+  });
+
   it("synchronously returns empty display settings on load failure", ()=>{
     mock(platform, "readTextFileSync").returnWith("");
 

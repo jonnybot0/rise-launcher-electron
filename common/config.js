@@ -65,8 +65,13 @@ function getDisplaySettingsFileName() {
 }
 
 function getDisplaySettingsSync() {
-  var textFileString = platform.readTextFileSync(getDisplaySettingsFileName());
-  if (!textFileString || textFileString.length === 0) {return {};}
+  var tempDisplayId = Math.random() + "",
+  textFileString = platform.readTextFileSync(getDisplaySettingsFileName());
+  if (!textFileString) {textFileString = "";}
+  if (textFileString.indexOf("displayid") < 0) {
+    textFileString += "\ntempdisplayid=" + tempDisplayId;
+  }
+
   return parsePropertyList(textFileString);
 }
 

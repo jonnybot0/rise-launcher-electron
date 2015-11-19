@@ -15,6 +15,8 @@ log.setDisplaySettings
 global.messages = require("./ui/messages.json"),
 
 log.external("started");
+log.debug("Electron " + process.versions.electron)
+log.debug("Chromium " + process.versions.chrome)
 
 app.on("window-all-closed", ()=>{
   log.debug("All windows closed. quitting...");
