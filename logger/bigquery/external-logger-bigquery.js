@@ -45,6 +45,7 @@ module.exports = (network, platform)=>{
 
       return mod.refreshToken(nowDate).then(()=>{
         var insertData = JSON.parse(JSON.stringify(config.insertSchema)),
+        row = insertData.rows[0],
         serviceUrl,
         headers; 
 
@@ -56,13 +57,13 @@ module.exports = (network, platform)=>{
           "Authorization": "Bearer " + token
         };
 
-        insertData.rows[0].insertId = Math.random().toString(36).substr(2).toUpperCase();
-        insertData.rows[0].json.event = eventName;
-        insertData.rows[0].json.display_id = displaySettings.displayid;
-        insertData.rows[0].json.installer_version = installerVersion;
-        insertData.rows[0].json.os = os;
-        if (eventDetails) {insertData.rows[0].json.event_details = eventDetails;}
-        insertData.rows[0].json.ts = nowDate.toISOString();
+        row.insertId = Math.random().toString(36).substr(2).toUpperCase();
+        row.json.event = eventName;
+        row.json.display_id = displaySettings.displayid || displaySettings.tempdisplayid;
+        row.json.installer_version = installerVersion;
+        row.json.os = os;
+        if (eventDetails) {row.json.event_details = eventDetails;}
+        row.json.ts = nowDate.toISOString();
         insertData = JSON.stringify(insertData);
         return network.httpFetch(serviceUrl, {
           method: "POST",
