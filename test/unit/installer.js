@@ -4,6 +4,7 @@ installer = require("../../installer.js"),
 component = require("../../component.js"),
 downloader = require("../../downloader.js"),
 launcher = require("../../launcher.js"),
+optimization = require("../../os-optimization.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 path = require("path"),
@@ -70,6 +71,8 @@ describe("installer", ()=>{
 
     mock(launcher, "launch").resolveWith();
 
+    mock(optimization, "updateSettings").returnWith();
+
     mock(process, "exit").returnWith();
   });
 
@@ -100,6 +103,7 @@ describe("installer", ()=>{
       assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "Installer"));
 
       assert.equal(autostart.createAutostart.callCount, 1);
+      assert.equal(optimization.updateSettings.callCount, 1);
     });
   });
 
@@ -109,6 +113,8 @@ describe("installer", ()=>{
 
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
+      assert(!autostart.createAutostart.called);
+      assert(!optimization.updateSettings.called);
       assert(platform.mkdir.called);
       assert(platform.deleteRecursively.called);
       assert(component.getComponents.called);
@@ -132,6 +138,8 @@ describe("installer", ()=>{
 
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
+      assert(!autostart.createAutostart.called);
+      assert(!optimization.updateSettings.called);
       assert(platform.mkdir.called);
       assert(platform.deleteRecursively.called);
       assert(component.getComponents.called);
