@@ -11,13 +11,13 @@ linuxCommands = {
     "gsettings set org.gnome.settings-daemon.plugins.power idle-dim false"
   ],
   disableSystemUpdates: [
-    "sudo mv /usr/bin/update-notifier /usr/bin/update-notifier.real",
-    "sudo echo '#!/bin/sh' >> /usr/bin/update-notifier",
-    "sudo echo 'exit 0' >> /usr/bin/update-notifier"
+    "sudo cp /usr/bin/update-notifier /usr/bin/update-notifier.real",
+    "echo '#!/bin/sh' |sudo tee /usr/bin/update-notifier",
+    "echo 'exit 0' |sudo tee -a /usr/bin/update-notifier"
   ],
   disableApport: [
-    "sudo echo ' # ' >>/etc/default/apport",
-    "sudo echo 'enabled=0' >>/etc/default/apport"
+    "echo ' # ' |sudo tee -a /etc/default/apport",
+    "echo 'enabled=0' |sudo tee -a /etc/default/apport"
   ],
   removeRVPlayerCron: [
     "sudo sed -i.bak '/rvplayer/d' /etc/crontab"
