@@ -61,6 +61,7 @@ describe("installer", ()=>{
     mock(platform, "setFilePermissions").resolveWith();
     mock(platform, "mkdir").resolveWith();
     mock(platform, "deleteRecursively").resolveWith();
+    mock(platform, "execSync").returnWith();
 
     mock(downloader, "downloadComponents").resolveWith();
     mock(downloader, "extractComponents").resolveWith();
