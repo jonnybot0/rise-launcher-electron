@@ -4,6 +4,7 @@ launcher = require("./launcher.js"),
 platform = require("./common/platform.js"),
 config = require("./common/config.js"),
 autostart = require("./autostart/autostart.js"),
+optimization = require("./os-optimization.js"),
 thisInstallerVersion = require("./version.json"),
 path = require("path"),
 yargs = require("yargs"),
@@ -103,6 +104,9 @@ module.exports = {
     return platform.copyFolderRecursive(installerPkgTempPath, path.join(platform.getInstallDir(), config.getComponentInfo("InstallerElectron").copy))
     .then(()=>{
       return autostart.createAutostart();
+    })
+    .then(()=>{
+      return optimization.updateSettings();
     });
   },
   getRunningInstallerDir() {

@@ -4,6 +4,7 @@ installer = require("../../installer.js"),
 component = require("../../component.js"),
 downloader = require("../../downloader.js"),
 launcher = require("../../launcher.js"),
+optimization = require("../../os-optimization.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 path = require("path"),
@@ -69,6 +70,8 @@ describe("installer", ()=>{
     mock(component, "getComponents").resolveWith(components);
 
     mock(launcher, "launch").resolveWith();
+
+    mock(optimization, "updateSettings").returnWith();
 
     mock(process, "exit").returnWith();
   });
