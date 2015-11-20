@@ -103,6 +103,7 @@ describe("installer", ()=>{
       assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "Installer"));
 
       assert.equal(autostart.createAutostart.callCount, 1);
+      assert.equal(optimization.updateSettings.callCount, 1);
     });
   });
 
@@ -112,6 +113,8 @@ describe("installer", ()=>{
 
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
+      assert(!autostart.createAutostart.called);
+      assert(!optimization.updateSettings.called);
       assert(platform.mkdir.called);
       assert(platform.deleteRecursively.called);
       assert(component.getComponents.called);
@@ -135,6 +138,8 @@ describe("installer", ()=>{
 
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
+      assert(!autostart.createAutostart.called);
+      assert(!optimization.updateSettings.called);
       assert(platform.mkdir.called);
       assert(platform.deleteRecursively.called);
       assert(component.getComponents.called);
