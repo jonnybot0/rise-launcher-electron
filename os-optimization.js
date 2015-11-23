@@ -1,29 +1,5 @@
 var platform = require("./common/platform.js"),
 childProcess = require("child_process"),
-linuxCommands = {
-  disableScreenSaver: [
-    "gsettings set org.gnome.desktop.session idle-delay 0"
-  ],
-  disableSleep: [
-    "gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0"
-  ],
-  disablePowerIdle: [
-    "gsettings set org.gnome.settings-daemon.plugins.power idle-dim false"
-  ],
-  disableSystemUpdates: [
-    "sudo cp /usr/bin/update-notifier /usr/bin/update-notifier.real",
-    "echo '#!/bin/sh' |sudo tee /usr/bin/update-notifier",
-    "echo 'exit 0' |sudo tee -a /usr/bin/update-notifier"
-  ],
-  disableApport: [
-    "echo ' # ' |sudo tee -a /etc/default/apport",
-    "echo 'enabled=0' |sudo tee -a /etc/default/apport"
-  ],
-  removeRVPlayerCron: [
-    "sudo sed -i.bak '/rvplayer/d' /etc/crontab"
-  ]
-},
-
 windowsCommands = {
   disableScreenSaver: [
     "reg add \"HKEY_CURRENT_USER\\Control Panel\\Desktop\" /v ScreenSaveActive /t REG_SZ /d 0 /f",
@@ -64,9 +40,6 @@ function updateSettings() {
   if(platform.isWindows()) {
     executeCommands(windowsCommands);
   }
-  else {
-    executeCommands(linuxCommands);
-  }
 }
 
 function executeCommands(osCommands) {
@@ -78,7 +51,6 @@ function executeCommands(osCommands) {
 }
 
 module.exports = {
-  linuxCommands,
   windowsCommands,
   updateSettings
 };
