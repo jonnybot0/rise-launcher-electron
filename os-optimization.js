@@ -57,7 +57,13 @@ windowsCommands = {
 };
 
 function execSync(command) {
-  childProcess.execSync(command, {timeout: 2000});
+  try {
+    childProcess.execSync(command, {timeout: 2000});
+  }
+  catch (e) {
+    log.debug("error optimizing system", e);
+    log.external("error optimizing system", require("util").inspect(e));
+  }
 }
 
 function updateSettings() {
