@@ -192,5 +192,15 @@ module.exports = {
   },
   callRimraf(path, cb) {
     rimraf(path, cb);
+  },
+  isFirstRun() {
+    return __dirname !== module.exports.getInstallerDir();
+  },
+  onFirstRun(whatToDo) {
+    if (module.exports.isFirstRun()) {
+      return whatToDo;
+    } else {
+      return function() {return Promise.resolve();};
+    }
   }
 };

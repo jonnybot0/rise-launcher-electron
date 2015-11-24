@@ -223,4 +223,24 @@ describe("platform", ()=>{
       assert.equal(err.error, "error");
     });
   });
+
+  it("executes a function that returns a promise on first run", ()=>{
+    mock(platform, "isFirstRun").returnWith(true);
+
+    return Promise.resolve()
+    .then(platform.onFirstRun(()=>{return Promise.resolve(true);}))
+    .then((itRan)=> {
+      assert.ok(itRan);
+    });
+  });
+
+  it("does not execute a function on other runs", ()=>{
+    mock(platform, "isFirstRun").returnWith(false);
+
+    return Promise.resolve()
+    .then(platform.onFirstRun(()=>{return Promise.resolve(true);}))
+    .then((itRan)=> {
+      assert.ok(itRan === undefined);
+    });
+  });
 });

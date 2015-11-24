@@ -62,6 +62,7 @@ describe("installer", ()=>{
     mock(platform, "mkdir").resolveWith();
     mock(platform, "deleteRecursively").resolveWith();
     mock(platform, "execSync").returnWith();
+    mock(platform, "onFirstRun").resolveWith();
 
     mock(downloader, "downloadComponents").resolveWith();
     mock(downloader, "extractComponents").resolveWith();
