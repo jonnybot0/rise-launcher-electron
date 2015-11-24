@@ -10,8 +10,7 @@ siteList = [
   "http://accounts.google.com",
   "http://talkgadget.google.com",
   "http://s3.amazonaws.com",
-  "http://p.jwpcdn.com/6/5/jwpsrv.js",
-  "http://rackcdn.com"
+  "http://p.jwpcdn.com/6/5/jwpsrv.js"
 ];
 
 module.exports = {
