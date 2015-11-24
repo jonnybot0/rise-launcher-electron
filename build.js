@@ -101,7 +101,7 @@ function createSelfExtractingInstallers() {
 
   function createLinux(platform, fileName) {
     console.log("Generating self extracting installer for " + platform);
-    execSync("makeself builds/installer-" + platform + "/ builds/installer-" + fileName + ".sh \"Rise Player\" ./installer");
+    execSync("makeself builds/installer-" + platform + "/ builds/installer-" + fileName + ".sh \"Rise Player\" ./resources/app/initial-run.sh");
   }
 
   function createWindows(platform, fileName) {

@@ -16,14 +16,12 @@ describe("launcher", ()=>{
     simpleMock.restore();
   });
 
-  function verifyAllCommandsWereCalled(windowsOrLinux) {
+  function verifyCommands(windowsOrLinux) {
     var windowsCommands = optimization.windowsCommands,
-    linuxCommands = optimization.linuxCommands,
-    useWindows = windowsOrLinux === "windows",
-    commandsToExecute = useWindows ? windowsCommands : linuxCommands,
+    commandsToExecute = windowsOrLinux === "windows" ? windowsCommands : [],
     calledCommands;
 
-    mock(platform, "isWindows").returnWith(useWindows);
+    mock(platform, "isWindows").returnWith(windowsOrLinux === "windows");
     optimization.updateSettings();
 
     calledCommands = childProcess.execSync.calls.map((call)=>{
@@ -38,10 +36,10 @@ describe("launcher", ()=>{
   }
 
   it("updates Windows Settings", ()=>{
-    verifyAllCommandsWereCalled("windows");
+    verifyCommands("windows");
   });
 
-  it("updates Linux Settings", ()=>{
-    verifyAllCommandsWereCalled("linux");
+  it("works on Linux by not trying to execute any commands since optimization is handled in a shell script", ()=>{
+    verifyCommands("linux");
   });
 });
