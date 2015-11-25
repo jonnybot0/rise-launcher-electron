@@ -3,6 +3,7 @@ downloader = require("./downloader.js"),
 launcher = require("./launcher.js"),
 platform = require("./common/platform.js"),
 config = require("./common/config.js"),
+networkVerification = require("./network-check.js"),
 autostart = require("./autostart/autostart.js"),
 optimization = require("./os-optimization.js"),
 thisInstallerVersion = require("./version.json"),
@@ -15,6 +16,7 @@ module.exports = {
     log.all("beginning install");
 
     return module.exports.checkInstallerUpdateStatus()
+    .then(platform.onFirstRun(networkVerification.checkSites))
     .then(()=>{
       return platform.mkdir(platform.getInstallDir());
     })
