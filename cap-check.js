@@ -1,9 +1,9 @@
 var platform = require("./common/platform.js"),
 path = require("path"),
 fs = require("fs"),
-risePlayerAppId = "ilcmohdkjfcfekfmpdppgoaaemgdmhaa";
+risePlayerAppIds = ["ilcmohdkjfcfekfmpdppgoaaemgdmhaa", "mfpgpdablffhbfofnhlpgmokokbahooi"];
 
-function findDirectory(basePath, name) {
+function findRisePlayerDirectory(basePath) {
   var list = fs.readdirSync(basePath);
 
   for(var i = 0; i < list.length; i++) {
@@ -12,7 +12,7 @@ function findDirectory(basePath, name) {
     var stat = fs.statSync(fullPath);
 
     if (stat && stat.isDirectory()) {
-      if((file === name && fullPath.indexOf("Extensions") >= 0) || findDirectory(fullPath, name)) {
+      if((risePlayerAppIds.indexOf(file) >= 0 && fullPath.indexOf("Extensions") >= 0) || findRisePlayerDirectory(fullPath)) {
         return true;
       }
     }
@@ -32,6 +32,6 @@ module.exports = {
       basePath = path.join(platform.getHomeDir(), ".config", "google-chrome");
     }
 
-    return findDirectory(basePath, risePlayerAppId);
+    return findRisePlayerDirectory(basePath);
   }
 };
