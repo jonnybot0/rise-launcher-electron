@@ -106,7 +106,7 @@ module.exports = {
   },
   copyFolderRecursive(source, target) {
     return new Promise((resolve, reject)=>{
-      module.exports.callNCP(source, target, { clobber: true }, (err)=>{
+      ncp.ncp(source, target, { clobber: true }, (err)=>{
         if(!err) {
           resolve();
         }
@@ -115,9 +115,6 @@ module.exports = {
         }
       });
     });
-  },
-  callNCP(source, target, options, cb) {
-    ncp(source, target, options, cb);
   },
   extractZipTo(source, destination, overwrite) {
     return new Promise((resolve, reject)=>{
