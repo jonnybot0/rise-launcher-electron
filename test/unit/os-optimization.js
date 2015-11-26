@@ -42,4 +42,15 @@ describe("launcher", ()=>{
   it("works on Linux by not trying to execute any commands since optimization is handled in a shell script", ()=>{
     verifyCommands("linux");
   });
+
+  it("does not crash if execSync fails", ()=>{
+    mock(log, "debug").returnWith();
+    mock(platform, "isWindows").returnWith(true);
+    mock(childProcess, "execSync").throwWith("failed execSync");
+
+    optimization.windowsCommands = [ "test" ];
+    optimization.updateSettings();
+
+    assert.equal(log.debug.lastCall.args[1], "failed execSync");
+  });
 });
