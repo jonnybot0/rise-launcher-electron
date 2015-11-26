@@ -2,7 +2,10 @@ var platform = require("../../../common/platform.js"),
 childProcess = require("child_process"),
 os = require("os"),
 path = require("path"),
+ncp = require("ncp"),
 fs = require("fs"),
+gunzip = require("gunzip-maybe"),
+tar = require("tar-fs"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock;
@@ -141,19 +144,19 @@ describe("platform", ()=>{
   });
 
   it("copies folder recursively", ()=>{
-    mock(platform, "callNCP").callbackWith(null);
+    mock(ncp, "ncp").callbackWith(null);
 
     return platform.copyFolderRecursive("folder1", "folder2").then((err)=>{
-      assert(platform.callNCP.called);
+      assert(ncp.ncp.called);
       assert(!err);
     });
   });
 
   it("fails to copy folder recursively", ()=>{
-    mock(platform, "callNCP").callbackWith("error");
+    mock(ncp, "ncp").callbackWith("error");
 
     return platform.copyFolderRecursive("folder1", "folder2").catch((err)=>{
-      assert(platform.callNCP.called);
+      assert(ncp.ncp.called);
       assert.equal(err, "error");
     });
   });
@@ -249,7 +252,7 @@ describe("platform", ()=>{
   });
 
   it("executes a function that returns a promise on first run", ()=>{
-    mock(platform, "isFirstRun").returnWith(true);
+    mock(platform, "getInstallerDir").returnWith("not current directory");
 
     return Promise.resolve()
     .then(platform.onFirstRun(()=>{return Promise.resolve(true);}))
@@ -259,7 +262,10 @@ describe("platform", ()=>{
   });
 
   it("does not execute a function on other runs", ()=>{
-    mock(platform, "isFirstRun").returnWith(false);
+    var mockDirName = __dirname.split(path.sep);
+    mockDirName.splice(-3, 2);
+    mockDirName = mockDirName.join(path.sep);
+    mock(platform, "getInstallerDir").returnWith(mockDirName);
 
     return Promise.resolve()
     .then(platform.onFirstRun(()=>{return Promise.resolve(true);}))

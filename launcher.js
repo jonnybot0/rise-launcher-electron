@@ -1,9 +1,24 @@
 var platform = require("./common/platform.js"),
 network = require("./common/network.js"),
+config = require("./common/config.js"),
+url = require("url"),
+proxy = require("./common/proxy.js"),
+proxyArgs = [],
 path = require("path");
 
 function replaceAll(string, search, replace) {
   return string.split(search).join(replace);
+}
+
+proxy.observe(setProxyArgs);
+function setProxyArgs(fields) {
+  if (!fields.hostname || !fields.port) {return (proxyArgs = []);}
+  proxyArgs = [
+    `-Dhttp.proxyHost=${fields.hostname}`, 
+    `-Dhttp.proxyPort=${fields.port}`,
+    `-Dhttps.proxyHost=${fields.hostname}`,
+    `-Dhttps.proxyPort=${fields.port}`
+  ];
 }
 
 function getJavaPath() {
@@ -23,7 +38,7 @@ function stopCache() {
 }
 
 function startCache() {
-  platform.startProcess(getJavaPath(), ["-jar", path.join(platform.getInstallDir(), "RiseCache", "RiseCache.jar")]);
+  platform.startProcess(getJavaPath(), proxyArgs.concat(["-jar", path.join(platform.getInstallDir(), "RiseCache", "RiseCache.jar")]));
 }
 
 function stopPlayer() {
@@ -34,7 +49,7 @@ function stopPlayer() {
 }
 
 function startPlayer() {
-  platform.startProcess(getJavaPath(), ["-jar", path.join(platform.getInstallDir(), "RisePlayer.jar")]);
+  platform.startProcess(getJavaPath(), proxyArgs.concat(["-jar", path.join(platform.getInstallDir(), "RisePlayer.jar")]));
 }
 
 module.exports = {

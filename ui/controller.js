@@ -25,11 +25,13 @@ module.exports = {
       mainWindow = null;
     });
 
-    mainWindow.webContents.on("did-finish-load", ()=> {
-      log.debug("received did finish load");
+    mainWindow.webContents.on("did-finish-load", (event)=> {
       mainWindow.webContents.send("first-ping");
     });
 
     return mainWindow;
+  },
+  showProxyOption() {
+    mainWindow.webContents.send("show-proxy-options");
   }
 };

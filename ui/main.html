@@ -2,7 +2,6 @@
 <html>
   <head>
     <title>Rise Vision Installer</title>
-    <script src="./dom.js"></script>
   </head>
   <body style="padding:1em">
     <img src="./logo.svg" style="display: inline-block; width: 10%"/>
@@ -10,8 +9,14 @@
       <h3 style="margin:0;padding:0">Rise Vision Installer</h3>
       <h5 style="margin:0;padding:0">Version <span id="version"></span></h5>
     </section>
-    <button style="float: right" type="button" onclick="window.sendMainClose()">close</button>
+    <button id="mainClose" style="float: right" type="button">close</button>
     <div class="errors" style="background-color: red; font-size: 0.8em; font-weight: bold"></div>
     <div class="messages" style="font-size: 0.8em"></div>
+    <div id="proxyOptions" style="display:none">
+      <p>It seems this machine cannot connect to the internet.  If you're running behind a proxy please complete the following fields.  Otherwise please contact support.</p>
+      <p>Proxy server address: <input id="proxyAddress" type="text"></input></p>
+      <p>Proxy server port: <input id="proxyPort" type="text"></input></p>
+      <button type="button">ok</button>
+    </div>
   </body>
 </html>

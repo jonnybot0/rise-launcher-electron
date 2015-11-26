@@ -13,13 +13,14 @@
     "mocha": "^2.3.3"
   },
   "dependencies": {
+    "gunzip-maybe": "^1.2.1",
+    "http-proxy-agent": "^1.0.0",
     "ncp": "git://github.com/Rise-Vision/ncp.git",
     "node-fetch": "1.3.3",
-    "yargs": "3.28.0",
-    "gunzip-maybe": "^1.2.1",
-    "tar-fs": "^1.8.1",
     "rimraf": "2.4.3",
-    "windows-shortcuts": "git://github.com/Rise-Vision/windows-shortcuts.git"
+    "tar-fs": "^1.8.1",
+    "windows-shortcuts": "git://github.com/Rise-Vision/windows-shortcuts.git",
+    "yargs": "3.28.0"
   },
   "scripts": {
     "test": "istanbul cover node_modules/mocha/bin/_mocha -- --recursive test/unit"
