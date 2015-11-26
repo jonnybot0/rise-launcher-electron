@@ -16,6 +16,30 @@ describe("platform", ()=>{
     simpleMock.restore();
   });
 
+  it("returns a valid URL for viewer", ()=>{
+    assert(platform.getViewerUrl());
+  });
+
+  it("returns a valid name for Windows installer name", ()=>{
+    mock(platform, "isWindows").returnWith(true);
+    assert(platform.getInstallerName());
+  });
+
+  it("returns a valid name for Linux installer name", ()=>{
+    mock(platform, "isWindows").returnWith(false);
+    assert(platform.getInstallerName());
+  });
+
+  it("returns a valid name for old Windows installer name", ()=>{
+    mock(platform, "isWindows").returnWith(true);
+    assert(platform.getOldInstallerName());
+  });
+
+  it("returns a valid name for old Linux installer name", ()=>{
+    mock(platform, "isWindows").returnWith(false);
+    assert(platform.getOldInstallerName());
+  });
+
   it("gets Ubuntu version", ()=>{
     mock(childProcess, "spawnSync").returnWith({ stdout: {} });
 
