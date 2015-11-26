@@ -16,7 +16,6 @@ module.exports = {
     log.all("beginning install");
 
     return module.exports.checkInstallerUpdateStatus()
-    .then(platform.onFirstRun(networkVerification.checkSites))
     .then(()=>{
       return platform.mkdir(platform.getInstallDir());
     })
