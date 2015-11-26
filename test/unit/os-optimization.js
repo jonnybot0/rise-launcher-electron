@@ -5,7 +5,7 @@ assert = require("assert"),
 simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock;
 
-describe("launcher", ()=>{
+describe("os optimization", ()=>{
   beforeEach("setup mocks", ()=>{
     mock(platform, "getInstallerPath").returnWith("fake path");
     mock(platform, "execSync").returnWith();
@@ -39,7 +39,17 @@ describe("launcher", ()=>{
     verifyCommands("windows");
   });
 
-  it("works on Linux by not trying to execute any commands since optimization is handled in a shell script", ()=>{
+  it("does nothing on linux since optimization is handled in a shell script", ()=>{
     verifyCommands("linux");
+  });
+
+  it("logs on external call failures", ()=>{
+    mock(log, "debug").returnWith();
+    mock(log, "external").returnWith();
+    mock(platform, "isWindows").returnWith(true);
+    mock(childProcess, "execSync").throwWith({err:"err"});
+    optimization.updateSettings();
+    assert.ok(log.debug.callCount > 0);
+    assert.ok(log.external.callCount > 0);
   });
 });
