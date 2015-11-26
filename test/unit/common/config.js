@@ -1,5 +1,6 @@
 var platform = require("../../../common/platform.js"),
 config = require("../../../common/config.js"),
+proxy = require("../../../common/proxy.js"),
 path = require("path"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
@@ -143,6 +144,25 @@ describe("config", ()=>{
     assert(platform.readTextFileSync.called);
     assert.equal(settings.displayid, "A2F9");
     assert.equal(settings.tempdisplayid, undefined);
+  });
+
+  it("saves proxy settings to the config file", ()=>{
+    var expectedString = "proxy=http://127.0.0.1:8888/" + "\n" +
+    "browsersetting=--proxy-server=http://127.0.0.1:8888/\n";
+
+    mock(config, "getDisplaySettings").resolveWith({});
+    mock(platform, "writeTextFile").resolveWith({});
+
+    proxy.setEndpoint("127.0.0.1:8888");
+
+    return new Promise((res, rej)=>{
+      setTimeout(checkSavedString, 10);
+
+      function checkSavedString() {
+        if (platform.writeTextFile.calls[0].args[1] === expectedString) {return res();}
+        setTimeout(checkSavedString, 10);
+      }
+    });
   });
 
   it("synchronously returns empty display settings on load failure", ()=>{

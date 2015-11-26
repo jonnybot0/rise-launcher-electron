@@ -1,4 +1,6 @@
 var platform = require("../common/platform.js"),
+network = require("../common/network.js"),
+proxy = require("../common/proxy.js"),
 thisInstallerVersion = require("../version.json"),
 path = require("path");
 
@@ -58,6 +60,26 @@ function saveVersion(componentName, version) {
   if (componentName === "InstallerElectron") {return Promise.resolve();}
 
   return platform.writeTextFile(getComponentVersionFileName(componentName), version);
+}
+
+proxy.observe(saveProxySettings);
+function saveProxySettings(fields) {
+  if (!fields.href) {return;}
+
+  log.debug("saving settings " + fields.href);
+  getDisplaySettings()
+  .then((displaySettings)=>{
+    var displaySettingsString = "";
+    displaySettings.proxy = fields.href;
+    displaySettings.browsersetting = `--proxy-server=${fields.href}`;
+
+    Object.keys(displaySettings).forEach((key)=>{
+      if (!key) {return;}
+      displaySettingsString += `${key}=${displaySettings[key]}\n`;
+    });
+
+    platform.writeTextFile(getDisplaySettingsFileName(), displaySettingsString); 
+  });
 }
 
 function getDisplaySettingsFileName() {

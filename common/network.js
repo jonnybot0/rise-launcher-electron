@@ -1,15 +1,29 @@
 var platform = require("./platform.js"),
 fetch = require("node-fetch"),
 http = require("http"),
+proxyAgent = require("http-proxy-agent"),
+proxy = require("./proxy.js"),
+fetchOptions = {},
 urlParse = require("url").parse,
 path = require("path"),
 fs = require("fs");
 
+proxy.observe(handleProxyChange);
+function handleProxyChange(fields) {
+  log.debug("Setting proxy to " + fields.href);
+  fetchOptions.agent = new proxyAgent(fields.href);
+}
+
 module.exports = {
-  httpFetch: function(dest, opts) {
+  httpFetch(dest, opts) {
+    if (!opts) {opts = fetchOptions;}
+    if (!opts.agent && fetchOptions.agent) {opts.agent = fetchOptions.agent;}
+
+    return module.exports.callFetch(dest, opts);
+  },
+  callFetch(dest, opts) {
     return fetch(dest, opts);
   },
-
   downloadFile(url) {
     return new Promise((resolve, reject)=>{
       var tempPath = path.join(platform.getTempDir(), urlParse(url).pathname.split(path.sep).pop()),
