@@ -1,25 +1,29 @@
-module.exports = (platform)=>{
-  return {
-    validatePlatform() {
-      return ["win32", "linux"].indexOf(platform.getOS()) !== -1;
-    },
-    validateOS() {
-      var osVer;
+var platform = require("./common/platform.js"),
+networkCheck = require("./network-check.js");
 
-      if (platform.getOS() === "win32") {return true;}
+module.exports = {
+  validatePlatform() {
+    return ["win32", "linux"].indexOf(platform.getOS()) !== -1;
+  },
+  validateOS() {
+    var osVer;
 
-      osVer = platform.getUbuntuVer();
+    if (platform.getOS() === "win32") {return true;}
 
-      if (!osVer) {
-        log.error("Linux version not supported");
-        return false;
-      }
+    osVer = platform.getUbuntuVer();
 
-      if (!Number(osVer.toString()) || Number(osVer.toString()) < 14.04) {
-        log.all("Ubuntu 14.04 or later is required.");
-        return false;
-      }
-      return true;
+    if (!osVer) {
+      log.error("Linux version not supported");
+      return false;
     }
-  };
+
+    if (!Number(osVer.toString()) || Number(osVer.toString()) < 14.04) {
+      log.all("Ubuntu 14.04 or later is required.");
+      return false;
+    }
+    return true;
+  },
+  checkNetworkConnectivity() {
+    return networkCheck.checkSites();
+  }
 };
