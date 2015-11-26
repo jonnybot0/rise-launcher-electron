@@ -19,6 +19,7 @@ module.exports = {
       return network.httpFetch(site);
     });
 
+    log.all("Checking network requirements");
     return Promise.all(siteConnections);
   }
 };
