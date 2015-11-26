@@ -5,6 +5,7 @@ component = require("../../component.js"),
 downloader = require("../../downloader.js"),
 launcher = require("../../launcher.js"),
 optimization = require("../../os-optimization.js"),
+capCheck = require("../../cap-check.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 path = require("path"),
@@ -74,6 +75,8 @@ describe("installer", ()=>{
     mock(launcher, "launch").resolveWith();
 
     mock(optimization, "updateSettings").returnWith();
+
+    mock(capCheck, "isCAPInstalled").returnWith(false);
 
     mock(process, "exit").returnWith();
   });
@@ -252,5 +255,15 @@ describe("installer", ()=>{
     var installerDir = installer.getRunningInstallerDir();
 
     assert.equal(installerDir, path.join("test", "installer"));
+  });
+
+  it("does not start player if CAP is installed", ()=>{
+    mock(installer, "isInstallerDeployed").returnWith(true);
+    mock(capCheck, "isCAPInstalled").returnWith(true);
+
+    return installer.begin().catch(()=>{
+      assert(capCheck.isCAPInstalled.called);
+      assert(!launcher.launch.called);
+    });
   });
 });
