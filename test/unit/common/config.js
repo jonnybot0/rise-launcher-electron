@@ -8,7 +8,7 @@ mock = require("simple-mock").mock;
 
 describe("config", ()=>{
   beforeEach("setup mocks", ()=>{
-    
+    mock(platform, "writeTextFile").resolveWith();
   });
 
   afterEach("clean mocks", ()=>{
@@ -70,24 +70,18 @@ describe("config", ()=>{
   });
 
   it("writes a version correctly", ()=>{
-    mock(platform, "writeTextFile").resolveWith();
-
     return config.saveVersion("Browser", "10").then(()=>{
       assert(platform.writeTextFile.called);
     });
   });
 
   it("does not write a file for Installer's version", ()=>{
-    mock(platform, "writeTextFile").resolveWith();
-
     return config.saveVersion("InstallerElectron", "10").then(()=>{
       assert(!platform.writeTextFile.called);
     });
   });
 
   it("fails to write a version correctly", ()=>{
-    mock(platform, "writeTextFile").rejectWith();
-
     return config.saveVersion("Browser", "10").catch(()=>{
       assert(platform.writeTextFile.called);
     });
@@ -151,7 +145,6 @@ describe("config", ()=>{
     "browsersetting=--proxy-server=http://127.0.0.1:8888/\n";
 
     mock(config, "getDisplaySettings").resolveWith({});
-    mock(platform, "writeTextFile").resolveWith({});
 
     proxy.setEndpoint("127.0.0.1:8888");
 

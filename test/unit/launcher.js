@@ -9,10 +9,6 @@ mock = require("simple-mock").mock;
 global.log = require("../../logger/logger.js")();
 
 describe("launcher", ()=>{
-  beforeEach("setup mocks", ()=>{
-    
-  });
-
   afterEach("clean mocks", ()=>{
     simpleMock.restore();
   });
