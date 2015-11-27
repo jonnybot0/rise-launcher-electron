@@ -11,7 +11,7 @@ var opts = {
   name: "installer",
   platform: "linux,win32",
   arch: "all",
-  version: "0.33.9",
+  version: "0.35.2",
   ignore: ".git|builds|test",
   out: "builds",
   overwrite: "true"
@@ -108,7 +108,6 @@ function createSelfExtractingInstallers() {
     var configFileData =
     ";!@Install@!UTF-8!" + "\n" +
     "Title=\"Rise Vision Player\"" + "\n" +
-    "BeginPrompt=\"Do you want to install Rise Vision Player?\"" + "\n" +
     "Directory=\"\"" +  "\n" +
     "RunProgram=\"builds\\installer-" + platform + "\\installer.exe\"" + "\n" +
     ";!@InstallEnd@!" + "\n";

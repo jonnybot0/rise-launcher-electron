@@ -65,7 +65,7 @@ module.exports = {
       return platform.waitFor(2000);
     })
     .then(()=>{
-      log.all("cache start");
+      log.all("cache start", "", "50%");
       startCache();
 
       return module.exports.stopPlayer();
@@ -74,7 +74,7 @@ module.exports = {
       return platform.waitFor(2000);
     })
     .then(()=>{
-      log.all("player start");
+      log.all("player start", "", "100%");
       startPlayer();
     })
     .then(()=>{

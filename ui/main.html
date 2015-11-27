@@ -1,22 +1,87 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <title>Rise Vision Installer</title>
-  </head>
-  <body style="padding:1em">
-    <img src="./logo.svg" style="display: inline-block; width: 10%"/>
-    <section style="padding-left: 1em;display: inline-block;margin: 0;vertical-align: top;">
-      <h3 style="margin:0;padding:0">Rise Vision Installer</h3>
-      <h5 style="margin:0;padding:0">Version <span id="version"></span></h5>
-    </section>
-    <button id="mainClose" style="float: right" type="button">close</button>
-    <div class="errors" style="background-color: red; font-size: 0.8em; font-weight: bold"></div>
-    <div class="messages" style="font-size: 0.8em"></div>
-    <div id="proxyOptions" style="display:none">
-      <p>It seems this machine cannot connect to the internet.  If you're running behind a proxy please complete the following fields.  Otherwise please contact support.</p>
-      <p>Proxy server address: <input id="proxyAddress" type="text"></input></p>
-      <p>Proxy server port: <input id="proxyPort" type="text"></input></p>
-      <button type="button">ok</button>
+    <link href="css/ui.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="container header">
+        <section>
+            <img src="img/logo.svg" style="position:absolute;left:0;">
+            <button class="btn btn-default btn-close" type="button" id="close">
+                <img src="img/close.svg">
+            </button>
+        </section>
+        <h3>Rise Vision Installer</h3>
+        <h5>Version <span id="version"></span></h5>
     </div>
-  </body>
+    <!-- OS Optimizations warning -->
+    <div id="" class="container slide active">
+        <div class="centeredBox">
+            <p>
+            Rise Vision Installer will configure your Media player with core optimizations to make your Presentation perform smoothly and error-free.</p>
+            <p>
+            These optimizations include disabling screen savers, timeouts, and system notifications.
+            </p>
+            <p>
+            If you do <b>not</b> wish to proceed with the modifications, please cancel this installation and contact us at <a href="mailto:">support@risevision.com
+            </a>
+            </p>
+        </div>
+    </div>
+    <!-- AgreeTo or Deactivate Startup Hijack -->
+    <div id="" class="container slide inactive">
+        <div class="centeredBox">
+            <p>
+            Rise Player has the ability to run on Startup for this hardware player. This is ideal for a dedicated Presentation setup, as rebooting your device will start the Player immediately.
+            </p>
+            <div style="text-align:center;padding-top:12px">
+            <input type="checkbox" class="css-checkbox" name="addToStartup" id="addToStartup" checked />
+            <label class="css-label" for="addToStartup"  >Add to Startup process</label>
+            </div>
+           
+             <p>
+             (Note: Player can be exited by pressing the windows key on your keyboard and selecting the Stop Player shortcut in the Rise Vision program group.) 
+            </p>
+        </div>
+    </div>
+    <!-- Loading... -->
+    <div id="installing" class="container slide inactive">
+        <div class="errors error"></div>
+        <div class="messages"></div>
+        <div class="centeredBox">
+            <p id="statusLabel">Checking Network Requirements...</p>
+            <div class="progress">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+        <div id="proxyOptions" style="display:none">
+            <p>It seems this machine cannot connect to the internet. If you're running behind a proxy please complete the following fields. Otherwise please contact support.</p>
+            <p>Proxy server address:
+                <input id="proxyAddress" type="text"></input>
+            </p>
+            <p>Proxy server port:
+                <input id="proxyPort" type="text"></input>
+            </p>
+            <button type="button">ok</button>
+        </div>
+    </div>
+    <!-- Success -->
+    <div id="launch" class="container slide inactive">
+        <div class="centeredBox" style="text-align: center; padding-top:72px;">
+            <h3>Success!</h3>
+            <img src="img/success.svg">
+            <br/>
+            <input type="checkbox" class="css-checkbox" name="startPlayer" id="startPlayer" checked />
+            <label class="css-label" for="startPlayer">Start Player</label>
+        </div>
+    </div>
+    <div class="footer">
+        <button type="button" class="btn btn-default closeInstall" id="cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="continue">Continue</button>
+    </div>
+</body>
+
 </html>

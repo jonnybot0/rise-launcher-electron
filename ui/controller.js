@@ -19,7 +19,7 @@ module.exports = {
       }
     });
 
-    mainWindow.loadUrl("file://" + __dirname + "/main.html");
+    mainWindow.loadURL("file://" + __dirname + "/main.html");
 
     mainWindow.on("closed", ()=>{
       mainWindow = null;
@@ -33,5 +33,14 @@ module.exports = {
   },
   showProxyOption() {
     mainWindow.webContents.send("show-proxy-options");
+  },
+  setProgress(details) {
+    mainWindow.webContents.send("set-progress", details);
+  },
+  enableContinue() {
+    mainWindow.webContents.send("enable-continue");
+  },
+  disableContinue() {
+    mainWindow.webContents.send("disable-continue");
   }
 };

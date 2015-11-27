@@ -2,14 +2,18 @@ var app = require("app"),
 ipc = require("ipc"),
 platform = require("./common/platform.js"),
 network = require("./common/network.js"),
+launcher = require("./launcher.js"),
 proxy = require("./common/proxy.js"),
 config = require("./common/config.js"),
+autostart = require("./autostart/autostart.js"),
+optimization = require("./os-optimization.js"),
 installer = require("./installer.js"),
 prereqs = require("./prereqs.js"),
 launcher = require("./launcher.js"),
 ui = require("./ui/controller.js"),
 displaySettings,
-mainWindow;
+mainWindow,
+startPlayerRequested = false;
 
 global.log = require("./logger/logger.js")
 (require("./logger/bigquery/external-logger-bigquery.js")
@@ -33,6 +37,12 @@ app.on("window-all-closed", ()=>{
 
 app.on("error", (err)=>{log.error(err, messages.unknown);});
 
+function isUnattended() {
+  return process.argv.some((arg)=>{
+    return (arg.indexOf("unattended") > -1);
+  });
+}
+
 app.on("ready", ()=>{
   log.debug("app ready event received");
 
@@ -45,21 +55,46 @@ app.on("ready", ()=>{
     installerPrereqCheck();
   });
 
+  ipc.on("set-autostart", (event, message)=>{
+    autostart.requested(true);
+    log.debug("autostart requested");
+  });
+
+  ipc.on("unset-autostart", (event, message)=>{
+    autostart.requested(false);
+    log.debug("autostart not requested");
+  });
+
+  ipc.on("install", (event, message)=>{
+    optimization.updateSettings();
+    autostart.createAutostart();
+    installerPrereqCheck();
+  });
+
+  ipc.on("launch", ()=>{
+    return launcher.launch().then(()=>{
+      process.exit();
+    });
+  });
+
   ipc.on("ui-pong", (event)=>{
     log.debug("UI is ready");
     log.setUIWindow(event.sender);
     event.sender.send("version", require("./version"));
 
     if (!(prereqs.validatePlatform() && prereqs.validateOS())) {
-      log.error("validation failure", messages.osRequirementsNotMet);
+      log.error("os validation failure", messages.osRequirementsNotMet);
     }
 
-    installerPrereqCheck();
+    if (isUnattended()) {
+      installer.begin();
+    }
   });
 
   mainWindow = ui.init();
 
   function installerPrereqCheck() {
+    ui.disableContinue();
     platform.onFirstRun(prereqs.checkNetworkConnectivity)()
     .catch(()=>{
       ui.showProxyOption();
@@ -79,8 +114,7 @@ app.on("ready", ()=>{
         throw new Error();
       });
     })
-    .then(()=>{
-      installer.begin();
-    });
+    .then(installer.begin)
+    .then(ui.enableContinue);
   }
 });

@@ -6,7 +6,9 @@ proxy = require("./proxy.js"),
 fetchOptions = {},
 urlParse = require("url").parse,
 path = require("path"),
-fs = require("fs");
+fs = require("fs"),
+downloadStats = {},
+observers = [];
 
 proxy.observe(handleProxyChange);
 function handleProxyChange(fields) {
@@ -25,22 +27,20 @@ module.exports = {
     return fetch(dest, opts);
   },
   downloadFile(url) {
-    var tryCount = 0;
+    downloadStats[url] = {tries: 0, bytesExpected: 0, bytesReceived: 0};
 
     function tryDownload(resolve, reject) {
       var tempPath = path.join(platform.getTempDir(), urlParse(url).pathname.split(path.sep).pop()),
       file = fs.createWriteStream(tempPath),
-      fileName = urlParse(url).pathname,
-      progress = 0;
+      fileName = urlParse(url).pathname;
 
-      tryCount += 1;
+      downloadStats[url].tries += 1;
 
       file.on("error", (err)=>{
         reject({ message: "Error creating temporary download file", error: err });
       });
 
-      log.debug("Downloading " + url + " try " + tryCount);
-      log.ui(progress, fileName);
+      log.debug("Downloading " + url + " try " + downloadStats[url].tries);
 
       var req = http.get(url, (res)=>{
         if(res.statusCode === 404) {
@@ -50,10 +50,11 @@ module.exports = {
           reject({ message: "Error downloading file", error: res.statusCode });
         }
 
+        downloadStats[url].bytesExpected = Number(res.headers["content-length"]);
         res.on("data", (data)=>{
-          progress += data.length;
-          log.ui(progress, fileName);
+          downloadStats[url].bytesReceived += data.length;
           file.write(data);
+          observers.forEach((observer)=>{observer(downloadStats);});
         });
         res.on("end", ()=>{
           file.end();
@@ -68,9 +69,9 @@ module.exports = {
       req.on("socket", function (socket) {
         socket.setTimeout(2000);  
         socket.on("timeout", function() {
-          if(!progress) {
+          if(!downloadStats[url].bytesReceived) {
             req.abort();
-            if (tryCount === 3) {
+            if (downloadStats[url].tries === 3) {
               reject({ message: "Request timed out", error: url });
             } else {
               tryDownload(resolve, reject);
@@ -86,5 +87,8 @@ module.exports = {
     }
 
     return new Promise(tryDownload);
+  },
+  registerObserver(fn) {
+    observers.push(fn);
   }
 };
