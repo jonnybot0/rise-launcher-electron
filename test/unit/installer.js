@@ -6,6 +6,7 @@ downloader = require("../../downloader.js"),
 launcher = require("../../launcher.js"),
 optimization = require("../../os-optimization.js"),
 capCheck = require("../../cap-check.js"),
+watchdogCheck = require("../../watchdog-check.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 path = require("path"),
@@ -77,7 +78,7 @@ describe("installer", ()=>{
     mock(optimization, "updateSettings").returnWith();
 
     mock(capCheck, "isCAPInstalled").returnWith(false);
-
+    
     mock(process, "exit").returnWith();
   });
 
@@ -115,6 +116,7 @@ describe("installer", ()=>{
   it("performs a normal startup without installing/updating", ()=>{
     mock(installer, "checkInstallerUpdateStatus").resolveWith();
     mock(installer, "isInstallerDeployed").returnWith(true);
+    mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
 
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
@@ -140,6 +142,7 @@ describe("installer", ()=>{
 
     mock(installer, "checkInstallerUpdateStatus").resolveWith();
     mock(installer, "isInstallerDeployed").returnWith(true);
+    mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
 
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
@@ -162,6 +165,7 @@ describe("installer", ()=>{
     mock(installer, "checkInstallerUpdateStatus").resolveWith();
     mock(installer, "isInstallerDeployed").returnWith(false);
     mock(installer, "updateInstaller").resolveWith();
+    mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
     
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
@@ -178,6 +182,8 @@ describe("installer", ()=>{
   });
 
   it("performs an installer restart to overwrite current version", ()=>{
+    mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
+    
     components.InstallerElectron.versionChanged = true;
 
     return installer.begin().then(()=>{
@@ -188,6 +194,7 @@ describe("installer", ()=>{
   });
 
   it("performs an installer update based on command line arguments", ()=>{
+    mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
     mock(installer, "isInstallerDeployed").returnWith(true);
     mock(installer, "updateInstaller").resolveWith();
     mock(installer, "getOptions").returnWith({
@@ -263,6 +270,16 @@ describe("installer", ()=>{
 
     return installer.begin().catch(()=>{
       assert(capCheck.isCAPInstalled.called);
+      assert(!launcher.launch.called);
+    });
+  });
+
+  it("does not start player if watchdog is running", ()=>{
+    mock(installer, "isInstallerDeployed").returnWith(true);
+    mock(watchdogCheck, "isWatchdogRunning").returnWith(true);
+
+    return installer.begin().catch(()=>{
+      assert(watchdogCheck.isWatchdogRunning.called);
       assert(!launcher.launch.called);
     });
   });

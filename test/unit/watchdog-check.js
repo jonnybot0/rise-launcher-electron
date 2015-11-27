@@ -59,4 +59,10 @@ describe("watchdog check", ()=>{
 
     assert(!watchdogCheck.isWatchdogRunning());
   });
+
+  it("checks watchdog is not running on Linux", ()=>{
+    mock(platform, "isWindows").returnWith(false);
+
+    assert(!watchdogCheck.isWatchdogRunning());
+  });
 });
