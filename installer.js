@@ -2,6 +2,7 @@ var component = require("./component.js"),
 downloader = require("./downloader.js"),
 launcher = require("./launcher.js"),
 capCheck = require("./cap-check.js"),
+watchdogCheck = require("./watchdog-check.js"),
 platform = require("./common/platform.js"),
 config = require("./common/config.js"),
 networkVerification = require("./network-check.js"),
@@ -75,6 +76,14 @@ module.exports = {
           }
           else {
             return Promise.reject("Rise Vision Chrome App extension should be removed before running Rise Player");
+          }
+        })
+        .then(()=>{
+          if(!watchdogCheck.isWatchdogRunning()) {
+            return Promise.resolve();
+          }
+          else {
+            return Promise.reject("Older versions of Rise Player should be removed from Application Monitor");
           }
         })
         .then(()=>{
