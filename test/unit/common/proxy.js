@@ -1,9 +1,14 @@
 var proxy = require("../../../common/proxy.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
+platform = require("../../../common/platform.js"),
 mock = require("simple-mock").mock;
 
-describe("config", ()=>{
+describe("proxy", ()=>{
+  beforeEach("setup mocks", ()=>{
+    mock(platform, "writeTextFile").resolveWith();
+  });
+
   afterEach("clean mocks", ()=>{
     simpleMock.restore();
   });

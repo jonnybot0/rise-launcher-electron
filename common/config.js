@@ -65,21 +65,18 @@ function saveVersion(componentName, version) {
 proxy.observe(saveProxySettings);
 function saveProxySettings(fields) {
   if (!fields.href) {return;}
-
+  var displaySettings = getDisplaySettingsSync(),
+  displaySettingsString = "";
   log.debug("saving settings " + fields.href);
-  getDisplaySettings()
-  .then((displaySettings)=>{
-    var displaySettingsString = "";
-    displaySettings.proxy = fields.href;
-    displaySettings.browsersetting = `--proxy-server=${fields.href}`;
 
-    Object.keys(displaySettings).forEach((key)=>{
-      if (!key) {return;}
-      displaySettingsString += `${key}=${displaySettings[key]}\n`;
-    });
+  displaySettings.proxy = fields.href;
+  displaySettings.browsersetting = `--proxy-server=${fields.href}`;
 
-    platform.writeTextFile(getDisplaySettingsFileName(), displaySettingsString); 
+  Object.keys(displaySettings).forEach((key)=>{
+    displaySettingsString += `${key}=${displaySettings[key]}\n`;
   });
+
+  platform.writeTextFile(getDisplaySettingsFileName(), displaySettingsString); 
 }
 
 function getDisplaySettingsFileName() {
@@ -93,7 +90,6 @@ function getDisplaySettingsSync() {
   if (textFileString.indexOf("displayid") < 0) {
     textFileString += "\ntempdisplayid=" + tempDisplayId;
   }
-
   return parsePropertyList(textFileString);
 }
 
@@ -112,6 +108,7 @@ function getDisplaySettings() {
 function parsePropertyList(list) {
   var result = {};
   list.split("\n").forEach((line)=>{
+    if (line.indexOf("=") < 0) {return;}
     var vals = line.trim().split("=");
     result[vals[0]] = vals[1];
   });
