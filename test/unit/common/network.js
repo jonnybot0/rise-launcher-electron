@@ -10,9 +10,10 @@ assert = require("assert"),
 simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock;
 
-describe("config", ()=>{
+describe("network", ()=>{
   beforeEach("setup mocks", ()=>{
     mock(platform, "getTempDir").returnWith("test");
+    mock(platform, "writeTextFile").resolveWith();
     mock(fs, "createWriteStream").returnWith({
       write() {},
       end() {},

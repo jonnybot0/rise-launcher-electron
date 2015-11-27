@@ -144,18 +144,8 @@ describe("config", ()=>{
     var expectedString = "proxy=http://127.0.0.1:8888/" + "\n" +
     "browsersetting=--proxy-server=http://127.0.0.1:8888/\n";
 
-    mock(config, "getDisplaySettings").resolveWith({});
-
     proxy.setEndpoint("127.0.0.1:8888");
-
-    return new Promise((res, rej)=>{
-      setTimeout(checkSavedString, 10);
-
-      function checkSavedString() {
-        if (platform.writeTextFile.calls[0].args[1] === expectedString) {return res();}
-        setTimeout(checkSavedString, 10);
-      }
-    });
+    assert.ok(platform.writeTextFile.calls[0].args[1].indexOf(expectedString) > -1);
   });
 
   it("synchronously returns empty display settings on load failure", ()=>{

@@ -9,6 +9,10 @@ mock = require("simple-mock").mock;
 global.log = require("../../logger/logger.js")();
 
 describe("launcher", ()=>{
+  beforeEach("setup mocks", ()=>{
+    mock(platform, "writeTextFile").resolveWith();
+  });
+
   afterEach("clean mocks", ()=>{
     simpleMock.restore();
   });
