@@ -83,10 +83,10 @@ module.exports = {
       stringContents = fs.readFileSync(path, "utf8");
     } catch (e) {
       if(logError) {
-        log.error("Could not read file " + path);
+        log.error("Could not read file " + path + " " + require("util").inspect(e));
       }
       else {
-        log.debug("Could not read file " + path);
+        log.debug("Could not read file " + path + " " + require("util").inspect(e));
       }
     }
 
