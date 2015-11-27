@@ -10,7 +10,7 @@ var winChromeHome = path.join("home", "Google", "Chrome", "User Data");
 var linuxChromeHome = path.join("home", ".config", "google-chrome");
 var risePlayerAppId = "ilcmohdkjfcfekfmpdppgoaaemgdmhaa";
 
-describe("launcher", ()=>{
+describe("CAP check", ()=>{
   beforeEach("setup mocks", ()=>{
     mock(platform, "getHomeDir").returnWith("home");
     mock(fs, "statSync").callFn((basePath)=>{
