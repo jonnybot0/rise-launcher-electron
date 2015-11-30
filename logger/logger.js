@@ -5,10 +5,10 @@ module.exports = (externalLogger)=> {
     debug(msg) {
       console.log(msg); 
     },
-    error(detail) {
+    error(detail, userFriendlyMessage) {
       console.log("ERROR: " + detail);
       if (externalLogger) {externalLogger.log("error", detail);}
-      if (uiWindow) {uiWindow.send("errorMessage", detail);}
+      if (uiWindow) {uiWindow.send("errorMessage", userFriendlyMessage || detail);}
     },
     all(evt, detail) {
       console.log(evt, detail ? detail : "");

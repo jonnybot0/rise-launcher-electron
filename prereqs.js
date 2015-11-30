@@ -13,12 +13,10 @@ module.exports = {
     osVer = platform.getUbuntuVer();
 
     if (!osVer) {
-      log.error("Linux version not supported");
       return false;
     }
 
     if (osVer.toString().trim() !== "14.04") {
-      log.all("Ubuntu 14.04 is required");
       return false;
     }
     return true;
