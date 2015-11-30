@@ -8,6 +8,7 @@ module.exports = {
     if (!endpoint) {return;}
     if (endpoint.substring(0,4) !== "http") {endpoint = "http://" + endpoint;}
 
+    log.all("proxy", endpoint);
     newFields = urlParse(endpoint);
     Object.keys(newFields).forEach((key)=>{
       proxyFields[key] = newFields[key];
