@@ -13,11 +13,31 @@ path = require("path"),
 yargs = require("yargs"),
 options = yargs.parse(process.argv.slice(1));
 
+function checkCAPInstalled() {
+  if(!capCheck.isCAPInstalled()) {
+    return Promise.resolve();
+  }
+  else {
+    return Promise.reject("Rise Vision Chrome App extension should be removed before running Rise Player");
+  }
+}
+
+function isWatchdogRunning() {
+  if(!watchdogCheck.isWatchdogRunning()) {
+    return Promise.resolve();
+  }
+  else {
+    return Promise.reject("Older versions of Rise Player should be removed from Application Monitor");
+  }  
+}
+
 module.exports = {
   begin() {
     log.all("beginning install");
 
     return module.exports.checkInstallerUpdateStatus()
+    .then(checkCAPInstalled)
+    .then(isWatchdogRunning)
     .then(()=>{
       return platform.mkdir(platform.getInstallDir());
     })
@@ -68,22 +88,6 @@ module.exports = {
           }
           else if(!installerDeployed) {
             return module.exports.updateInstaller(runningInstallerDir);
-          }
-        })
-        .then(()=>{
-          if(!capCheck.isCAPInstalled()) {
-            return Promise.resolve();
-          }
-          else {
-            return Promise.reject("Rise Vision Chrome App extension should be removed before running Rise Player");
-          }
-        })
-        .then(()=>{
-          if(!watchdogCheck.isWatchdogRunning()) {
-            return Promise.resolve();
-          }
-          else {
-            return Promise.reject("Older versions of Rise Player should be removed from Application Monitor");
           }
         })
         .then(()=>{
