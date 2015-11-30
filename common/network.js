@@ -25,17 +25,21 @@ module.exports = {
     return fetch(dest, opts);
   },
   downloadFile(url) {
-    return new Promise((resolve, reject)=>{
+    var tryCount = 0;
+
+    function tryDownload(resolve, reject) {
       var tempPath = path.join(platform.getTempDir(), urlParse(url).pathname.split(path.sep).pop()),
       file = fs.createWriteStream(tempPath),
       fileName = urlParse(url).pathname,
       progress = 0;
 
+      tryCount += 1;
+
       file.on("error", (err)=>{
         reject({ message: "Error creating temporary download file", error: err });
       });
 
-      log.debug("Downloading " + url);
+      log.debug("Downloading " + url + " try " + tryCount);
       log.ui(progress, fileName);
 
       var req = http.get(url, (res)=>{
@@ -66,7 +70,11 @@ module.exports = {
         socket.on("timeout", function() {
           if(!progress) {
             req.abort();
-            reject({ message: "Request timed out", error: url });
+            if (tryCount === 3) {
+              reject({ message: "Request timed out", error: url });
+            } else {
+              tryDownload(resolve, reject);
+            }
           }
         });
       });
@@ -75,6 +83,8 @@ module.exports = {
         file.end();
         reject({ message: "Request error downloading file" + e.message, error: e });
       });
-    });
+    }
+
+    return new Promise(tryDownload);
   }
 };
