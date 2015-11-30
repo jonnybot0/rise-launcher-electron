@@ -17,8 +17,8 @@ module.exports = {
       return false;
     }
 
-    if (!Number(osVer.toString()) || Number(osVer.toString()) < 14.04) {
-      log.all("Ubuntu 14.04 or later is required.");
+    if (osVer.toString().trim() !== "14.04") {
+      log.all("Ubuntu 14.04 is required");
       return false;
     }
     return true;
