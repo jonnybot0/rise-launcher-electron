@@ -10,6 +10,7 @@ assert = require("assert"),
 simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock;
 
+global.messages = {};
 describe("platform", ()=>{
   beforeEach("setup mocks", ()=>{
     

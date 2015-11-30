@@ -96,7 +96,7 @@ module.exports = {
       });
     })
     .catch((err)=>{
-      log.error(require("util").inspect(err));
+      log.error(require("util").inspect(err), messages.unknown);
       return Promise.reject(err);
     });
   },

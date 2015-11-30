@@ -31,7 +31,7 @@ app.on("window-all-closed", ()=>{
   setTimeout(()=>{app.quit();}, 500);
 });
 
-app.on("error", (err)=>{log.error(err);});
+app.on("error", (err)=>{log.error(err, messages.unknown);});
 
 app.on("ready", ()=>{
   log.debug("app ready event received");
@@ -51,7 +51,7 @@ app.on("ready", ()=>{
     event.sender.send("version", require("./version"));
 
     if (!(prereqs.validatePlatform() && prereqs.validateOS())) {
-      log.error(messages.osRequirementsNotMet);
+      log.error("validation failure", messages.osRequirementsNotMet);
     }
 
     beginInstall();
