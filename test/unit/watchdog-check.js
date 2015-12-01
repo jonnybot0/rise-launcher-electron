@@ -46,7 +46,7 @@ describe("watchdog check", ()=>{
     mock(childProcess, "execSync").returnWith(new Buffer(executablePath));
     mock(platform, "readTextFileSync").returnWith(matchingFile);
 
-    assert(watchdogCheck.isWatchdogRunning());
+    assert(watchdogCheck.hasLegacyWatchdog());
   });
 
   it("checks watchdog is running on Windows but not watching programs of interest", ()=>{
@@ -54,7 +54,7 @@ describe("watchdog check", ()=>{
     mock(childProcess, "execSync").returnWith(new Buffer(executablePath));
     mock(platform, "readTextFileSync").returnWith(notMatchingFile);
 
-    assert(!watchdogCheck.isWatchdogRunning());
+    assert(!watchdogCheck.hasLegacyWatchdog());
   });
 
   it("checks watchdog is not running on Windows", ()=>{
@@ -62,7 +62,7 @@ describe("watchdog check", ()=>{
     mock(platform, "readTextFileSync").returnWith(matchingFile);
     mock(childProcess, "execSync").returnWith(new Buffer(noInstanceAvailable));
 
-    assert(!watchdogCheck.isWatchdogRunning());
+    assert(!watchdogCheck.hasLegacyWatchdog());
   });
 
   it("checks watchdog is on startup on Windows", ()=>{
@@ -70,7 +70,7 @@ describe("watchdog check", ()=>{
     mock(platform, "readTextFileSync").returnWith(matchingFile);
     mock(childProcess, "execSync").returnWith(new Buffer(registryStartupPath));
 
-    assert(watchdogCheck.isWatchdogRunning());
+    assert(watchdogCheck.hasLegacyWatchdog());
   });
 
   it("checks watchdog is not on startup on Windows", ()=>{
@@ -78,19 +78,19 @@ describe("watchdog check", ()=>{
     mock(platform, "readTextFileSync").returnWith(matchingFile);
     mock(childProcess, "execSync").returnWith(new Buffer(notOnStartup));
 
-    assert(!watchdogCheck.isWatchdogRunning());
+    assert(!watchdogCheck.hasLegacyWatchdog());
   });
 
   it("checks watchdog validation failed but does not crash installer", ()=>{
     mock(platform, "isWindows").returnWith(true);
     mock(childProcess, "execSync").throwWith("error");
 
-    assert(!watchdogCheck.isWatchdogRunning());
+    assert(!watchdogCheck.hasLegacyWatchdog());
   });
 
   it("checks watchdog is not running on Linux", ()=>{
     mock(platform, "isWindows").returnWith(false);
 
-    assert(!watchdogCheck.isWatchdogRunning());
+    assert(!watchdogCheck.hasLegacyWatchdog());
   });
 });

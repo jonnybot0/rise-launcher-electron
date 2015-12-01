@@ -61,7 +61,7 @@ function isRisePlayerOnWindowsMonitorSettings(monitorPath) {
 }
 
 module.exports = {
-  isWatchdogRunning() {
+  hasLegacyWatchdog() {
     if(platform.isWindows()) {
       return isWindowsWatchdogOnStartup() || isWindowsWatchdogRunning();
     }
