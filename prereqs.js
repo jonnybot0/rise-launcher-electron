@@ -1,5 +1,7 @@
 var platform = require("./common/platform.js"),
-networkCheck = require("./network-check.js");
+networkCheck = require("./network-check.js"),
+capCheck = require("./cap-check.js"),
+watchdogCheck = require("./watchdog-check.js");
 
 module.exports = {
   validatePlatform() {
@@ -23,5 +25,13 @@ module.exports = {
   },
   checkNetworkConnectivity() {
     return networkCheck.checkSites();
+  },
+  checkCAPNotInstalled() {
+    if (!capCheck.isCAPInstalled()) {return Promise.resolve();}
+    return Promise.reject();
+  },
+  checkNoLegacyWatchdog() {
+    if (!watchdogCheck.hasLegacyWatchdog()) {return Promise.resolve();}
+    return Promise.reject();
   }
 };

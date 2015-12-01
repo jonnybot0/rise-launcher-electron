@@ -42,7 +42,7 @@ app.on("ready", ()=>{
 
   ipc.on("set-proxy", (event, message)=>{
     proxy.setEndpoint(message);
-    beginInstall();
+    installerPrereqCheck();
   });
 
   ipc.on("ui-pong", (event)=>{
@@ -54,18 +54,29 @@ app.on("ready", ()=>{
       log.error("validation failure", messages.osRequirementsNotMet);
     }
 
-    beginInstall();
+    installerPrereqCheck();
   });
-
 
   mainWindow = ui.init();
 
-  function beginInstall() {
+  function installerPrereqCheck() {
     platform.onFirstRun(prereqs.checkNetworkConnectivity)()
+    .catch(()=>{
+      ui.showProxyOption();
+      throw new Error();
+    })
+    .then(prereqs.checkCAPNotInstalled)
+    .catch(()=>{
+      log.error("cap found", messages.CAPInstalled);
+      throw new Error();
+    })
+    .then(prereqs.checkNoLegacyWatchdog)
+    .catch(()=>{
+      log.error("legacy watchdog", messages.legacyWatchdog);
+      throw new Error();
+    })
     .then(()=>{
       installer.begin();
-    }).catch(()=>{
-      ui.showProxyOption();
     });
   }
 });

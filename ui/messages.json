@@ -2,5 +2,7 @@
   "osRequirementsNotMet": "Operating system requirements are not met. The installer requires windows 7, Windows 8, Windows 10, or Ubuntu 14.04.",
   "unknownOS": "Could not determine operating system release.",
   "fileReadError": "There was a problem reading a system file.  Please try running the installer again or contact support.",
+  "legacyWatchdog": "Application Monitor is no longer supported.  Please remove it.",
+  "CAPInstalled": "Rise Vision Chrome App Player conflicts with this player.  Please remove it.",
   "unknown": "An unknown error has occurred.  Please try again or contact support."
 }

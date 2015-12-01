@@ -218,6 +218,8 @@ describe("installer", ()=>{
 
   it("handles errors on components list fetch", ()=>{
     mock(component, "getComponents").rejectWith();
+    mock(installer, "isInstallerDeployed").returnWith(false);
+    mock(capCheck, "isCAPInstalled").returnWith(false);
 
     return installer.begin().catch(()=>{
       assert(component.getComponents.called);
