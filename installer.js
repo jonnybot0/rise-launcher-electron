@@ -64,7 +64,7 @@ module.exports = {
             log.all("updating installer version");
 
             module.exports.startInstallerUpdate().then(()=>{
-              process.exit();
+              process.exit(0);
             });
           }
           else if(!installerDeployed) {
@@ -77,7 +77,7 @@ module.exports = {
           log.all("install complete");
 
           return launcher.launch().then(()=>{
-            process.exit();
+            process.exit(0);
           });
         });
       });
