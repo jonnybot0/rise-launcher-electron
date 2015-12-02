@@ -12,8 +12,7 @@ prereqs = require("./prereqs.js"),
 launcher = require("./launcher.js"),
 ui = require("./ui/controller.js"),
 displaySettings,
-mainWindow,
-startPlayerRequested = false;
+mainWindow;
 
 global.log = require("./logger/logger.js")
 (require("./logger/bigquery/external-logger-bigquery.js")
