@@ -5,7 +5,8 @@ fs = require(process.versions.electron ? "original-fs" : "fs"),
 ncp = require("ncp"),
 rimraf = require("rimraf"),
 gunzip = require("gunzip-maybe"),
-tar = require("tar-fs");
+tar = require("tar-fs"),
+ws = require("windows-shortcuts");
 
 module.exports = {
   getCoreUrl() {
@@ -49,6 +50,22 @@ module.exports = {
   },
   getOldInstallerPath() {
     return path.join(module.exports.getInstallerDir(), module.exports.getOldInstallerName());
+  },
+  getProgramsMenuPath() {
+    if(module.exports.isWindows()) {
+      return path.join(process.env.APPDATA, "Microsoft", "Windows", "Start Menu", "Programs");
+    }
+    else {
+      return path.join(module.exports.getHomeDir(), ".local", "share", "applications");
+    }
+  },
+  getAutoStartupPath() {
+    if(module.exports.isWindows()) {
+      return path.join(module.exports.getProgramsMenuPath(), "Startup");
+    }
+    else {
+      return path.join(module.exports.getHomeDir(), ".config", "autostart");
+    }
   },
   waitFor(milliseconds) {
     return new Promise((resolve, reject)=>{
@@ -199,5 +216,17 @@ module.exports = {
     } else {
       return function() {return Promise.resolve();};
     }
+  },
+  createWindowsShortcut(lnkPath, exePath) {
+    return new Promise((resolve, reject)=>{
+      ws.create(lnkPath, exePath, (err)=>{
+        if(!err) {
+          resolve();
+        }
+        else {
+          reject(err);
+        }
+      });        
+    });
   }
 };

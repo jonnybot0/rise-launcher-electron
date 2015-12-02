@@ -6,6 +6,7 @@ ncp = require("ncp"),
 fs = require("fs"),
 gunzip = require("gunzip-maybe"),
 tar = require("tar-fs"),
+ws = require("windows-shortcuts"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock;
@@ -272,6 +273,25 @@ describe("platform", ()=>{
     .then(platform.onFirstRun(()=>{return Promise.resolve(true);}))
     .then((itRan)=> {
       assert.ok(itRan === undefined);
+    });
+  });
+
+  it("creates a shortcut on Windows", ()=>{
+    mock(ws, "create").callbackWith();
+
+    return platform.createWindowsShortcut()
+    .then(()=>{
+      assert.ok(ws.create.called);
+    });
+  });
+
+  it("fails to create a shortcut on Windows", ()=>{
+    mock(ws, "create").callbackWith("error");
+
+    return platform.createWindowsShortcut()
+    .catch((err)=>{
+      assert.ok(ws.create.called);
+      assert.equal(err, "error");
     });
   });
 });

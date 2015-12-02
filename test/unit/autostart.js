@@ -1,6 +1,6 @@
 var autostart = require("../../autostart/autostart.js"),
 platform = require("../../common/platform.js"),
-ws = require("windows-shortcuts"),
+path = require("path"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock,
@@ -40,45 +40,27 @@ describe("autostart", ()=>{
   });
 
   it("creates Windows autostart file", ()=>{
-    var exePath = "C:\\Users\\rvuser\\AppData\\Local\\rvplayer2\\Installer\\installer.exe";
+    var exePath = path.join("C:", "Users", "rvuser", "AppData", "Local", "rvplayer2", "Installer", "installer.exe");
 
     mock(platform, "getInstallerPath").returnWith(exePath);
-    mock(autostart, "createWindowsShortcut").resolveWith();
+    mock(platform, "createWindowsShortcut").resolveWith();
 
     return autostart.createWindowsAutostart()
     .then(()=>{
-      assert.ok(autostart.createWindowsShortcut.callCount === 1);
-      assert.ok(autostart.createWindowsShortcut.lastCall.args[1] === exePath);
-    });
-  });
-
-  it("creates a shortcut on Windows", ()=>{
-    mock(ws, "create").callbackWith();
-
-    return autostart.createWindowsShortcut()
-    .then(()=>{
-      assert.ok(ws.create.called);
-    });
-  });
-
-  it("fails to create a shortcut on Windows", ()=>{
-    mock(ws, "create").callbackWith("error");
-
-    return autostart.createWindowsShortcut()
-    .catch((err)=>{
-      assert.ok(ws.create.called);
-      assert.equal(err, "error");
+      assert.ok(platform.createWindowsShortcut.callCount === 1);
+      assert.ok(platform.createWindowsShortcut.lastCall.args[1] === exePath);
     });
   });
 
   it("creates Ubuntu autostart file", ()=>{
-    var expectedAutoStartPath = "/home/testuser/.config/autostart/rvplayer.desktop";
+    var expectedAutoStartPath = path.join("home", "testuser", ".config", "autostart", "rvplayer.desktop");
 
+    mock(platform, "isWindows").returnWith(false);
     mock(platform, "writeTextFile").resolveWith(true);
     mock(platform, "readTextFile").resolveWith("fake\nautostart\nfile");
     mock(platform, "setFilePermissions").resolveWith(true);
-    mock(platform, "getHomeDir").returnWith("/home/testuser");
-    mock(platform, "getInstallerPath").returnWith("/home/testuser/rvplayer2/Installer/installer");
+    mock(platform, "getHomeDir").returnWith(path.join("home", "testuser"));
+    mock(platform, "getInstallerPath").returnWith(path.join("home", "testuser", "rvplayer2", "Installer", "installer"));
 
     return autostart.createUbuntuAutostart()
     .then(()=>{

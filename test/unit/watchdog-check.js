@@ -24,7 +24,7 @@ var matchingFile = `<?xml version="1.0" standalone="yes"?>
   <program>
     <name>hhh</name>
     <time>20,00</time>
-    <path>"C:\\Users\\Francisco\\Downloads\\rvplayer-installer.exe"</path>
+    <path>"C:\\Users\\RiseUser\\rvplayer-installer.exe"</path>
     <check>true</check>
   </program>
 </ApplicationMonitor>`;

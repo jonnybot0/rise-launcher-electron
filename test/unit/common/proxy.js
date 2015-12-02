@@ -18,4 +18,11 @@ describe("proxy", ()=>{
     console.log(proxy.proxyFields);
     assert.equal(proxy.proxyFields.href, "http://127.0.0.1:8888/");
   });
+
+  it("does not set the new endpoint", ()=>{
+    mock(log, "all").returnWith();
+
+    proxy.setEndpoint();
+    assert(!log.all.called);
+  });
 });

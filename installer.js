@@ -6,6 +6,7 @@ config = require("./common/config.js"),
 networkVerification = require("./network-check.js"),
 autostart = require("./autostart/autostart.js"),
 optimization = require("./os-optimization.js"),
+uninstall = require("./uninstall.js"),
 thisInstallerVersion = require("./version.json"),
 path = require("path"),
 yargs = require("yargs"),
@@ -60,11 +61,15 @@ module.exports = {
         })
         .then(()=>{
           if(installerVersionChanged) {
+            log.all("updating installer version");
+
             module.exports.startInstallerUpdate().then(()=>{
-              process.exit();
+              process.exit(0);
             });
           }
           else if(!installerDeployed) {
+            log.all("deploying installer");
+
             return module.exports.updateInstaller(runningInstallerDir);
           }
         })
@@ -72,13 +77,14 @@ module.exports = {
           log.all("install complete");
 
           return launcher.launch().then(()=>{
-            process.exit();
+            process.exit(0);
           });
         });
       });
     })
     .catch((err)=>{
       log.error(require("util").inspect(err), messages.unknown);
+      console.log("Unexpected error", err);
       return Promise.reject(err);
     });
   },
@@ -91,8 +97,6 @@ module.exports = {
     }
   },
   isInstallerDeployed() {
-    console.log("platform.getInstallerPath()", platform.getInstallerPath());
-
     return platform.fileExists(platform.getInstallerPath());
   },
   startInstallerUpdate() {
@@ -103,12 +107,9 @@ module.exports = {
   },
   updateInstaller(installerPkgTempPath) {
     return platform.copyFolderRecursive(installerPkgTempPath, path.join(platform.getInstallDir(), config.getComponentInfo("InstallerElectron").copy))
-    .then(()=>{
-      return autostart.createAutostart();
-    })
-    .then(()=>{
-      return optimization.updateSettings();
-    });
+    .then(autostart.createAutostart)
+    .then(uninstall.createUninstallOption)
+    .then(optimization.updateSettings);
   },
   getRunningInstallerDir() {
     var currPath = module.exports.getCwd().split(path.sep);

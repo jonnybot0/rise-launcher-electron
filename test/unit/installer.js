@@ -7,6 +7,7 @@ launcher = require("../../launcher.js"),
 optimization = require("../../os-optimization.js"),
 capCheck = require("../../cap-check.js"),
 watchdogCheck = require("../../watchdog-check.js"),
+uninstall = require("./uninstall.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 path = require("path"),
@@ -65,6 +66,7 @@ describe("installer", ()=>{
     mock(platform, "deleteRecursively").resolveWith();
     mock(platform, "execSync").returnWith();
     mock(platform, "onFirstRun").resolveWith();
+    mock(platform, "writeTextFile").resolveWith();
 
     mock(downloader, "downloadComponents").resolveWith();
     mock(downloader, "extractComponents").resolveWith();
@@ -78,6 +80,8 @@ describe("installer", ()=>{
     mock(optimization, "updateSettings").returnWith();
 
     mock(capCheck, "isCAPInstalled").returnWith(false);
+
+    mock(uninstall, "createUninstallOption").resolveWith();
     
     mock(process, "exit").returnWith();
   });
