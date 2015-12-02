@@ -65,15 +65,19 @@ app.on("ready", ()=>{
       ui.showProxyOption();
       throw new Error();
     })
-    .then(prereqs.checkCAPNotInstalled)
-    .catch(()=>{
-      log.error("cap found", messages.CAPInstalled);
-      throw new Error();
+    .then(()=>{
+      return prereqs.checkCAPNotInstalled()
+      .catch(()=>{
+        log.error("cap found", messages.CAPInstalled);
+        throw new Error();
+      });
     })
-    .then(prereqs.checkNoLegacyWatchdog)
-    .catch(()=>{
-      log.error("legacy watchdog", messages.legacyWatchdog);
-      throw new Error();
+    .then(()=>{
+      return prereqs.checkNoLegacyWatchdog()
+      .catch(()=>{
+        log.error("legacy watchdog", messages.legacyWatchdog);
+        throw new Error();
+      });
     })
     .then(()=>{
       installer.begin();
