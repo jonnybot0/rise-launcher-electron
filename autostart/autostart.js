@@ -1,5 +1,5 @@
 var platform = require("../common/platform.js"),
-ws = require("windows-shortcuts");
+path = require("path");
 
 module.exports = {
   createAutostart() {
@@ -11,16 +11,15 @@ module.exports = {
     }
   },
   createWindowsAutostart() {
-    var shortCutPath = "%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Rise Vision Player.lnk";
+    var shortCutPath = path.join(platform.getAutoStartupPath(), "Rise Vision", "Rise Vision Player.lnk");
 
-    return module.exports.createWindowsShortcut(shortCutPath, platform.getInstallerPath());
+    return platform.createWindowsShortcut(shortCutPath, platform.getInstallerPath());
   },
   createUbuntuAutostart() {
-    var homeDir = platform.getHomeDir(),
-    fileText,
+    var fileText,
     autostartPath;
 
-    autostartPath = homeDir + "/.config/autostart/rvplayer.desktop";
+    autostartPath = path.join(platform.getAutoStartupPath(), "rvplayer.desktop");
 
     fileText =
     `[Desktop Entry]
@@ -39,18 +38,6 @@ module.exports = {
     return platform.writeTextFile(autostartPath, fileText)
     .then(()=>{
       return platform.setFilePermissions(autostartPath, 0755);
-    });
-  },
-  createWindowsShortcut(lnkPath, exePath) {
-    return new Promise((resolve, reject)=>{
-      ws.create(lnkPath, exePath, (err)=>{
-        if(!err) {
-          resolve();
-        }
-        else {
-          reject(err);
-        }
-      });        
     });
   }
 };

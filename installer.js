@@ -6,6 +6,7 @@ config = require("./common/config.js"),
 networkVerification = require("./network-check.js"),
 autostart = require("./autostart/autostart.js"),
 optimization = require("./os-optimization.js"),
+uninstall = require("./uninstall.js"),
 thisInstallerVersion = require("./version.json"),
 path = require("path"),
 yargs = require("yargs"),
@@ -91,8 +92,6 @@ module.exports = {
     }
   },
   isInstallerDeployed() {
-    console.log("platform.getInstallerPath()", platform.getInstallerPath());
-
     return platform.fileExists(platform.getInstallerPath());
   },
   startInstallerUpdate() {
@@ -103,12 +102,9 @@ module.exports = {
   },
   updateInstaller(installerPkgTempPath) {
     return platform.copyFolderRecursive(installerPkgTempPath, path.join(platform.getInstallDir(), config.getComponentInfo("InstallerElectron").copy))
-    .then(()=>{
-      return autostart.createAutostart();
-    })
-    .then(()=>{
-      return optimization.updateSettings();
-    });
+    .then(autostart.createAutostart)
+    .then(uninstall.createUninstallOption)
+    .then(optimization.updateSettings);
   },
   getRunningInstallerDir() {
     var currPath = module.exports.getCwd().split(path.sep);
