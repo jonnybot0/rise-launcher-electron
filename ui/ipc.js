@@ -1,4 +1,4 @@
-var ipc = require("ipc");
+const ipc = require("electron").ipcRenderer;
 
 ipc.on("first-ping", ()=> {
   ipc.send("ui-pong");
@@ -42,13 +42,13 @@ ipc.on("first-ping", ()=> {
   });
 });
 
-ipc.on("message", (message)=> {
+ipc.on("message", (evt, message)=> {
   var p = document.createElement("p");
   p.innerHTML = message;
   document.querySelector("div.messages").appendChild(p);
 });
 
-ipc.on("rewriteMessage", (messageObject)=> {
+ipc.on("rewriteMessage", (evt, messageObject)=> {
   if (document.getElementById(messageObject.id)) {
     document.getElementById(messageObject.id).innerHTML = messageObject.msg;
   } else {
@@ -59,17 +59,17 @@ ipc.on("rewriteMessage", (messageObject)=> {
   }
 });
 
-ipc.on("errorMessage", (detail)=> {
+ipc.on("errorMessage", (evt, detail)=> {
   var p = document.createElement("p");
   p.innerHTML = detail;
   document.querySelector("div.errors").appendChild(p);
 });
 
-ipc.on("version", (version)=> {
+ipc.on("version", (evt, version)=> {
   document.querySelector("#version").innerHTML = version;
 });
 
-ipc.on("enable-continue", (version)=> {
+ipc.on("enable-continue", ()=> {
   var btn = document.querySelector("#continue");
   var className = btn.className;
   btn.disabled = false;
@@ -78,7 +78,7 @@ ipc.on("enable-continue", (version)=> {
   .filter((itm)=>{return itm !=="disabled";}).join(" ");
 });
 
-ipc.on("disable-continue", (version)=> {
+ipc.on("disable-continue", ()=> {
   var btn = document.querySelector("#continue");
   var className = document.querySelector("#continue").className;
   className += " disabled";
@@ -103,7 +103,7 @@ ipc.on("show-proxy-options", ()=>{
   }
 });
 
-ipc.on("set-progress", (detail)=>{
+ipc.on("set-progress", (evt, detail)=>{
   var bar = document.querySelector(".progress-bar"),
   message = document.querySelector("#statusLabel");
   bar.style.width = detail.pct;

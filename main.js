@@ -1,5 +1,5 @@
 var app = require("app"),
-ipc = require("ipc"),
+ipc = require("electron").ipcMain,
 platform = require("./common/platform.js"),
 network = require("./common/network.js"),
 launcher = require("./launcher.js"),
