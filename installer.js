@@ -61,11 +61,15 @@ module.exports = {
         })
         .then(()=>{
           if(installerVersionChanged) {
+            log.all("updating installer version");
+
             module.exports.startInstallerUpdate().then(()=>{
               process.exit();
             });
           }
           else if(!installerDeployed) {
+            log.all("deploying installer");
+
             return module.exports.updateInstaller(runningInstallerDir);
           }
         })
@@ -80,6 +84,7 @@ module.exports = {
     })
     .catch((err)=>{
       log.error(require("util").inspect(err), messages.unknown);
+      console.log("Unexpected error", err);
       return Promise.reject(err);
     });
   },

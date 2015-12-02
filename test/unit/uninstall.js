@@ -29,7 +29,7 @@ describe("uninstall", ()=>{
       assert(platform.writeTextFile.called);
       assert(platform.mkdir.called);
       assert(platform.createWindowsShortcut.called);
-      assert.equal(platform.createWindowsShortcut.lastCall.args[0], path.join("programs", "Rise Vision", "Rise Vision Player.lnk"));
+      assert.equal(platform.createWindowsShortcut.lastCall.args[0], path.join("programs", "Rise Vision", "Uninstall Rise Vision Player.lnk"));
     });
   });
 

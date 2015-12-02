@@ -11,7 +11,7 @@ module.exports = {
     }
   },
   createWindowsAutostart() {
-    var shortCutPath = path.join(platform.getAutoStartupPath(), "Rise Vision", "Rise Vision Player.lnk");
+    var shortCutPath = path.join(platform.getAutoStartupPath(), "Rise Vision Player.lnk");
 
     return platform.createWindowsShortcut(shortCutPath, platform.getInstallerPath());
   },
