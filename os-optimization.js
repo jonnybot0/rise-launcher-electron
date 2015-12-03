@@ -49,8 +49,11 @@ function updateSettings() {
 }
 
 function executeCommands(osCommands) {
+  var pct = 0;
   Object.keys(osCommands).forEach((key)=>{
     osCommands[key].forEach((command)=>{
+      pct += 10;
+      log.all("Optimizing OS settings", "", pct + "%");
       execSync(command);
     });
   });

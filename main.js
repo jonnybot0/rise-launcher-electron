@@ -94,12 +94,16 @@ app.on("ready", ()=>{
 
   function installerPrereqCheck() {
     ui.disableContinue();
-    platform.onFirstRun(prereqs.checkNetworkConnectivity)()
+    platform.onFirstRun(()=>{
+      log.all("Checking network requirements", "", "25%");
+      return prereqs.checkNetworkConnectivity();
+    })()
     .catch(()=>{
       ui.showProxyOption();
       throw new Error();
     })
     .then(()=>{
+      log.all("Checking Chrome App Player", "", "45%");
       return prereqs.checkCAPNotInstalled()
       .catch(()=>{
         log.error("cap found", messages.CAPInstalled);
@@ -107,6 +111,7 @@ app.on("ready", ()=>{
       });
     })
     .then(()=>{
+      log.all("Checking Application Monitor", "", "75%");
       return prereqs.checkNoLegacyWatchdog()
       .catch(()=>{
         log.error("legacy watchdog", messages.legacyWatchdog);
