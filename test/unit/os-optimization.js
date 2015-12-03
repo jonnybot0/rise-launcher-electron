@@ -8,8 +8,7 @@ mock = require("simple-mock").mock;
 describe("os optimization", ()=>{
   beforeEach("setup mocks", ()=>{
     mock(platform, "getInstallerPath").returnWith("fake path");
-    mock(platform, "execSync").returnWith();
-    mock(childProcess, "execSync").returnWith();
+    mock(childProcess, "spawn").returnWith();
   });
 
   afterEach("clean mocks", ()=>{
@@ -22,15 +21,16 @@ describe("os optimization", ()=>{
     calledCommands;
 
     mock(platform, "isWindows").returnWith(windowsOrLinux === "windows");
-    optimization.updateSettings();
+    return optimization.updateSettings()
+    .then(()=>{
+      calledCommands = childProcess.spawn.calls.map((call)=>{
+        return call.args[0];
+      });
 
-    calledCommands = childProcess.execSync.calls.map((call)=>{
-      return call.args[0];
-    });
-
-    Object.keys(commandsToExecute).forEach((key)=>{
-      commandsToExecute[key].forEach((command)=>{
-        assert(calledCommands.indexOf(command) > -1);
+      Object.keys(commandsToExecute).forEach((key)=>{
+        commandsToExecute[key].forEach((command)=>{
+          assert(calledCommands.indexOf(command) > -1);
+        });
       });
     });
   }
@@ -47,7 +47,7 @@ describe("os optimization", ()=>{
     mock(log, "debug").returnWith();
     mock(log, "external").returnWith();
     mock(platform, "isWindows").returnWith(true);
-    mock(childProcess, "execSync").throwWith({err:"err"});
+    mock(childProcess, "spawn").returnWith({on(evt, fn) {fn();}});
     optimization.updateSettings();
     assert.ok(log.debug.callCount > 0);
     assert.ok(log.external.callCount > 0);

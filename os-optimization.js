@@ -1,5 +1,6 @@
 var platform = require("./common/platform.js"),
 childProcess = require("child_process"),
+promisesPct = 0,
 windowsCommands = {
   disableScreenSaver: [
     "reg add \"HKEY_CURRENT_USER\\Control Panel\\Desktop\" /v ScreenSaveActive /t REG_SZ /d 0 /f",
@@ -32,31 +33,42 @@ windowsCommands = {
   ]
 };
 
-function execSync(command) {
-  try {
-    childProcess.execSync(command, {timeout: 2000});
-  }
-  catch (e) {
-    log.debug("error optimizing system", e);
-    log.external("error optimizing system", require("util").inspect(e));
-  }
+function spawn(command) {
+  var args = command.split(" ");
+  args.splice(0, 1);
+  log.debug("executing " + command.split(" ")[0] + " with [" + args + "]");
+
+  return new Promise((res, rej)=>{
+    var child;
+
+      child = childProcess.spawn(command.split(" ")[0], args, {timeout: 2000});
+      child.on("close", (retCode)=>{
+        promisesPct += 10;
+        log.all("Optimizing OS Settings", "", promisesPct + "%");
+        res(retCode);
+      });
+      child.on("error", (err)=>{
+        log.debug("error optimizing system", err);
+        log.external("error optimizing system", require("util").inspect(err));
+      });
+  });
 }
 
 function updateSettings() {
-  if(platform.isWindows()) {
-    executeCommands(windowsCommands);
-  }
+  if(!platform.isWindows()) {return Promise.resolve();}
+  return executeCommands(windowsCommands);
 }
 
 function executeCommands(osCommands) {
-  var pct = 0;
+  promises = [];
+
   Object.keys(osCommands).forEach((key)=>{
     osCommands[key].forEach((command)=>{
-      pct += 10;
-      log.all("Optimizing OS settings", "", pct + "%");
-      execSync(command);
+      promises.push(spawn(command));
     });
   });
+
+  return Promise.all(promises);
 }
 
 module.exports = {
