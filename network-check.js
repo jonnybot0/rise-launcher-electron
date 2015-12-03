@@ -1,4 +1,5 @@
 var network = require("./common/network.js"),
+promisesPct = 0;
 siteList = [
   "http://rvashow2.appspot.com",
   "http://rvashow.appspot.com",
@@ -16,7 +17,11 @@ siteList = [
 module.exports = {
   checkSites() {
     var siteConnections = siteList.map((site)=>{
-      return network.httpFetch(site);
+      return network.httpFetch(site)
+      .then(()=>{
+        promisesPct += 10;
+        log.all("Checking network connectivity - " + site, "", promisesPct + "%");
+      });
     });
 
     return Promise.all(siteConnections);
