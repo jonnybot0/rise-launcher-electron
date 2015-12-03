@@ -3,6 +3,7 @@ platform = require("../../common/platform.js"),
 networkCheck = require("../../network-check.js"),
 capCheck = require("../../cap-check.js"),
 watchdogCheck = require("../../watchdog-check.js"),
+os = require("os"),
 mock = require("simple-mock").mock,
 simpleMock = require("simple-mock"),
 assert = require("assert");
@@ -14,7 +15,7 @@ describe("prereqs", ()=>{
     simpleMock.restore();
   });
 
-  it("allows windows", ()=>{
+  it("allows Windows", ()=>{
     mock(platform, "getOS").returnWith("win32");
     assert.ok(prereqs.validatePlatform());
   });
@@ -26,7 +27,14 @@ describe("prereqs", ()=>{
 
   it("accepts windows", ()=>{
     mock(platform, "getOS").returnWith("win32");
+    mock(os, "release").returnWith("10.0");
     assert.ok(prereqs.validateOS());
+  });
+
+  it("does not accept Windows XP", ()=>{
+    mock(platform, "getOS").returnWith("win32");
+    mock(os, "release").returnWith("5.1");
+    assert.ok(!prereqs.validateOS());
   });
 
   it("accepts ubuntu 14.04", ()=>{

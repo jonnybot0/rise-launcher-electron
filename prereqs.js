@@ -1,7 +1,8 @@
 var platform = require("./common/platform.js"),
 networkCheck = require("./network-check.js"),
 capCheck = require("./cap-check.js"),
-watchdogCheck = require("./watchdog-check.js");
+watchdogCheck = require("./watchdog-check.js"),
+os = require("os");
 
 module.exports = {
   validatePlatform() {
@@ -10,7 +11,9 @@ module.exports = {
   validateOS() {
     var osVer;
 
-    if (platform.getOS() === "win32") {return true;}
+    if (platform.getOS() === "win32") {
+      return !os.release().startsWith("5");
+    }
 
     osVer = platform.getUbuntuVer();
 
