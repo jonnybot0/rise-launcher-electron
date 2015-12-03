@@ -10,6 +10,15 @@ deployment:
     branch: /(feature|fix|chore).*/
     commands:
       - node build.js
+      - cp builds/*.exe $CIRCLE_ARTIFACTS
+      - cp builds/*.sh $CIRCLE_ARTIFACTS
+
+  production:
+    branch: master
+    commands:
+      - node build.js
+      - cp builds/*.exe $CIRCLE_ARTIFACTS
+      - cp builds/*.sh $CIRCLE_ARTIFACTS
 
 #Update version.json with a new version number
 #node build
