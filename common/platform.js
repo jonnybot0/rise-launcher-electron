@@ -67,7 +67,7 @@ module.exports = {
       return path.join(module.exports.getHomeDir(), ".config", "autostart");
     }
   },
-  waitFor(milliseconds) {
+  waitForMillis(milliseconds) {
     return new Promise((resolve, reject)=>{
       setTimeout(function() {
         resolve();

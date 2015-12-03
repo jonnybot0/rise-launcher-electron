@@ -80,24 +80,24 @@ describe("launcher", ()=>{
   it("launches Cache and Player", ()=>{
     mock(platform, "getInstallDir").returnWith("test");
     mock(platform, "startProcess").returnWith();
-    mock(platform, "waitFor").resolveWith();
+    mock(platform, "waitForMillis").resolveWith();
     mock(network, "httpFetch").resolveWith();
 
     return launcher.launch().then(()=>{
       assert.equal(platform.startProcess.callCount, 2);
-      assert.equal(platform.waitFor.callCount, 3);
+      assert.equal(platform.waitForMillis.callCount, 3);
     });
   });
 
   it("launches Cache and Player even when stopping them fails", ()=>{
     mock(platform, "getInstallDir").returnWith("test");
     mock(platform, "startProcess").returnWith();
-    mock(platform, "waitFor").resolveWith();
+    mock(platform, "waitForMillis").resolveWith();
     mock(network, "httpFetch").rejectWith();
 
     return launcher.launch().then(()=>{
       assert.equal(platform.startProcess.callCount, 2);
-      assert.equal(platform.waitFor.callCount, 3);
+      assert.equal(platform.waitForMillis.callCount, 3);
     });
   });
 });
