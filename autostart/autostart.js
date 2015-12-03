@@ -6,7 +6,7 @@ userWantsAutostart = true;
 module.exports = {
   requested(yesOrNo) {userWantsAutostart = yesOrNo;},
   createAutostart() {
-    if (!userWantsAutostart) {log.debug("not setting autostart");return;}
+    if (!userWantsAutostart) {log.debug("not setting autostart");return Promise.resolve();}
 
     log.all("Setting autostart", "", "15%");
     if(platform.isWindows()) {

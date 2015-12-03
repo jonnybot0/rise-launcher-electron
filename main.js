@@ -65,9 +65,9 @@ app.on("ready", ()=>{
   });
 
   ipc.on("install", (event, message)=>{
-    optimization.updateSettings();
-    autostart.createAutostart();
-    installerPrereqCheck();
+    optimization.updateSettings()
+    .then(autostart.createAutostart)
+    .then(installerPrereqCheck);
   });
 
   ipc.on("launch", ()=>{

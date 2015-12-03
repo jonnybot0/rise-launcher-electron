@@ -110,12 +110,14 @@ module.exports = {
     return stringContents;
   },
   writeTextFile(path, data) {
+    log.debug("writing " + path);
     return new Promise((resolve, reject)=>{
       fs.writeFile(path, data, "utf8", function (err) {
         if(!err) {
           resolve();
         }
         else {
+          log.error("Error writing file", messages.fileWriteError);
           reject({ message: "Error writing file", error: err });
         }
       });
