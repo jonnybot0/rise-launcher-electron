@@ -229,7 +229,7 @@ label.css-label {
   color: #000;
   border: 1px solid #e78f8e;
   text-align: center;
-  display: inline-block;
+  display: none;
   margin: 10px;
   font-size: 12px;
   max-height: 150px;

@@ -60,6 +60,7 @@ ipc.on("rewriteMessage", (evt, messageObject)=> {
 });
 
 ipc.on("errorMessage", (evt, detail)=> {
+  document.querySelector(".errors").style.display = "inline-block";
   var p = document.createElement("p");
   p.innerHTML = detail;
   document.querySelector("div.errors").appendChild(p);
