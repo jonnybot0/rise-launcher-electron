@@ -6,9 +6,13 @@ userWantsAutostart = true;
 module.exports = {
   requested(yesOrNo) {userWantsAutostart = yesOrNo;},
   createAutostart() {
-    if (!userWantsAutostart) {log.debug("not setting autostart");return Promise.resolve();}
-
+    if (!userWantsAutostart) {
+      log.debug("not setting autostart");
+      return Promise.resolve();
+    }
+    
     log.all("Setting autostart", "", "15%");
+
     if(platform.isWindows()) {
       return module.exports.createWindowsAutostart();
     }
@@ -44,18 +48,6 @@ module.exports = {
     return platform.writeTextFile(autostartPath, fileText)
     .then(()=>{
       return platform.setFilePermissions(autostartPath, 0755);
-    });
-  },
-  createWindowsShortcut(lnkPath, exePath) {
-    return new Promise((resolve, reject)=>{
-      ws.create(lnkPath, exePath, (err)=>{
-        if(!err) {
-          resolve();
-        }
-        else {
-          reject(err);
-        }
-      });        
     });
   }
 };

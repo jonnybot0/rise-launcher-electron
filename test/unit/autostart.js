@@ -70,4 +70,16 @@ describe("autostart", ()=>{
       assert.equal(platform.setFilePermissions.lastCall.args[0], expectedAutoStartPath);
     });
   });
+
+  it("does not create a autostart entry", ()=>{
+    mock(autostart, "createWindowsAutostart").resolveWith();
+    mock(autostart, "createUbuntuAutostart").resolveWith();
+
+    autostart.requested(false);
+    
+    return autostart.createAutostart().then(()=>{
+      assert(!autostart.createWindowsAutostart.called);
+      assert(!autostart.createUbuntuAutostart.called);
+    });
+  });
 });

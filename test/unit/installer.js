@@ -8,6 +8,7 @@ optimization = require("../../os-optimization.js"),
 capCheck = require("../../cap-check.js"),
 watchdogCheck = require("../../watchdog-check.js"),
 uninstall = require("./uninstall.js"),
+stop = require("./stop.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 path = require("path"),
@@ -82,7 +83,9 @@ describe("installer", ()=>{
     mock(capCheck, "isCAPInstalled").returnWith(false);
 
     mock(uninstall, "createUninstallOption").resolveWith();
-    
+
+    mock(stop, "createStopOption").resolveWith();
+
     mock(process, "exit").returnWith();
   });
 
