@@ -10,9 +10,10 @@ module.exports = (externalLogger)=> {
       if (externalLogger) {externalLogger.log("error", detail);}
       if (uiWindow) {uiWindow.send("errorMessage", userFriendlyMessage || detail);}
     },
-    all(evt, detail) {
+    all(evt, detail, pct) {
       console.log(evt, detail ? detail : "");
-      if (uiWindow) {uiWindow.send("message", detail ? evt + ": " + detail : evt);}
+      if (uiWindow && !pct) {uiWindow.send("message", detail ? evt + ": " + detail : evt);}
+      if (uiWindow && pct) {uiWindow.send("set-progress", {msg: evt, pct});}
       if (externalLogger) {externalLogger.log(evt, detail);}
     },
     setUIWindow(win) {
@@ -27,8 +28,8 @@ module.exports = (externalLogger)=> {
     file() {
       Array.prototype.slice.call(arguments).forEach(msg=>{console.log(msg);});
     },
-    ui(msg, id) {
-      if (uiWindow) {uiWindow.send(id ? "rewriteMessage" : "message", {msg, id});}
+    progress(msg, pct) {
+      if (uiWindow) {uiWindow.send("set-progress", {msg, pct});}
     }
   };
 };

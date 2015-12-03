@@ -1,6 +1,5 @@
 var component = require("./component.js"),
 downloader = require("./downloader.js"),
-launcher = require("./launcher.js"),
 platform = require("./common/platform.js"),
 config = require("./common/config.js"),
 networkVerification = require("./network-check.js"),
@@ -14,8 +13,7 @@ options = yargs.parse(process.argv.slice(1));
 
 module.exports = {
   begin() {
-    log.all("beginning install");
-
+    log.all("beginning install", "", "5%");
     return module.exports.checkInstallerUpdateStatus()
     .then(()=>{
       return platform.mkdir(platform.getInstallDir());
@@ -24,7 +22,7 @@ module.exports = {
       return platform.deleteRecursively(platform.getOldInstallerPath());
     })
     .then(()=>{
-      log.all("fetching components list");
+      log.all("fetching components list", "", "10%");
 
       return component.getComponents().then((compsMap)=>{
         var components = component.getComponentNames().map((name)=>{ return compsMap[name]; });
@@ -35,27 +33,27 @@ module.exports = {
         var runningInstallerDir = module.exports.getRunningInstallerDir();
         
         if(compsMap.InstallerElectron.versionChanged) {
-          log.all("upgrading installer");
+          log.all("upgrading installer", "20%");
 
           changedComponents = [compsMap.InstallerElectron];
           changedNames = "installer";
         }
 
-        log.all("downloading components", changedNames);
+        log.all("downloading components", changedNames, "30%");
 
         return downloader.downloadComponents(changedComponents)
         .then(()=>{
-          log.all("extracting", changedNames);
+          log.all("extracting", changedNames, "50%");
 
           return downloader.extractComponents(changedComponents);
         })
         .then(()=>{
-          log.all("removing previous versions", changedNames);
+          log.all("removing previous versions", changedNames, "60%");
 
           return downloader.removePreviousVersions(changedComponents);
         })
         .then(()=>{
-          log.all("installing", changedNames);
+          log.all("installing", changedNames, "90%");
 
           return downloader.installComponents(changedComponents);
         })
@@ -72,13 +70,7 @@ module.exports = {
 
             return module.exports.updateInstaller(runningInstallerDir);
           }
-        })
-        .then(()=>{
-          log.all("install complete");
-
-          return launcher.launch().then(()=>{
-            process.exit(0);
-          });
+          log.all("install complete", "", "100%");
         });
       });
     })

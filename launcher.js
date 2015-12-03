@@ -62,23 +62,23 @@ module.exports = {
   launch() {
     return module.exports.stopCache()
     .then(()=>{
-      return platform.waitFor(2000);
+      return platform.waitForMillis(2000);
     })
     .then(()=>{
-      log.all("cache start");
+      log.all("cache start", "", "50%");
       startCache();
 
       return module.exports.stopPlayer();
     })
     .then(()=>{
-      return platform.waitFor(2000);
+      return platform.waitForMillis(2000);
     })
     .then(()=>{
-      log.all("player start");
-      startPlayer();
+      log.all("player start", "", "100%");
+      return startPlayer();
     })
     .then(()=>{
-      return platform.waitFor(2000);
+      return platform.waitForMillis(2000);
     });
   }
 };

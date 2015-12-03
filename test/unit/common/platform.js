@@ -66,7 +66,7 @@ describe("platform", ()=>{
   it("waits for 100ms to resolve the promise", ()=>{
     var time0 = new Date().getTime();
 
-    return platform.waitFor(100).then(()=>{
+    return platform.waitForMillis(100).then(()=>{
       assert(new Date().getTime() - time0 >= 0);
     });
   });

@@ -133,8 +133,6 @@ describe("installer", ()=>{
       assert(downloader.extractComponents.called);
       assert(downloader.removePreviousVersions.called);
       assert(!downloader.installComponent.called);
-      assert(launcher.launch.called);
-      assert(process.exit.called);
     });
   });
 
@@ -160,8 +158,6 @@ describe("installer", ()=>{
       assert(downloader.removePreviousVersions.called);
       assert(downloader.installComponent.called);
       assert.equal(downloader.installComponent.callCount, 4);
-      assert(launcher.launch.called);
-      assert(process.exit.called);
     });
   });
 
@@ -180,8 +176,6 @@ describe("installer", ()=>{
       assert(downloader.downloadComponents.called);
       assert(downloader.extractComponents.called);
       assert(downloader.removePreviousVersions.called);
-      assert(launcher.launch.called);
-      assert(process.exit.called);
     });
   });
 

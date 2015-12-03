@@ -1,8 +1,12 @@
 var platform = require("../common/platform.js"),
-path = require("path");
+path = require("path"),
+ws = require("windows-shortcuts"),
+userWantsAutostart = true;
 
 module.exports = {
+  requested(yesOrNo) {userWantsAutostart = yesOrNo;},
   createAutostart() {
+    if (!userWantsAutostart) {log.debug("not setting autostart");return;}
     if(platform.isWindows()) {
       return module.exports.createWindowsAutostart();
     }
@@ -38,6 +42,19 @@ module.exports = {
     return platform.writeTextFile(autostartPath, fileText)
     .then(()=>{
       return platform.setFilePermissions(autostartPath, 0755);
+    });
+  },
+  createWindowsShortcut(lnkPath, exePath) {
+    log.all("windows shortcut", "", "30%");
+    return new Promise((resolve, reject)=>{
+      ws.create(lnkPath, exePath, (err)=>{
+        if(!err) {
+          resolve();
+        }
+        else {
+          reject(err);
+        }
+      });        
     });
   }
 };

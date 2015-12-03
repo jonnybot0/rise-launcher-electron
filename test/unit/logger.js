@@ -41,13 +41,6 @@ describe("launcher", ()=>{
     assert(externalLogger.log.called);
   });
 
-  it("only calls ui logger on 'ui' method", ()=>{
-    log.setUIWindow(uiWindow);
-    log.ui("test");
-    assert(uiWindow.send.called);
-    assert(!externalLogger.log.called);
-  });
-
   it("sets external logger's display settings", ()=>{
     mock(externalLogger, "setDisplaySettings").returnWith();
     log.setDisplaySettings("test");

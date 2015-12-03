@@ -4,6 +4,17 @@ config = require("./common/config.js"),
 fs = require("fs"),
 path = require("path");
 
+network.registerObserver((stats)=>{
+  var totalExpected = 0, totalReceived = 0;
+
+  Object.keys(stats).forEach((key)=>{
+    totalExpected += stats[key].bytesExpected;
+    totalReceived += stats[key].bytesReceived;
+  });
+
+  log.progress("downloading components", (totalReceived / totalExpected * 100) + "%");
+});
+
 module.exports = {
   downloadComponents(components) {
     var promises = components.map((c)=>{
