@@ -42,6 +42,7 @@ describe("network", ()=>{
   it("downloads a file using the given url", ()=>{
     mock(http, "get").callbackWith({
       statusCode: 200,
+      headers: {"content-length": 0},
       on(name, cb) {
         if(name === "end") { cb(); }
         if(name === "data") { cb(""); }

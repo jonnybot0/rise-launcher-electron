@@ -72,7 +72,7 @@ app.on("ready", ()=>{
 
   ipc.on("launch", ()=>{
     return launcher.launch().then(()=>{
-      process.exit();
+      process.exit(0);
     });
   });
 
