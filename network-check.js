@@ -19,7 +19,6 @@ module.exports = {
       return network.httpFetch(site);
     });
 
-    log.all("Checking network requirements", "", "25%");
     return Promise.all(siteConnections);
   }
 };

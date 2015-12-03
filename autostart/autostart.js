@@ -7,6 +7,8 @@ module.exports = {
   requested(yesOrNo) {userWantsAutostart = yesOrNo;},
   createAutostart() {
     if (!userWantsAutostart) {log.debug("not setting autostart");return;}
+
+    log.all("Setting autostart", "", "15%");
     if(platform.isWindows()) {
       return module.exports.createWindowsAutostart();
     }
@@ -45,7 +47,6 @@ module.exports = {
     });
   },
   createWindowsShortcut(lnkPath, exePath) {
-    log.all("windows shortcut", "", "30%");
     return new Promise((resolve, reject)=>{
       ws.create(lnkPath, exePath, (err)=>{
         if(!err) {
