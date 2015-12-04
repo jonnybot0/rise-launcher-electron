@@ -84,13 +84,19 @@ app.on("ready", ()=>{
     if (!(prereqs.validatePlatform() && prereqs.validateOS())) {
       log.error("os validation failure", messages.osRequirementsNotMet);
     }
-
-    if (isUnattended()) {
-      installer.begin();
-    }
   });
 
-  mainWindow = ui.init();
+  if (isUnattended()) {
+    installer.begin()
+    .then(()=>{
+      return launcher.launch();
+    })
+    .then(()=>{
+      process.exit(0);
+    });
+  } else {
+    mainWindow = ui.init();
+  }
 
   function installerPrereqCheck() {
     ui.disableContinue();

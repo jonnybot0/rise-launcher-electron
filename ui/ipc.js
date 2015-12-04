@@ -64,6 +64,7 @@ ipc.on("errorMessage", (evt, detail)=> {
   var p = document.createElement("p");
   p.innerHTML = detail;
   document.querySelector("div.errors").appendChild(p);
+  setContinueButtonEnabled(false);
 });
 
 ipc.on("version", (evt, version)=> {
@@ -71,22 +72,26 @@ ipc.on("version", (evt, version)=> {
 });
 
 ipc.on("enable-continue", ()=> {
-  var btn = document.querySelector("#continue");
-  var className = btn.className;
-  btn.disabled = false;
-
-  btn.className = btn.className.split(" ")
-  .filter((itm)=>{return itm !=="disabled";}).join(" ");
+  setContinueButtonEnabled(true);
 });
 
 ipc.on("disable-continue", ()=> {
-  var btn = document.querySelector("#continue");
-  var className = document.querySelector("#continue").className;
-  className += " disabled";
-
-  btn.disabled = true;
-  btn.className = className;
+  setContinueButtonEnabled(false);
 });
+
+function setContinueButtonEnabled(enabled) {
+  var btn = document.querySelector("#continue");
+  var className = btn.className;
+  btn.disabled = !enabled;
+
+  if (!enabled) {
+    className += " disabled";
+    btn.className = className;
+  } else {
+    btn.className = btn.className.split(" ")
+    .filter((itm)=>{return itm !=="disabled";}).join(" ");
+  }
+}
 
 ipc.on("show-proxy-options", ()=>{
   var optionsBlock = document.querySelector("#proxyOptions"),
