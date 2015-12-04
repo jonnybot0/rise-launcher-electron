@@ -19,7 +19,7 @@ module.exports = {
     var siteConnections = siteList.map((site)=>{
       return network.httpFetch(site)
       .then(()=>{
-        promisesPct += 10;
+        promisesPct += 9;
         log.all("Checking network connectivity - " + site, "", promisesPct + "%");
       });
     });
