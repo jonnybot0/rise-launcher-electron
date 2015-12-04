@@ -114,9 +114,6 @@ describe("installer", ()=>{
       assert(platform.copyFolderRecursive.called);
       assert.equal(platform.copyFolderRecursive.lastCall.args[0], "testPath");
       assert.equal(platform.copyFolderRecursive.lastCall.args[1], path.join("install", "Installer"));
-
-      assert.equal(autostart.createAutostart.callCount, 1);
-      assert.equal(optimization.updateSettings.callCount, 1);
     });
   });
 

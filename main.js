@@ -52,7 +52,9 @@ app.on("ready", ()=>{
   ipc.on("set-proxy", (event, message)=>{
     proxy.setEndpoint(message);
     attendedPrereqCheck()
-    .then(installer.begin());
+    .then(preInstall)
+    .then(installer.begin)
+    .then(ui.enableContinue);
   });
 
   ipc.on("set-autostart", (event, message)=>{
@@ -66,8 +68,9 @@ app.on("ready", ()=>{
   });
 
   ipc.on("install", (event, message)=>{
-    preInstall()
-    .then(attendedPrereqCheck)
+    ui.disableContinue();
+    attendedPrereqCheck()
+    .then(preInstall)
     .then(installer.begin)
     .then(ui.enableContinue);
   });
@@ -109,7 +112,6 @@ app.on("ready", ()=>{
   }
 
   function attendedPrereqCheck() {
-    ui.disableContinue();
     return platform.onFirstRun(()=>{
       log.all("Checking network requirements", "", "25%");
       return prereqs.checkNetworkConnectivity();
