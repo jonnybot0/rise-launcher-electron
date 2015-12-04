@@ -51,7 +51,10 @@ app.on("ready", ()=>{
 
   ipc.on("set-proxy", (event, message)=>{
     proxy.setEndpoint(message);
-    installerPrereqCheck();
+    attendedPrereqCheck()
+    .then(preInstall)
+    .then(installer.begin)
+    .then(ui.enableContinue);
   });
 
   ipc.on("set-autostart", (event, message)=>{
@@ -65,9 +68,11 @@ app.on("ready", ()=>{
   });
 
   ipc.on("install", (event, message)=>{
-    optimization.updateSettings()
-    .then(autostart.createAutostart)
-    .then(installerPrereqCheck);
+    ui.disableContinue();
+    attendedPrereqCheck()
+    .then(preInstall)
+    .then(installer.begin)
+    .then(ui.enableContinue);
   });
 
   ipc.on("launch", ()=>{
@@ -87,7 +92,8 @@ app.on("ready", ()=>{
   });
 
   if (isUnattended()) {
-    installer.begin()
+    preInstall()
+    .then(installer.begin)
     .then(()=>{
       return launcher.launch();
     })
@@ -98,9 +104,15 @@ app.on("ready", ()=>{
     mainWindow = ui.init();
   }
 
-  function installerPrereqCheck() {
-    ui.disableContinue();
-    platform.onFirstRun(()=>{
+  function preInstall() {
+    return optimization.updateSettings()
+    .then(autostart.createAutostart)
+    .then(uninstall.createUninstallOption)
+    .then(stop.createStopOption);
+  }
+
+  function attendedPrereqCheck() {
+    return platform.onFirstRun(()=>{
       log.all("Checking network requirements", "", "25%");
       return prereqs.checkNetworkConnectivity();
     })()
@@ -123,8 +135,6 @@ app.on("ready", ()=>{
         log.error("legacy watchdog", messages.legacyWatchdog);
         throw new Error();
       });
-    })
-    .then(installer.begin)
-    .then(ui.enableContinue);
+    });
   }
 });
