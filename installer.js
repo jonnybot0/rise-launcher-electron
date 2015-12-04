@@ -99,11 +99,7 @@ module.exports = {
     });
   },
   updateInstaller(installerPkgTempPath) {
-    return platform.copyFolderRecursive(installerPkgTempPath, path.join(platform.getInstallDir(), config.getComponentInfo("InstallerElectron").copy))
-    .then(autostart.createAutostart)
-    .then(uninstall.createUninstallOption)
-    .then(stop.createStopOption)
-    .then(optimization.updateSettings);
+    return platform.copyFolderRecursive(installerPkgTempPath, path.join(platform.getInstallDir(), config.getComponentInfo("InstallerElectron").copy));
   },
   getRunningInstallerDir() {
     var currPath = module.exports.getCwd().split(path.sep);
