@@ -50,6 +50,7 @@ function spawn(command) {
       child.on("error", (err)=>{
         log.debug("error optimizing system", err);
         log.external("error optimizing system", require("util").inspect(err));
+        res(retCode);
       });
   });
 }
