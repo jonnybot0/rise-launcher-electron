@@ -1,9 +1,13 @@
 {
-  "esnext": true,
+  "esversion": 6,
+  "undef": true,
   "white": true,
   "globals": {
     "window": false,
     "module": false,
+    "log": false,
+    "global": false,
+    "messages": false,
     "describe": false,
     "document": false,
     "chrome": false,
