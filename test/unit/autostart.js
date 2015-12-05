@@ -47,8 +47,8 @@ describe("autostart", ()=>{
 
     return autostart.createWindowsAutostart()
     .then(()=>{
-      assert.ok(platform.createWindowsShortcut.callCount === 1);
-      assert.ok(platform.createWindowsShortcut.lastCall.args[1] === exePath);
+      assert.equal(platform.createWindowsShortcut.callCount, 1);
+      assert.equal(platform.createWindowsShortcut.lastCall.args[1], exePath + " --unattended");
     });
   });
 
