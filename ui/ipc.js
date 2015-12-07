@@ -48,6 +48,16 @@ ipc.on("message", (evt, message)=> {
   document.querySelector("div.messages").appendChild(p);
 });
 
+ipc.on("start-unattended", (evt, message)=> {
+  var currentSlide = document.querySelector(".container.slide.active"),
+  installingSlide = document.querySelector("#installing");
+
+  currentSlide.className = "container slide inactive";
+  installingSlide.className = "container slide active";
+
+  ipc.send("install");
+});
+
 ipc.on("rewriteMessage", (evt, messageObject)=> {
   if (document.getElementById(messageObject.id)) {
     document.getElementById(messageObject.id).innerHTML = messageObject.msg;
@@ -95,9 +105,12 @@ function setContinueButtonEnabled(enabled) {
 
 ipc.on("show-proxy-options", ()=>{
   var optionsBlock = document.querySelector("#proxyOptions"),
-  okButton = document.querySelector("#proxyOptions button");
+  okButton = document.querySelector("#proxyOptions button"),
+  progressContainer = document.querySelector("#progressContainer");
 
   optionsBlock.style.display = "block";
+  progressContainer.style.display = "none";
+
   okButton.addEventListener("click", doneHandler);
 
   function doneHandler() {
@@ -105,6 +118,7 @@ ipc.on("show-proxy-options", ()=>{
     proxyPort = document.querySelector("#proxyPort");
     okButton.removeEventListener(doneHandler);
     optionsBlock.style.display = "none";
+    progressContainer.style.display = "block";
     ipc.send("set-proxy", proxyAddress.value + ":" + proxyPort.value );
   }
 });

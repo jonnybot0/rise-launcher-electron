@@ -219,9 +219,9 @@ module.exports = {
       return function() {return Promise.resolve();};
     }
   },
-  createWindowsShortcut(lnkPath, exePath) {
+  createWindowsShortcut(lnkPath, exePath, args) {
     return new Promise((resolve, reject)=>{
-      ws.create(lnkPath, exePath, (err)=>{
+      ws.create(lnkPath, { target: exePath, args: args }, (err)=>{
         if(!err) {
           resolve();
         }

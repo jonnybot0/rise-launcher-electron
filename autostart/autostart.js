@@ -22,9 +22,9 @@ module.exports = {
   },
   createWindowsAutostart() {
     var shortCutPath = path.join(platform.getAutoStartupPath(), "Rise Vision Player.lnk");
-    var uninstallPath = platform.getInstallerPath() + " --unattended";
+    var uninstallPath = platform.getInstallerPath();
 
-    return platform.createWindowsShortcut(shortCutPath, uninstallPath)
+    return platform.createWindowsShortcut(shortCutPath, uninstallPath, "--unattended")
     .catch((err)=>{
       log.debug("error creating autostart", err);
       log.external("error creating autostart", require("util").inspect(err));

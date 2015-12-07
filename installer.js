@@ -60,17 +60,19 @@ module.exports = {
         })
         .then(()=>{
           if(installerVersionChanged) {
-            log.all("updating installer version");
+            log.all("updating installer version", "", "95%");
 
             module.exports.startInstallerUpdate().then(()=>{
               process.exit(0);
             });
           }
           else if(!installerDeployed) {
-            log.all("deploying installer");
+            log.all("deploying installer", "", "95%");
 
             return module.exports.updateInstaller(runningInstallerDir);
           }
+        })
+        .then(()=>{
           log.all("install complete", "", "100%");
         });
       });

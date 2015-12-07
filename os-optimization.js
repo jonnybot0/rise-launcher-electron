@@ -43,7 +43,7 @@ function spawn(command) {
 
       child = childProcess.spawn(command.split(" ")[0], args, {timeout: 2000});
       child.on("close", (retCode)=>{
-        promisesPct += 10;
+        promisesPct += (100 / 15); // Currently 15 commands
         log.all("Optimizing OS Settings", "", promisesPct + "%");
         res(retCode);
       });

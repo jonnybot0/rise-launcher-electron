@@ -53,7 +53,7 @@ app.on("ready", ()=>{
 
   ipc.on("set-proxy", (event, message)=>{
     proxy.setEndpoint(message);
-    attendedPrereqCheck()
+    prereqCheck()
     .then(preInstall)
     .then(installer.begin)
     .then(ui.enableContinue);
@@ -71,10 +71,24 @@ app.on("ready", ()=>{
 
   ipc.on("install", (event, message)=>{
     ui.disableContinue();
-    attendedPrereqCheck()
-    .then(preInstall)
-    .then(installer.begin)
-    .then(ui.enableContinue);
+
+    if (isUnattended()) {
+      prereqCheck()
+      .then(preInstall)
+      .then(installer.begin)
+      .then(()=>{
+        return launcher.launch();
+      })
+      .then(()=>{
+        process.exit(0);
+      });
+    }
+    else {
+      prereqCheck()
+      .then(preInstall)
+      .then(installer.begin)
+      .then(ui.enableContinue);
+    }
   });
 
   ipc.on("launch", ()=>{
@@ -91,20 +105,13 @@ app.on("ready", ()=>{
     if (!(prereqs.validatePlatform() && prereqs.validateOS())) {
       log.error("os validation failure", messages.osRequirementsNotMet);
     }
+
+    if (isUnattended()) {
+      ui.startUnattended();
+    }
   });
 
-  if (isUnattended()) {
-    preInstall()
-    .then(installer.begin)
-    .then(()=>{
-      return launcher.launch();
-    })
-    .then(()=>{
-      process.exit(0);
-    });
-  } else {
-    mainWindow = ui.init();
-  }
+  mainWindow = ui.init();
 
   function preInstall() {
     return optimization.updateSettings()
@@ -113,7 +120,7 @@ app.on("ready", ()=>{
     .then(stop.createStopOption);
   }
 
-  function attendedPrereqCheck() {
+  function prereqCheck() {
     return platform.onFirstRun(()=>{
       log.all("Checking network requirements", "", "25%");
       return prereqs.checkNetworkConnectivity();
