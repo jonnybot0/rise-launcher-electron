@@ -48,6 +48,16 @@ ipc.on("message", (evt, message)=> {
   document.querySelector("div.messages").appendChild(p);
 });
 
+ipc.on("start-unattended", (evt, message)=> {
+  var currentSlide = document.querySelector(".container.slide.active"),
+  installingSlide = document.querySelector("#installing");
+
+  currentSlide.className = "container slide inactive";
+  installingSlide.className = "container slide active";
+
+  ipc.send("install");
+});
+
 ipc.on("rewriteMessage", (evt, messageObject)=> {
   if (document.getElementById(messageObject.id)) {
     document.getElementById(messageObject.id).innerHTML = messageObject.msg;

@@ -42,5 +42,8 @@ module.exports = {
   },
   disableContinue() {
     mainWindow.webContents.send("disable-continue");
+  },
+  startUnattended() {
+    mainWindow.webContents.send("start-unattended");
   }
 };
