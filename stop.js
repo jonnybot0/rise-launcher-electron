@@ -8,7 +8,7 @@ function createWindowsStopOption() {
   var content = "";
 
   content += "taskkill /f /im chrome.exe" + "\n";
-  content += "taskkill /f /im java.exe" + "\n";
+  content += "taskkill /f /im javaw.exe" + "\n";
   content += "taskkill /f /im installer.exe" + "\n";
 
   return platform.writeTextFile(stopScriptPath, content)

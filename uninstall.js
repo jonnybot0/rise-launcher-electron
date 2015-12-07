@@ -9,7 +9,7 @@ function createWindowsUninstallOption() {
   var content = "";
 
   content += "taskkill /f /im chrome.exe" + "\n";
-  content += "taskkill /f /im java.exe" + "\n";
+  content += "taskkill /f /im javaw.exe" + "\n";
   content += "taskkill /f /im installer.exe" + "\n";
   content += "del /F /Q \"" + autostartShortcut + "\"\n";
   content += "del /F /S /Q \"" + riseProgramsDir + "\"\n";
