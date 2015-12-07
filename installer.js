@@ -23,7 +23,7 @@ module.exports = {
       return platform.deleteRecursively(platform.getOldInstallerPath());
     })
     .then(()=>{
-      log.all("beginning install", "", "10%");
+      log.all("checking components", "", "10%");
 
       return component.getComponents().then((compsMap)=>{
         var components = component.getComponentNames().map((name)=>{ return compsMap[name]; });
