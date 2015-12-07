@@ -105,9 +105,12 @@ function setContinueButtonEnabled(enabled) {
 
 ipc.on("show-proxy-options", ()=>{
   var optionsBlock = document.querySelector("#proxyOptions"),
-  okButton = document.querySelector("#proxyOptions button");
+  okButton = document.querySelector("#proxyOptions button"),
+  progressContainer = document.querySelector("#progressContainer");
 
   optionsBlock.style.display = "block";
+  progressContainer.style.display = "none";
+
   okButton.addEventListener("click", doneHandler);
 
   function doneHandler() {
@@ -115,6 +118,7 @@ ipc.on("show-proxy-options", ()=>{
     proxyPort = document.querySelector("#proxyPort");
     okButton.removeEventListener(doneHandler);
     optionsBlock.style.display = "none";
+    progressContainer.style.display = "block";
     ipc.send("set-proxy", proxyAddress.value + ":" + proxyPort.value );
   }
 });
