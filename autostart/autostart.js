@@ -22,26 +22,24 @@ module.exports = {
   },
   createWindowsAutostart() {
     var shortCutPath = path.join(platform.getAutoStartupPath(), "Rise Vision Player.lnk");
+    var uninstallPath = platform.getInstallerPath() + " --unattended";
 
-    return platform.createWindowsShortcut(shortCutPath, platform.getInstallerPath())
+    return platform.createWindowsShortcut(shortCutPath, uninstallPath)
     .catch((err)=>{
       log.debug("error creating autostart", err);
       log.external("error creating autostart", require("util").inspect(err));
     });
   },
   createUbuntuAutostart() {
-    var fileText,
-    autostartPath;
-
-    autostartPath = path.join(platform.getAutoStartupPath(), "rvplayer.desktop");
-
-    fileText =
+    var autostartPath = path.join(platform.getAutoStartupPath(), "rvplayer.desktop");
+    var uninstallPath = platform.getInstallerPath() + " --unattended";
+    var fileText =
     `[Desktop Entry]
     Encoding=UTF-8
     Name=Rise Vision Player
     Comment=
     Icon=
-    Exec=` + platform.getInstallerPath() + `
+    Exec=` + uninstallPath + `
     Terminal=false
     Type=Application
     Categories=

@@ -20,6 +20,9 @@
     "process": false,
     "driver": false,
     "XMLHttpRequest": false,
-    "logger": false
+    "logger": false,
+    "it": false,
+    "afterEach": false,
+    "beforeEach": false
   }
 }
