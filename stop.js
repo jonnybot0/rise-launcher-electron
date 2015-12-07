@@ -27,12 +27,9 @@ function createLinuxStopOption() {
   var content = "";
 
   content += "#!/bin/bash" + "\n";
-  content += "killall chrome" + "\n";
-  content += "killall java" + "\n";
-  content += "killall installer" + "\n";
+  content += "pkill -f " + platform.getInstallDir() + "\n";
   content += "notify-send \"Rise Vision Player stopped\" --icon=dialog-information" + "\n";
   
-
   return platform.writeTextFile(stopScriptPath, content)
   .then(()=>{
     return platform.setFilePermissions(stopScriptPath, 0755);
