@@ -9,7 +9,7 @@
 <body>
     <div class="container header">
         <section>
-            <img src="img/logo.svg" style="position:absolute;left:0;">
+            <img src="img/logo.svg" style="position:absolute;left:15px;">
             <button class="btn btn-default btn-close" type="button" id="close">
                 <img src="img/close.svg">
             </button>
@@ -41,22 +41,22 @@
     </div>
     <!-- Loading... -->
     <div id="installing" class="container slide inactive">
-        <div id="progressContainer" class="centeredBox">
+        <div id="progressContainer" class="centeredBox" style="display:none">
             <p id="statusLabel">Checking Network Requirements...</p>
             <div class="progress">
                 <div class="progress-bar"></div>
             </div>
         </div>
-        <div id="proxyOptions" style="display:none">
+        <div id="proxyOptions" >
             <p>It seems this machine cannot connect to the internet. If you're running behind a proxy please complete the following fields. Otherwise please contact support.</p>
             <p>Proxy server address:
-                <input id="proxyAddress" type="text"></input>
+                <input id="proxyAddress" type="text" class="form-control"></input>
             </p>
             <p>Proxy server port:
-                <input id="proxyPort" type="text"></input>
+                <input id="proxyPort" type="text" class="form-control"></input>
             </p>
-            <button type="button">ok</button>
-        </div>
+<!--             <button type="button">ok</button>
+ -->        </div>
     </div>
     <!-- Success -->
     <div id="launch" class="container slide inactive">
