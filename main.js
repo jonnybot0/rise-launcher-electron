@@ -11,6 +11,7 @@ installer = require("./installer.js"),
 prereqs = require("./prereqs.js"),
 uninstall = require("./uninstall.js"),
 stop = require("./stop.js"),
+editConfig = require("./edit-config.js"),
 launcher = require("./launcher.js"),
 ui = require("./ui/controller.js"),
 displaySettings,
@@ -117,6 +118,7 @@ app.on("ready", ()=>{
     return optimization.updateSettings()
     .then(autostart.createAutostart)
     .then(uninstall.createUninstallOption)
+    .then(editConfig.createEditConfig)
     .then(stop.createStopOption);
   }
 
