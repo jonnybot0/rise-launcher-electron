@@ -1,5 +1,6 @@
 var childProcess = require("child_process"),
 path = require("path"),
+mkdirp = require("mkdirp"),
 os = require("os"),
 fs = require(process.versions.electron ? "original-fs" : "fs"),
 ncp = require("ncp"),
@@ -109,17 +110,29 @@ module.exports = {
 
     return stringContents;
   },
-  writeTextFile(path, data) {
-    log.debug("writing " + path);
+  writeTextFile(filePath, data) {
+    log.debug("writing " + filePath);
     return new Promise((resolve, reject)=>{
-      fs.writeFile(path, data, "utf8", function (err) {
-        if(!err) {
+      mkdirp(path.dirname(filePath), (err)=>{
+        if (!err) {
           resolve();
-        }
-        else {
+        } else {
           log.error("Error writing file", messages.fileWriteError);
           reject({ message: "Error writing file", error: err });
         }
+      });
+    })
+    .then(()=>{
+      return new Promise((resolve, reject)=>{
+        fs.writeFile(filePath, data, "utf8", function (err) {
+          if(!err) {
+            resolve();
+          }
+          else {
+            log.error("Error writing file", messages.fileWriteError);
+            reject({ message: "Error writing file", error: err });
+          }
+        });
       });
     });
   },
