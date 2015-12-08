@@ -12,7 +12,7 @@ function createWindowsUninstallOption() {
   content += "taskkill /f /im javaw.exe" + "\n";
   content += "taskkill /f /im installer.exe" + "\n";
   content += "del /F /Q \"" + autostartShortcut + "\"\n";
-  content += "del /F /S /Q \"" + riseProgramsDir + "\"\n";
+  content += "rd /S /Q \"" + riseProgramsDir + "\"\n";
   content += "choice /C Y /N /D Y /T 3 & del /F /S /Q " + platform.getInstallDir() + "\n";
 
   return platform.writeTextFile(uninstallerPath, content)
