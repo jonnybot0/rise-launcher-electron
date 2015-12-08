@@ -62,7 +62,11 @@ module.exports = {
         });
         res.on("error", function(e) {
           file.end();
-          reject({ message: "Response error downloading file" + e.message, error: e });
+          if (downloadStats[url].tries === 3) {
+            reject({ message: "Response error downloading file" + e.message, error: e });
+          } else {
+            tryDownload(resolve, reject);
+          }
         });
       });
 
