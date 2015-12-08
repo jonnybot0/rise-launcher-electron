@@ -11,7 +11,7 @@ var opts = {
   name: "installer",
   platform: "linux,win32",
   arch: "all",
-  version: "0.35.2",
+  version: "0.35.4",
   ignore: ".git|builds|test",
   out: "builds",
   overwrite: "true"
