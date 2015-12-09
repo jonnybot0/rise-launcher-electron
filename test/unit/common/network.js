@@ -29,7 +29,7 @@ describe("network", ()=>{
     var resultingProxySetup,
     expectedProxyHref = "http://127.0.0.1:8888/";
 
-    proxy.setEndpoint("127.0.0.1:8888");
+    proxy.setEndpoint({address: "127.0.0.1", port: "8888"});
     mock(network, "callFetch").resolveWith({});
 
     return network.httpFetch("http://testdest.com")

@@ -144,7 +144,7 @@ describe("config", ()=>{
     var expectedString = "proxy=http://127.0.0.1:8888/" + "\n" +
     "browsersetting=--proxy-server=http://127.0.0.1:8888/\n";
 
-    proxy.setEndpoint("127.0.0.1:8888");
+    proxy.setEndpoint({address: "127.0.0.1", port: "8888"});
     assert.ok(platform.writeTextFile.calls[0].args[1].indexOf(expectedString) > -1);
   });
 

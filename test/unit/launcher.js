@@ -43,7 +43,7 @@ describe("launcher", ()=>{
       "-Dhttps.proxyPort=8888",
     ];
     mock(platform, "startProcess").returnWith();
-    proxy.setEndpoint("http://127.0.0.1:8888");
+    proxy.setEndpoint({address: "127.0.0.1", port: "8888"});
     launcher.startCache();
     assert.equal(platform.startProcess.calls[0].args[1][0], expectedJavaParameters[0]);
     assert.equal(platform.startProcess.calls[0].args[1][1], expectedJavaParameters[1]);
@@ -51,21 +51,6 @@ describe("launcher", ()=>{
     assert.equal(platform.startProcess.calls[0].args[1][3], expectedJavaParameters[3]);
   });
 
-  it("sets proxy arguments for player", ()=>{
-    var expectedJavaParameters = [
-      "-Dhttp.proxyHost=127.0.0.1",
-      "-Dhttp.proxyPort=8888",
-      "-Dhttps.proxyHost=127.0.0.1",
-      "-Dhttps.proxyPort=8888",
-    ];
-    mock(platform, "startProcess").returnWith();
-    proxy.setEndpoint("http://127.0.0.1:8888");
-    launcher.startPlayer();
-    assert.equal(platform.startProcess.calls[0].args[1][0], expectedJavaParameters[0]);
-    assert.equal(platform.startProcess.calls[0].args[1][1], expectedJavaParameters[1]);
-    assert.equal(platform.startProcess.calls[0].args[1][2], expectedJavaParameters[2]);
-    assert.equal(platform.startProcess.calls[0].args[1][3], expectedJavaParameters[3]);
-  });
   it("doesn't set invalid proxy", ()=>{
     var expectedArgCountWithoutProxySettings = 2,
     javaArgCountCalled;
@@ -73,8 +58,25 @@ describe("launcher", ()=>{
     mock(platform, "startProcess").returnWith();
     proxy.setEndpoint("badproxy");
     launcher.startCache();
+    console.log(platform.startProcess.calls[0]);
     javaArgCountCalled = platform.startProcess.calls[0].args[1].length;
     assert.equal(javaArgCountCalled, expectedArgCountWithoutProxySettings);
+  });
+
+  it("sets valid proxy arguments for player", ()=>{
+    var expectedJavaParameters = [
+      "-Dhttp.proxyHost=127.0.0.1",
+      "-Dhttp.proxyPort=8888",
+      "-Dhttps.proxyHost=127.0.0.1",
+      "-Dhttps.proxyPort=8888",
+    ];
+    mock(platform, "startProcess").returnWith();
+    proxy.setEndpoint({address: "127.0.0.1", port: "8888"});
+    launcher.startPlayer();
+    assert.equal(platform.startProcess.calls[0].args[1][0], expectedJavaParameters[0]);
+    assert.equal(platform.startProcess.calls[0].args[1][1], expectedJavaParameters[1]);
+    assert.equal(platform.startProcess.calls[0].args[1][2], expectedJavaParameters[2]);
+    assert.equal(platform.startProcess.calls[0].args[1][3], expectedJavaParameters[3]);
   });
 
   it("launches Cache and Player", ()=>{
