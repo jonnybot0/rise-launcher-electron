@@ -9,7 +9,7 @@
 <body>
     <div class="container header">
         <section>
-            <img src="img/logo.svg" style="position:absolute;left:15px;">
+            <img class="logo" src="img/logo.svg" >
             <button class="btn btn-default btn-close" type="button" id="close">
                 <img src="img/close.svg">
             </button>
@@ -20,16 +20,16 @@
     </div>
     <!-- AgreeTo or Deactivate Startup Hijack -->
     <div id="" class="container slide active">
-        <div class="centeredBox" style="margin-top:22px">
+        <div class="centeredBox marginTop">
             <p>
             The Rise Player is designed to work on a dedicated computer attached to a Display. The installation will disable screen savers, time outs, and system notifications. It will show content full screen on startup, by default. We do not recommend installing Rise Player on a personal, non-dedicated computer. If you do wish to proceed with the installation please press <b>Continue</b>. Otherwise, select <b>Cancel</b> to quit.
             </p>
-            <div style="text-align:center;padding-top:12px">
+            <div class="checkAction">
             <input type="checkbox" class="css-checkbox" name="addToStartup" id="addToStartup" checked />
             <label class="css-label" for="addToStartup"  >Add to Startup process</label>
             </div>
-            <p style="font-size:11px;">If you need assistance with your installation please post any questions that you might have to <a href="http://community.risevision.com" target="_blank">http://community.risevision.com</a>. Thank You!</p>
-             <p style="font-size:11px;">
+            <p class="footerText">If you need assistance with your installation please post any questions that you might have to <a href="http://community.risevision.com" target="_blank">http://community.risevision.com</a>. Thank You!</p>
+             <p class="footerText">
              (Note: Player can be exited by pressing the windows key on your keyboard and selecting the <b>Stop Player</b> shortcut in the Rise Vision program group.) 
             </p>
             
@@ -43,7 +43,7 @@
                 <div class="progress-bar"></div>
             </div>
         </div>
-        <div id="proxyOptions"style="display:none" >
+        <div id="proxyOptions" style="display:none">
             <p>It seems this machine cannot connect to the internet. If you're running behind a proxy please complete the following fields. Otherwise please contact support.</p>
             <p>Proxy server address:
                 <input id="proxyAddress" type="text" class="form-control"></input>
@@ -56,7 +56,7 @@
     </div>
     <!-- Success -->
     <div id="launch" class="container slide inactive">
-        <div class="centeredBox" style="text-align: center; padding-top:72px;">
+        <div class="centeredBox textCenter">
             <h3>Success!</h3>
             <img src="img/success.svg">
             <br/>

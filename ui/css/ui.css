@@ -28,6 +28,10 @@ h5 {
   font-size: 20px;
 }
 
+.footerText {
+  font-size: 11px;
+}
+
 .container {
   margin: 10px;
 }
@@ -35,6 +39,11 @@ h5 {
 .container img {
   width: 20%;
   margin: 6px;
+}
+
+.container img.logo {
+  position:absolute;
+  left:15px;
 }
 
 .container.slide.inactive {
@@ -73,6 +82,14 @@ section {
 .centeredBox img {
   width: 40%;
   margin-bottom: 16px;
+}
+
+.checkAction {
+  text-align: center;
+}
+
+.textCenter {
+  text-align: center;
 }
 
 
@@ -138,9 +155,11 @@ section {
   height: 44px;
   background-color: #FFF !important;
 }
+
 .btn-close img {
-    width: 40%;
+  width: 40%;
 }
+
 .btn-close:hover {
   background-color: #F2F2F2 !important;
 }
@@ -281,10 +300,9 @@ label.css-label {
 }
 
 #proxyOptions {
-    text-align: center;
+  text-align: center;
 }
+
 #proxyOptions input {
-    margin: 0 auto;
+  margin: 0 auto;
 }
-
-
