@@ -2,12 +2,6 @@ var component = require("./component.js"),
 downloader = require("./downloader.js"),
 platform = require("./common/platform.js"),
 config = require("./common/config.js"),
-networkVerification = require("./network-check.js"),
-autostart = require("./autostart/autostart.js"),
-optimization = require("./os-optimization.js"),
-uninstall = require("./uninstall.js"),
-stop = require("./stop.js"),
-thisInstallerVersion = require("./version.json"),
 path = require("path"),
 yargs = require("yargs"),
 options = yargs.parse(process.argv.slice(1));
@@ -67,7 +61,7 @@ module.exports = {
             });
           }
           else if(!installerDeployed) {
-            log.all("deploying installer", "", "95%");
+            log.all("installing launcher", "", "95%");
 
             return module.exports.updateInstaller(runningInstallerDir);
           }
