@@ -29,7 +29,6 @@ describe("CAP check", ()=>{
   it("checks CAP is installed on Windows", ()=>{
     mock(platform, "isWindows").returnWith(true);
     mock(fs, "readdirSync").callFn((basePath)=>{
-      console.log("basePath", basePath);
       if(basePath === winChromeHome) {
         return [ "Default", "Other" ];
       }
@@ -47,7 +46,6 @@ describe("CAP check", ()=>{
   it("checks CAP is not installed on Windows", ()=>{
     mock(platform, "isWindows").returnWith(true);
     mock(fs, "readdirSync").callFn((basePath)=>{
-      console.log("basePath", basePath);
       if(basePath === winChromeHome) {
         return [ "Default", "Other" ];
       }
@@ -59,10 +57,16 @@ describe("CAP check", ()=>{
     assert(!capCheck.isCAPInstalled());
   });
 
+  it("checks CAP is not installed on Windows because Chrome is not installed (readdirSync throws an Error)", ()=>{
+    mock(platform, "isWindows").returnWith(true);
+    mock(fs, "readdirSync").throwWith("Error");
+
+    assert(!capCheck.isCAPInstalled());
+  });
+
   it("checks CAP is installed on Linux", ()=>{
     mock(platform, "isWindows").returnWith(false);
     mock(fs, "readdirSync").callFn((basePath)=>{
-      console.log("basePath", basePath);
       if(basePath === linuxChromeHome) {
         return [ "Default", "Other" ];
       }
@@ -80,7 +84,6 @@ describe("CAP check", ()=>{
   it("checks CAP is not installed on Linux", ()=>{
     mock(platform, "isWindows").returnWith(false);
     mock(fs, "readdirSync").callFn((basePath)=>{
-      console.log("basePath", basePath);
       if(basePath === linuxChromeHome) {
         return [ "Default", "Other" ];
       }

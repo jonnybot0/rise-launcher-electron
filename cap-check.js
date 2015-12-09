@@ -4,18 +4,23 @@ fs = require("fs"),
 risePlayerAppIds = ["ilcmohdkjfcfekfmpdppgoaaemgdmhaa", "mfpgpdablffhbfofnhlpgmokokbahooi"];
 
 function findRisePlayerDirectory(basePath) {
-  var list = fs.readdirSync(basePath);
+  try {
+    var list = fs.readdirSync(basePath);
 
-  for(var i = 0; i < list.length; i++) {
-    var file = list[i];
-    var fullPath = path.join(basePath, file);
-    var stat = fs.statSync(fullPath);
+    for(var i = 0; i < list.length; i++) {
+      var file = list[i];
+      var fullPath = path.join(basePath, file);
+      var stat = fs.statSync(fullPath);
 
-    if (stat && stat.isDirectory()) {
-      if((risePlayerAppIds.indexOf(file) >= 0 && fullPath.indexOf("Extensions") >= 0) || findRisePlayerDirectory(fullPath)) {
-        return true;
+      if (stat && stat.isDirectory()) {
+        if((risePlayerAppIds.indexOf(file) >= 0 && fullPath.indexOf("Extensions") >= 0) || findRisePlayerDirectory(fullPath)) {
+          return true;
+        }
       }
     }
+  }
+  catch (err) {
+    // readdirSync throws an error if the directory does not exist
   }
 
   return false;
