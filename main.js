@@ -55,8 +55,8 @@ app.on("ready", ()=>{
   ipc.on("set-proxy", (event, message)=>{
     proxy.setEndpoint(message);
     prereqCheck()
-    .then(preInstall)
     .then(installer.begin)
+    .then(postInstall)
     .then(ui.enableContinue);
   });
 
@@ -75,8 +75,8 @@ app.on("ready", ()=>{
 
     if (isUnattended()) {
       prereqCheck()
-      .then(preInstall)
       .then(installer.begin)
+      .then(postInstall)
       .then(()=>{
         return launcher.launch();
       })
@@ -86,8 +86,8 @@ app.on("ready", ()=>{
     }
     else {
       prereqCheck()
-      .then(preInstall)
       .then(installer.begin)
+      .then(postInstall)
       .then(ui.enableContinue);
     }
   });
@@ -114,7 +114,7 @@ app.on("ready", ()=>{
 
   mainWindow = ui.init();
 
-  function preInstall() {
+  function postInstall() {
     return optimization.updateSettings()
     .then(autostart.createAutostart)
     .then(uninstall.createUninstallOption)
