@@ -75,6 +75,8 @@ ipc.on("errorMessage", (evt, detail)=> {
   p.innerHTML = detail;
   document.querySelector("div.errors").appendChild(p);
   setContinueButtonEnabled(false);
+  var currentSlide = document.querySelector(".container.slide.active");
+  currentSlide.className = "container slide inactive";
 });
 
 ipc.on("version", (evt, version)=> {

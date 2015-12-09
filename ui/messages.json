@@ -1,9 +1,9 @@
 {
-  "osRequirementsNotMet": "Operating system requirements are not met. The installer requires windows 7, Windows 8, Windows 10, or Ubuntu 14.04.",
+  "osRequirementsNotMet": "Installation cannot proceed. Rise Player requires Windows 7 (or higher) or Ubuntu 14.04.  If you need assistance with your installation please post any questions that you might have to http://community.risevision.com. Thank You!",
   "unknownOS": "Could not determine operating system release.",
   "fileReadError": "There was a problem reading a system file.  Please try running the installer again or contact support.",
   "fileWriteError": "There was a problem writing a system file.  Please try running the installer again or contact support.",
-  "legacyWatchdog": "Application Monitor is no longer supported.  Please remove it.",
-  "CAPInstalled": "Rise Vision Chrome App Player conflicts with this player.  Please remove it.",
+  "legacyWatchdog": "Installation cannot proceed. There appears to be an application monitor that will automatically restart Chrome if it shuts down unexpectedly and this monitor will conflict with this installation. The application monitor must be removed in order for this installation to complete.  If you need assistance with your installation please post any questions that you might have to http://community.risevision.com. Thank You!",
+  "CAPInstalled": "Installation cannot proceed. There appears to be an installation of Rise Chrome App Player on this computer and it must be removed in order for this installation to complete.  If you need assistance with your installation please post any questions that you might have to http://community.risevision.com. Thank You!",
   "unknown": "An unknown error has occurred.  Please try again or contact support."
 }
