@@ -1,10 +1,12 @@
 {
   "esversion": 6,
   "undef": true,
+  "unused": true,
   "white": true,
   "globals": {
     "window": false,
     "module": false,
+    "__dirname": false,
     "log": false,
     "global": false,
     "messages": false,
