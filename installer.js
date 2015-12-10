@@ -65,9 +65,6 @@ module.exports = {
 
             return module.exports.updateInstaller(runningInstallerDir);
           }
-        })
-        .then(()=>{
-          log.all("install complete", "", "100%");
         });
       });
     })

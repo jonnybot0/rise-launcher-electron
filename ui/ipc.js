@@ -36,6 +36,11 @@ ipc.on("first-ping", ()=> {
         ipc.send("close");
       }
     }
+
+    if (activeSlide.id === "installing") {
+      activeSlide.className = "container slide inactive";
+      document.querySelector("#launch").className = "container slide active";
+    }
     
     if (activeSlide.id === "proxyOptions") {
       var proxyAddress = document.querySelector("#proxyAddress"),
