@@ -119,7 +119,8 @@ app.on("ready", ()=>{
     .then(autostart.createAutostart)
     .then(uninstall.createUninstallOption)
     .then(editConfig.createEditConfig)
-    .then(stop.createStopOption);
+    .then(stop.createStopOption)
+    .then(()=>{log.all("install complete", "", "100%");});
   }
 
   function prereqCheck() {

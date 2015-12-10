@@ -36,6 +36,10 @@ ipc.on("first-ping", ()=> {
         ipc.send("close");
       }
     }
+
+    if (activeSlide.id === "installing") {
+      nextSlide();
+    }
     
     if (activeSlide.id === "proxyOptions") {
       var proxyAddress = document.querySelector("#proxyAddress"),
