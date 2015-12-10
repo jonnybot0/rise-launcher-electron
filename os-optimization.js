@@ -52,7 +52,7 @@ function executeCommands(osCommands) {
 
   Object.keys(osCommands).forEach((key)=>{
     osCommands[key].forEach((command)=>{
-      promises.push(platform.spawn(command, onSuccess, onError));
+      promises.push(platform.spawn(command).then(onSuccess).catch(onError));
     });
   });
 
