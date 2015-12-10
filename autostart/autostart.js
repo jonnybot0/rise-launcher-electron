@@ -21,10 +21,17 @@ module.exports = {
     }
   },
   createWindowsAutostart() {
+    var shortCutPathTemp = path.join(platform.getInstallDir(), "Rise Vision Player.lnk");
     var shortCutPath = path.join(platform.getAutoStartupPath(), "Rise Vision Player.lnk");
     var launcherPath = platform.getInstallerPath();
 
-    return platform.createWindowsShortcut(shortCutPath, launcherPath, "--unattended")
+    return platform.createWindowsShortcut(shortCutPathTemp, launcherPath, "--unattended")
+    .then(()=>{
+      return platform.deleteRecursively(shortCutPath);
+    })
+    .then(()=>{
+      return platform.renameFile(shortCutPathTemp, shortCutPath);
+    })
     .catch((err)=>{
       log.debug("error creating autostart", err);
       log.external("error creating autostart", require("util").inspect(err));

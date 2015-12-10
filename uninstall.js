@@ -5,6 +5,7 @@ function createWindowsUninstallOption() {
   var riseProgramsDir = path.join(platform.getProgramsMenuPath(), "Rise Vision");
   var uninstallerPath = path.join(platform.getInstallDir(), "uninstall.bat");
   var autostartShortcut = path.join(platform.getAutoStartupPath(), "Rise Vision Player.lnk");
+  var uninstallShortcutTemp = path.join(platform.getInstallDir(), "Uninstall Rise Vision Player.lnk");
   var uninstallShortcut = path.join(riseProgramsDir, "Uninstall Rise Vision Player.lnk");
   var content = "";
 
@@ -20,8 +21,14 @@ function createWindowsUninstallOption() {
     return platform.mkdir(riseProgramsDir);
   })
   .then(()=>{
-    return platform.createWindowsShortcut(uninstallShortcut, uninstallerPath);
-  });
+    return platform.createWindowsShortcut(uninstallShortcutTemp, uninstallerPath);
+  })
+  .then(()=>{
+    return platform.deleteRecursively(uninstallShortcut);
+  })
+  .then(()=>{
+    return platform.renameFile(uninstallShortcutTemp, uninstallShortcut);
+  });    
 }
 
 function createLinuxUninstallOption() {

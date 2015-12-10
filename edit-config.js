@@ -13,11 +13,18 @@ module.exports = {
   },
   createWindowsEditConfig() {
     var riseProgramsDir = path.join(platform.getProgramsMenuPath(), "Rise Vision");
+    var shortCutPathTemp = path.join(platform.getInstallDir(), "Edit Rise Vision Player Configuration.lnk");
     var shortCutPath = path.join(riseProgramsDir, "Edit Rise Vision Player Configuration.lnk");
     var editorPath = "notepad.exe";
     var configPath = path.join(platform.getInstallDir(), "RiseDisplayNetworkII.ini");
 
-    return platform.createWindowsShortcut(shortCutPath, editorPath, configPath);
+    return platform.createWindowsShortcut(shortCutPathTemp, editorPath, configPath)
+    .then(()=>{
+      return platform.deleteRecursively(shortCutPath);
+    })
+    .then(()=>{
+      return platform.renameFile(shortCutPathTemp, shortCutPath);
+    });    
   },
   createUbuntuEditConfig() {
     var riseProgramsDir = platform.getProgramsMenuPath();

@@ -9,7 +9,8 @@ global.log = require("../../logger/logger.js")();
 
 describe("uninstall", ()=>{
   beforeEach("setup mocks", ()=>{
-
+    mock(platform, "deleteRecursively").resolveWith();
+    mock(platform, "renameFile").resolveWith();
   });
 
   afterEach("reset mocks", ()=>{
@@ -29,7 +30,7 @@ describe("uninstall", ()=>{
       assert(platform.writeTextFile.called);
       assert(platform.mkdir.called);
       assert(platform.createWindowsShortcut.called);
-      assert.equal(platform.createWindowsShortcut.lastCall.args[0], path.join("programs", "Rise Vision", "Uninstall Rise Vision Player.lnk"));
+      assert.equal(platform.renameFile.lastCall.args[1], path.join("programs", "Rise Vision", "Uninstall Rise Vision Player.lnk"));
     });
   });
 
