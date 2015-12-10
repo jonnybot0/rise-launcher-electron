@@ -1,5 +1,6 @@
 var network = require("./common/network.js"),
-promisesPct = 0;
+platform = require("./common/platform.js"),
+promisesPct = 0,
 siteList = [
   "http://rvashow2.appspot.com",
   "http://rvashow.appspot.com",
@@ -13,7 +14,7 @@ siteList = [
 ];
 
 module.exports = {
-  checkSites() {
+  checkSitesWithElectron() {
     var siteConnections = siteList.map((site)=>{
       return network.httpFetch(site, {timeout: 9000})
       .then((res)=>{
@@ -31,5 +32,14 @@ module.exports = {
     });
 
     return Promise.all(siteConnections);
+  },
+  checkSitesWithJava() {
+    var command = `${platform.getJavaExecutablePath()} -jar java-network-test.jar ${siteList.join()}`;
+
+    return platform.spawn(command)
+    .then((retCode)=>{
+      if (retCode !== 0) {throw new Error(retCode);}
+      return retCode;
+    });
   }
 };
