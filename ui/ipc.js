@@ -23,20 +23,35 @@ ipc.on("first-ping", ()=> {
     activeSlide = document.querySelector(".container.slide.active"),
     nextIdx = Array.prototype.indexOf.call(slides, activeSlide) + 1;
 
-    if (nextIdx !== slides.length) {
-      slides[nextIdx].className = "container slide active";
-      activeSlide.className = "container slide inactive";
-    }
-
     if (slides[nextIdx] && slides[nextIdx].id === "installing") {
+      nextSlide();
       ipc.send("install");
     }
 
     if (activeSlide.id === "launch") {
       if (document.querySelector("#startPlayer").checked) {
+        setContinueButtonEnabled(false);
         ipc.send("launch");
       } else {
         ipc.send("close");
+      }
+    }
+    
+    if (activeSlide.id === "proxyOptions") {
+      var proxyAddress = document.querySelector("#proxyAddress"),
+      proxyPort = document.querySelector("#proxyPort");
+
+      activeSlide.className = "container slide inactive";
+
+      document.querySelector("#installing").className = "container slide active";
+      setContinueButtonEnabled(false);
+      ipc.send("set-proxy", {address: proxyAddress.value, port: proxyPort.value});
+    }
+
+    function nextSlide() {
+      if (nextIdx !== slides.length) {
+        slides[nextIdx].className = "container slide active";
+        activeSlide.className = "container slide inactive";
       }
     }
   });
@@ -48,7 +63,7 @@ ipc.on("message", (evt, message)=> {
   document.querySelector("div.messages").appendChild(p);
 });
 
-ipc.on("start-unattended", (evt, message)=> {
+ipc.on("start-unattended", ()=> {
   var currentSlide = document.querySelector(".container.slide.active"),
   installingSlide = document.querySelector("#installing");
 
@@ -107,22 +122,11 @@ function setContinueButtonEnabled(enabled) {
 
 ipc.on("show-proxy-options", ()=>{
   var optionsBlock = document.querySelector("#proxyOptions"),
-  okButton = document.querySelector("#proxyOptions button"),
-  progressContainer = document.querySelector("#progressContainer");
+  currentSlide = document.querySelector(".container.slide.active");
 
-  optionsBlock.style.display = "block";
-  progressContainer.style.display = "none";
-
-  okButton.addEventListener("click", doneHandler);
-
-  function doneHandler() {
-    var proxyAddress = document.querySelector("#proxyAddress"),
-    proxyPort = document.querySelector("#proxyPort");
-    okButton.removeEventListener(doneHandler);
-    optionsBlock.style.display = "none";
-    progressContainer.style.display = "block";
-    ipc.send("set-proxy", proxyAddress.value + ":" + proxyPort.value );
-  }
+  optionsBlock.className = "container slide active";
+  currentSlide.className = "container slide inactive";
+  setContinueButtonEnabled(true);
 });
 
 ipc.on("set-progress", (evt, detail)=>{

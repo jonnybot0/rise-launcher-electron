@@ -13,6 +13,7 @@ observers = [];
 proxy.observe(handleProxyChange);
 function handleProxyChange(fields) {
   log.debug("Setting proxy to " + fields.href);
+  if (!fields.href) {return (fetchOptions = {});}
   fetchOptions.agent = new proxyAgent(fields.href);
 }
 
@@ -31,8 +32,7 @@ module.exports = {
 
     function tryDownload(resolve, reject) {
       var tempPath = path.join(platform.getTempDir(), urlParse(url).pathname.split(path.sep).pop()),
-      file = fs.createWriteStream(tempPath),
-      fileName = urlParse(url).pathname;
+      file = fs.createWriteStream(tempPath);
 
       downloadStats[url].tries += 1;
 

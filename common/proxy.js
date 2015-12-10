@@ -1,23 +1,23 @@
 var urlParse = require("url").parse,
-proxyFields = Object.create(null),
 observers = [];
 
+function reset() {
+  observers.forEach((fn)=>{fn(urlParse(""));});
+}
+
 module.exports = {
-  setEndpoint(endpoint) {
+  setEndpoint(configObj) {
     var newFields;
-    if (!endpoint) {return;}
-    if (endpoint.substring(0,4) !== "http") {endpoint = "http://" + endpoint;}
+    if (!configObj || !configObj.address) {return reset();}
+    if (configObj.address.substring(0,4) !== "http") {
+      configObj.address = "http://" + configObj.address;
+    }
 
-    log.all("proxy", endpoint);
-    newFields = urlParse(endpoint);
-    Object.keys(newFields).forEach((key)=>{
-      proxyFields[key] = newFields[key];
-    });
-
-    observers.forEach((fn)=>{fn(proxyFields);});
+    log.debug("proxy", configObj);
+    newFields = urlParse(configObj.address + ":" + (configObj.port ? configObj.port : ""));
+    observers.forEach((fn)=>{fn(newFields);});
   },
   observe(cb) {
     observers.push(cb);
-  },
-  proxyFields
+  }
 };
