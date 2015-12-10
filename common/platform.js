@@ -54,7 +54,7 @@ module.exports = {
   },
   getProgramsMenuPath() {
     if(module.exports.isWindows()) {
-      return path.join(process.env.PROGRAMDATA, "Microsoft", "Windows", "Start Menu", "Programs");
+      return path.join(process.env.APPDATA, "Microsoft", "Windows", "Start Menu", "Programs");
     }
     else {
       return path.join(module.exports.getHomeDir(), ".local", "share", "applications");

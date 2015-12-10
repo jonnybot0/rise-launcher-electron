@@ -4,6 +4,7 @@ path = require("path");
 function createWindowsStopOption() {
   var riseProgramsDir = path.join(platform.getProgramsMenuPath(), "Rise Vision");
   var stopScriptPath = path.join(platform.getInstallDir(), "stop.bat");
+  var stopScriptShortcutTemp = path.join(platform.getInstallDir(), "Stop Rise Vision Player.lnk");
   var stopScriptShortcut = path.join(riseProgramsDir, "Stop Rise Vision Player.lnk");
   var content = "";
 
@@ -16,7 +17,13 @@ function createWindowsStopOption() {
     return platform.mkdir(riseProgramsDir);
   })
   .then(()=>{
-    return platform.createWindowsShortcut(stopScriptShortcut, stopScriptPath);
+    return platform.createWindowsShortcut(stopScriptShortcutTemp, stopScriptPath);
+  })
+  .then(()=>{
+    return platform.deleteRecursively(stopScriptShortcut);
+  })
+  .then(()=>{
+    return platform.renameFile(stopScriptShortcutTemp, stopScriptShortcut);
   });
 }
 

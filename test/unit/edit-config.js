@@ -6,6 +6,11 @@ simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock;
 
 describe("edit config", ()=>{
+  beforeEach("setup mocks", ()=>{
+    mock(platform, "deleteRecursively").resolveWith();
+    mock(platform, "renameFile").resolveWith();
+  });
+
   afterEach("clean mocks", ()=>{
     simpleMock.restore();
   });
