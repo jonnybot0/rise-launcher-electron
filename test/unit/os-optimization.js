@@ -48,7 +48,7 @@ describe("os optimization", ()=>{
     mock(log, "all").returnWith();
     mock(log, "external").returnWith();
     mock(platform, "isWindows").returnWith(true);
-    mock(childProcess, "spawn").returnWith({on(evt, fn) {fn();}});
+    mock(childProcess, "spawn").returnWith({on(evt, fn) {if (evt === "close") {fn();}}});
     return optimization.updateSettings()
     .then(()=>{
       assert.ok(log.all.callCount > 0);
@@ -60,9 +60,12 @@ describe("os optimization", ()=>{
     mock(log, "debug").returnWith();
     mock(log, "external").returnWith();
     mock(platform, "isWindows").returnWith(true);
-    mock(childProcess, "spawn").returnWith({on(evt, fn) {fn();}});
+    mock(childProcess, "spawn").returnWith({on(evt, fn) {if (evt === "error") {fn();}}});
     return optimization.updateSettings()
     .then(()=>{
+      assert.ok(false);
+    })
+    .catch((err)=>{
       assert.ok(log.external.callCount > 0);
     });
   });
