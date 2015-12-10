@@ -15,13 +15,18 @@ siteList = [
 module.exports = {
   checkSites() {
     var siteConnections = siteList.map((site)=>{
-      return network.httpFetch(site, {timeout: 4000})
+      return network.httpFetch(site, {timeout: 9000})
       .then((res)=>{
         if (res.status < 200 || res.status > 299) {
+          log.external("network prereq error", res.status + " - " + site);
           throw new Error("not ok");
         }
         promisesPct += 9;
         log.all("Checking network connectivity - " + site, "", promisesPct + "%");
+      })
+      .catch((err)=>{
+        log.external("network prereq error", err);
+        throw new Error("not ok");
       });
     });
 
