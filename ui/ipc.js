@@ -38,7 +38,8 @@ ipc.on("first-ping", ()=> {
     }
 
     if (activeSlide.id === "installing") {
-      nextSlide();
+      activeSlide.className = "container slide inactive";
+      document.querySelector("#launch").className = "container slide active";
     }
     
     if (activeSlide.id === "proxyOptions") {
