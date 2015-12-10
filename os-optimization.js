@@ -1,5 +1,4 @@
 var platform = require("./common/platform.js"),
-childProcess = require("child_process"),
 promisesPct = 0,
 windowsCommands = {
   disableScreenSaver: [
@@ -33,39 +32,27 @@ windowsCommands = {
   ]
 };
 
-function spawn(command) {
-  var args = command.split(" ");
-  args.splice(0, 1);
-  log.debug("executing " + command.split(" ")[0] + " with [" + args + "]");
-
-  return new Promise((res, rej)=>{
-    var child;
-
-      child = childProcess.spawn(command.split(" ")[0], args, {timeout: 2000});
-      child.on("close", (retCode)=>{
-        promisesPct += (100 / 15); // Currently 15 commands
-        log.all("Optimizing OS Settings", "", promisesPct + "%");
-        res(retCode);
-      });
-      child.on("error", (err)=>{
-        log.debug("error optimizing system", err);
-        log.external("error optimizing system", require("util").inspect(err));
-        res(retCode);
-      });
-  });
-}
-
 function updateSettings() {
   if(!platform.isWindows()) {return Promise.resolve();}
   return executeCommands(windowsCommands);
 }
 
 function executeCommands(osCommands) {
-  promises = [];
+  var promises = [];
+
+  function onSuccess() {
+    promisesPct += (100 / 15); // Currently 15 commands
+    log.all("Optimizing OS Settings", "", promisesPct + "%");
+  }
+
+  function onError(err) {
+    log.external("error optimizing system", require("util").inspect(err));
+    log.debug("error optimizing system", err);
+  }
 
   Object.keys(osCommands).forEach((key)=>{
     osCommands[key].forEach((command)=>{
-      promises.push(spawn(command));
+      promises.push(platform.spawn(command, onSuccess, onError));
     });
   });
 
