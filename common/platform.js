@@ -82,6 +82,25 @@ module.exports = {
       detached: true
     }).unref();
   },
+  spawn(command, onSuccess, onError, timeout) {
+    var args = command.split(" ");
+    args.splice(0, 1);
+    log.debug("executing " + command.split(" ")[0] + " with [" + args + "]");
+
+    return new Promise((res, rej)=>{
+      var child;
+
+      child = childProcess.spawn(command.split(" ")[0], args, {timeout: timeout || 2000});
+      child.on("close", (retCode)=>{
+        onSuccess(retCode);
+        res(retCode);
+      });
+      child.on("error", (err)=>{
+        onError(err);
+        res(retCode);
+      });
+    });
+  },
   readTextFile(path) {
     return new Promise((resolve, reject)=>{
       fs.readFile(path, "utf8", function (err, data) {

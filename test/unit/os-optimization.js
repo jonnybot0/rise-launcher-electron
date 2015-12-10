@@ -39,17 +39,31 @@ describe("os optimization", ()=>{
     verifyCommands("windows");
   });
 
-  it("does nothing on linux since optimization is handled in a shell script", ()=>{
+  it("does nothing on linux since optimization is handled in a shell script to avoid permissions issues", ()=>{
     verifyCommands("linux");
   });
 
+  it("logs on external call success", ()=>{
+    mock(log, "debug").returnWith();
+    mock(log, "all").returnWith();
+    mock(log, "external").returnWith();
+    mock(platform, "isWindows").returnWith(true);
+    mock(childProcess, "spawn").returnWith({on(evt, fn) {fn();}});
+    return optimization.updateSettings()
+    .then(()=>{
+      assert.ok(log.all.callCount > 0);
+    });
+  });
+
   it("logs on external call failures", ()=>{
+    mock(log, "all").returnWith();
     mock(log, "debug").returnWith();
     mock(log, "external").returnWith();
     mock(platform, "isWindows").returnWith(true);
     mock(childProcess, "spawn").returnWith({on(evt, fn) {fn();}});
-    optimization.updateSettings();
-    assert.ok(log.debug.callCount > 0);
-    assert.ok(log.external.callCount > 0);
+    return optimization.updateSettings()
+    .then(()=>{
+      assert.ok(log.external.callCount > 0);
+    });
   });
 });
