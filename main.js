@@ -2,6 +2,7 @@ var app = require("app"),
 ipc = require("electron").ipcMain,
 platform = require("./common/platform.js"),
 network = require("./common/network.js"),
+networkCheck = require("./network-check.js"),
 launcher = require("./launcher.js"),
 proxy = require("./common/proxy.js"),
 config = require("./common/config.js"),
@@ -115,7 +116,12 @@ app.on("ready", ()=>{
   mainWindow = ui.init();
 
   function postInstall() {
-    return optimization.updateSettings()
+    return networkCheck.checkSitesWithJava()
+    .catch((err)=>{
+      ui.showProxyOption();
+      throw new Error();
+    })
+    .then(optimization.updateSettings)
     .then(autostart.createAutostart)
     .then(uninstall.createUninstallOption)
     .then(editConfig.createEditConfig)

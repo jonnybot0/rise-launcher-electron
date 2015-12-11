@@ -1,28 +1,48 @@
 var platform = require("./platform.js"),
 fetch = require("node-fetch"),
 http = require("http"),
-proxyAgent = require("http-proxy-agent"),
+httpProxyAgent = require("http-proxy-agent"),
+httpsProxyAgent = require("https-proxy-agent"),
 proxy = require("./proxy.js"),
 fetchOptions = {},
+javaProxyArgs = [],
 urlParse = require("url").parse,
 path = require("path"),
 fs = require("fs"),
 downloadStats = {},
 observers = [];
 
-proxy.observe(handleProxyChange);
-function handleProxyChange(fields) {
+proxy.observe(setNodeHttpAgent);
+function setNodeHttpAgent(fields) {
   log.debug("Setting proxy to " + fields.href);
   if (!fields.href) {return (fetchOptions = {});}
-  fetchOptions.agent = new proxyAgent(fields.href);
+  fetchOptions.httpAgent = new httpProxyAgent(fields.href);
+  fetchOptions.httpsAgent = new httpsProxyAgent(fields.href);
+}
+
+
+proxy.observe(setJavaProxyArgs);
+function setJavaProxyArgs(fields) {
+  if (!fields.hostname || !fields.port) {return (javaProxyArgs = []);}
+  javaProxyArgs = [
+    `-Dhttp.proxyHost=${fields.hostname}`, 
+    `-Dhttp.proxyPort=${fields.port}`,
+    `-Dhttps.proxyHost=${fields.hostname}`,
+    `-Dhttps.proxyPort=${fields.port}`
+  ];
 }
 
 module.exports = {
   httpFetch(dest, opts) {
     if (!opts) {opts = fetchOptions;}
-    if (!opts.agent && fetchOptions.agent) {opts.agent = fetchOptions.agent;}
+    if (!opts.agent && fetchOptions.httpAgent) {
+      opts.agent = dest.indexOf("https:") > -1 ? fetchOptions.httpsAgent : fetchOptions.httpAgent;
+    }
 
     return module.exports.callFetch(dest, opts);
+  },
+  getJavaProxyArgs() {
+    return javaProxyArgs;
   },
   callFetch(dest, opts) {
     return fetch(dest, opts);

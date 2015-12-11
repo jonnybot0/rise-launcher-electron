@@ -24,7 +24,7 @@ module.exports = {
     return true;
   },
   checkNetworkConnectivity() {
-    return networkCheck.checkSites();
+    return networkCheck.checkSitesWithElectron();
   },
   checkCAPNotInstalled() {
     if (!capCheck.isCAPInstalled()) {return Promise.resolve();}

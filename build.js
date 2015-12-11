@@ -12,7 +12,7 @@ var opts = {
   platform: "linux,win32",
   arch: "all",
   version: "0.35.4",
-  ignore: ".git|builds|test",
+  ignore: ".git|builds|^test",
   out: "builds",
   overwrite: "true"
 };
