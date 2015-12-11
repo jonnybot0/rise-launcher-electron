@@ -4,17 +4,30 @@ http = require("http"),
 proxyAgent = require("http-proxy-agent"),
 proxy = require("./proxy.js"),
 fetchOptions = {},
+javaProxyArgs = [],
 urlParse = require("url").parse,
 path = require("path"),
 fs = require("fs"),
 downloadStats = {},
 observers = [];
 
-proxy.observe(handleProxyChange);
-function handleProxyChange(fields) {
+proxy.observe(setNodeHttpAgent);
+function setNodeHttpAgent(fields) {
   log.debug("Setting proxy to " + fields.href);
   if (!fields.href) {return (fetchOptions = {});}
   fetchOptions.agent = new proxyAgent(fields.href);
+}
+
+
+proxy.observe(setJavaProxyArgs);
+function setJavaProxyArgs(fields) {
+  if (!fields.hostname || !fields.port) {return (javaProxyArgs = []);}
+  javaProxyArgs = [
+    `-Dhttp.proxyHost=${fields.hostname}`, 
+    `-Dhttp.proxyPort=${fields.port}`,
+    `-Dhttps.proxyHost=${fields.hostname}`,
+    `-Dhttps.proxyPort=${fields.port}`
+  ];
 }
 
 module.exports = {
@@ -23,6 +36,9 @@ module.exports = {
     if (!opts.agent && fetchOptions.agent) {opts.agent = fetchOptions.agent;}
 
     return module.exports.callFetch(dest, opts);
+  },
+  getJavaProxyArgs() {
+    return javaProxyArgs;
   },
   callFetch(dest, opts) {
     return fetch(dest, opts);

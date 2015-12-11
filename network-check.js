@@ -35,7 +35,7 @@ module.exports = {
     return Promise.all(siteConnections);
   },
   checkSitesWithJava() {
-    var command = `${platform.getJavaExecutablePath()} -jar ${path.join(platform.getInstallerDir(), "resources", "app", "java-network-test.jar")} ${siteList.join(" ")}`;
+    var command = `${platform.getJavaExecutablePath()} ${network.getJavaProxyArgs().join(" ")} -jar ${path.join(platform.getInstallerDir(), "resources", "app", "java-network-test.jar")} ${siteList.join(" ")}`;
 
     return platform.spawn(command)
     .then((retCode)=>{
