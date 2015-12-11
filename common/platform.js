@@ -37,6 +37,13 @@ module.exports = {
   getTempDir() {
     return os.tmpdir();
   },
+  getJavaExecutablePath() {
+    if (module.exports.isWindows()) {
+      return path.join(module.exports.getInstallDir(), "JRE", "bin", "javaw.exe");
+    } else {
+      return path.join(module.exports.getInstallDir(), "jre", "bin", "java");
+    }
+  },
   getInstallerName() {
     return module.exports.isWindows() ? "installer.exe" : "installer";
   },
@@ -69,7 +76,7 @@ module.exports = {
     }
   },
   waitForMillis(milliseconds) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve)=>{
       setTimeout(function() {
         resolve();
       }, milliseconds);
@@ -165,7 +172,7 @@ module.exports = {
       });
     });
   },
-  extractZipTo(source, destination, overwrite) {
+  extractZipTo(source, destination) {
     return new Promise((resolve, reject)=>{
       fs.createReadStream(source)
       .pipe(gunzip())

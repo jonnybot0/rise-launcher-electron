@@ -1,4 +1,5 @@
 var checker = require("../../network-check.js"),
+platform = require("../../common/platform.js"),
 network = require("../../common/network.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
@@ -17,21 +18,45 @@ describe("network check", ()=>{
     assert.ok(network);
   });
 
-  it("checks for connectivity to sites", ()=>{
-    return checker.checkSites()
+  it("checks for Electron connectivity to sites", ()=>{
+    return checker.checkSitesWithElectron()
     .then((passed)=>{
       assert.ok(passed);
     });
   });
 
-  it("fails on bad connectivity", ()=>{
+  it("fails on bad connectivity in Electron", ()=>{
     mock(network, "httpFetch").rejectWith(false);
-    return checker.checkSites()
+    return checker.checkSitesWithElectron()
     .then((passed)=>{
       assert.fail();
     })
     .catch(()=>{
       assert.ok(true);
     });
+  });
+
+  it("checks for java connectivity to sites", ()=>{
+    mock(platform, "spawn").resolveWith(0);
+
+    return checker.checkSitesWithJava()
+    .then((retCode)=>{
+      assert.ok(platform.spawn.calls[0].args[0].indexOf("-jar java-network-test.jar") > 0);
+    })
+    .catch(()=>{
+      assert.ok(false);
+    });
+  });
+
+  it("throws on no java connectivity", ()=>{
+    mock(platform, "spawn").resolveWith(1);
+
+    return checker.checkSitesWithJava()
+    .then(()=>{
+      assert.ok(false);
+    })
+    .catch((err)=>{
+      assert.equal(err.message, 1);
+    })
   });
 });
