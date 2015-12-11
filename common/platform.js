@@ -39,7 +39,7 @@ module.exports = {
   },
   getJavaExecutablePath() {
     if (module.exports.isWindows()) {
-      return path.join(module.exports.getInstallDir(), "JRE", "bin", "javaw.exe");
+      return path.join(module.exports.getInstallDir(), "JRE", "bin", "java.exe");
     } else {
       return path.join(module.exports.getInstallDir(), "jre", "bin", "java");
     }
@@ -97,7 +97,7 @@ module.exports = {
     return new Promise((res, rej)=>{
       var child;
 
-      child = childProcess.spawn(command.split(" ")[0], args, {timeout: timeout || 2000});
+      child = childProcess.spawn(command.split(" ")[0], args, {timeout: timeout || 9000});
       child.on("close", (retCode)=>{
         res(retCode);
       });

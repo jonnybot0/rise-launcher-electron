@@ -1,14 +1,15 @@
 var network = require("./common/network.js"),
 platform = require("./common/platform.js"),
+path = require("path"),
 promisesPct = 0,
 siteList = [
   "http://rvashow2.appspot.com",
   "http://rvashow.appspot.com",
   "http://storage-dot-rvaserver2.appspot.com",
-  "http://store.risevision.com",
+  "https://store.risevision.com",
   "http://googleapis.com",
-  "http://accounts.google.com",
-  "http://talkgadget.google.com",
+  "https://accounts.google.com/ManageAccount",
+  "https://talkgadget.google.com",
   "http://s3.amazonaws.com",
   "http://p.jwpcdn.com/6/5/jwpsrv.js"
 ];
@@ -34,7 +35,7 @@ module.exports = {
     return Promise.all(siteConnections);
   },
   checkSitesWithJava() {
-    var command = `${platform.getJavaExecutablePath()} -jar java-network-test.jar ${siteList.join()}`;
+    var command = `${platform.getJavaExecutablePath()} -jar ${path.join(platform.getInstallerDir(), "resources", "app", "java-network-test.jar")} ${siteList.join(" ")}`;
 
     return platform.spawn(command)
     .then((retCode)=>{

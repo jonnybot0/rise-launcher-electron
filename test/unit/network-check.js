@@ -41,7 +41,8 @@ describe("network check", ()=>{
 
     return checker.checkSitesWithJava()
     .then((retCode)=>{
-      assert.ok(platform.spawn.calls[0].args[0].indexOf("-jar java-network-test.jar") > 0);
+      console.log(platform.spawn.calls[0].args[0]);
+      assert.ok(platform.spawn.calls[0].args[0].indexOf("java -jar") > 0);
     })
     .catch(()=>{
       assert.ok(false);
