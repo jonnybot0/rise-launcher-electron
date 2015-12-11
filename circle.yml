@@ -9,6 +9,8 @@ deployment:
   staging:
     branch: /(feature|fix|chore).*/
     commands:
+      - cd java-network-test && mvn package
+      - cp java-network-test/target/javanetworktest-1.0-SNAPSHOT-jar-with-dependencies.jar ./java-network-test.jar
       - node build.js
       - cp builds/*.exe $CIRCLE_ARTIFACTS
       - cp builds/*.sh $CIRCLE_ARTIFACTS
@@ -16,6 +18,8 @@ deployment:
   production:
     branch: master
     commands:
+      - cd java-network-test && mvn package
+      - cp java-network-test/target/javanetworktest-1.0-SNAPSHOT-jar-with-dependencies.jar ./java-network-test.jar
       - node build.js
       - cp builds/*.exe $CIRCLE_ARTIFACTS
       - cp builds/*.sh $CIRCLE_ARTIFACTS

@@ -3,3 +3,4 @@ builds/
 coverage/
 *.zip
 *.jar
+java-network-test/target/
