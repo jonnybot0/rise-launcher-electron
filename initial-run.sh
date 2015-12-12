@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$1" == "/s" ] || [ "$1" == "/S" ] || [ "$1" == "--unattended" ]; then
-  sudo $(dirname $(readlink -f "$0"))/os-optimizations.sh
+  $(dirname $(readlink -f "$0"))/os-unprivileged-optimizations.sh
   $(dirname $(readlink -f "$0"))/../../installer
   exit 0
 fi
@@ -16,5 +16,6 @@ if [ "$REPLY" != y ]; then
   exit 1
 fi
 
-sudo $(dirname $(readlink -f "$0"))/os-optimizations.sh
+sudo $(dirname $(readlink -f "$0"))/os-privileged-optimizations.sh
+$(dirname $(readlink -f "$0"))/os-unprivileged-optimizations.sh
 $(dirname $(readlink -f "$0"))/../../installer
