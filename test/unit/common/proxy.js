@@ -16,9 +16,14 @@ describe("proxy", ()=>{
     simpleMock.restore();
   });
 
-  it("sets new endpoint", ()=>{
+  it("sets new endpoint from an object with address and port", ()=>{
     proxy.setEndpoint({address: "127.0.0.1", port: "8888"});
     assert.equal(proxySetup.proxyFields.href, "http://127.0.0.1:8888/");
+  });
+
+  it("sets new endpoint from href string as in display settings doc", ()=>{
+    proxy.setEndpoint("http://192.168.0.0:80");
+    assert.equal(proxySetup.proxyFields.href, "http://192.168.0.0:80/");
   });
 
   it("does not set the new endpoint", ()=>{
