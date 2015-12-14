@@ -9,8 +9,13 @@ fi
 echo "The Rise Player is designed to work on a dedicated computer attached to a Display.
 The installation will disable screen savers, time outs, and system notifications.
 It will show content full screen on startup, by default.
-We do not recommend installing Rise Player on a personal, non-dedicated computer.
-If you do wish to proceed with the installation please press y to continue."
+We do not recommend installing Rise Player on a personal, non-dedicated computer."
+echo
+if [ $(lsb_release -sr) != "14.04" ]; then
+  echo "Note that  release 14.04 LTS is the only supported Ubuntu version."
+fi
+
+echo "If you wish to proceed with the installation please press y to continue."
 read -t 300 -n 1
 if [ $? != 0 ]; then
   echo "timeout"
