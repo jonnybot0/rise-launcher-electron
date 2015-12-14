@@ -1,6 +1,5 @@
 var platform = require("../common/platform.js"),
 path = require("path"),
-ws = require("windows-shortcuts"),
 userWantsAutostart = true;
 
 module.exports = {

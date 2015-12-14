@@ -1,7 +1,6 @@
 var platform = require("./common/platform.js"),
 network = require("./common/network.js"),
 config = require("./common/config.js"),
-fs = require("fs"),
 path = require("path");
 
 network.registerObserver((stats)=>{
