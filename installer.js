@@ -65,6 +65,11 @@ module.exports = {
 
             return module.exports.updateInstaller(runningInstallerDir);
           }
+        })
+        .then(()=>{
+          if(module.exports.isOldInstallerDeployed()) {
+            return module.exports.removeOldInstaller();
+          }
         });
       });
     })
@@ -85,6 +90,9 @@ module.exports = {
   isInstallerDeployed() {
     return platform.fileExists(platform.getInstallerPath());
   },
+  isOldInstallerDeployed() {
+    return platform.fileExists(platform.getOldInstallerPath());
+  },
   startInstallerUpdate() {
     return platform.setFilePermissions(platform.getInstallerPath(), 0755)
     .then(()=>{
@@ -93,6 +101,9 @@ module.exports = {
   },
   updateInstaller(installerPkgTempPath) {
     return platform.copyFolderRecursive(installerPkgTempPath, path.join(platform.getInstallDir(), config.getComponentInfo("InstallerElectron").copy));
+  },
+  removeOldInstaller() {
+    return platform.deleteRecursively(platform.getOldInstallerPath());
   },
   getRunningInstallerDir() {
     var currPath = module.exports.getCwd().split(path.sep);
