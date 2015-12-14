@@ -2,7 +2,7 @@
 
 if [ "$1" == "/s" ] || [ "$1" == "/S" ] || [ "$1" == "--unattended" ]; then
   $(dirname $(readlink -f "$0"))/os-unprivileged-optimizations.sh
-  $(dirname $(readlink -f "$0"))/../../installer
+  $(dirname $(readlink -f "$0"))/../../installer --unattended
   exit 0
 fi
 
@@ -15,7 +15,7 @@ read -t 300 -n 1
 if [ $? != 0 ]; then
   echo "timeout"
   $(dirname $(readlink -f "$0"))/os-unprivileged-optimizations.sh
-  $(dirname $(readlink -f "$0"))/../../installer
+  $(dirname $(readlink -f "$0"))/../../installer --unattended
   exit 0
 fi
 
