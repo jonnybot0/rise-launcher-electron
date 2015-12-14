@@ -18,7 +18,7 @@ module.exports = {
       return false;
     }
 
-    if (osVer.toString().trim() !== "14.04") {
+    if (Number(osVer) < 14.04) {
       return false;
     }
     return true;

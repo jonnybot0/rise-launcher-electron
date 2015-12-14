@@ -47,6 +47,12 @@ describe("prereqs", ()=>{
     assert.ok(!prereqs.validateOS());
   });
 
+  it("accepts ubuntu greater than 14.04", ()=>{
+    mock(platform, "getOS").returnWith("linux");
+    mock(platform, "getUbuntuVer").returnWith("15.10");
+    assert.ok(prereqs.validateOS());
+  });
+
   it("checks network connectivity", ()=>{
     mock(networkCheck, "checkSites").resolveWith(true);
     prereqs.checkNetworkConnectivity().then(()=>{assert.ok(true);});
