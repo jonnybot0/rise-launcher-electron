@@ -74,23 +74,22 @@ app.on("ready", ()=>{
   ipc.on("install", (event, message)=>{
     ui.disableContinue();
 
-    if (isUnattended()) {
-      prereqCheck()
-      .then(installer.begin)
-      .then(postInstall)
-      .then(()=>{
-        return launcher.launch();
-      })
-      .then(()=>{
-        process.exit(0);
-      });
-    }
-    else {
-      prereqCheck()
-      .then(installer.begin)
-      .then(postInstall)
-      .then(ui.enableContinue);
-    }
+    prereqCheck()
+    .then(installer.begin)
+    .then(postInstall)
+    .then(ui.enableContinue);
+  });
+
+  ipc.on("install-unattended", (event, message)=>{
+    ui.disableContinue();
+
+    prereqCheck()
+    .then(installer.begin)
+    .then(postInstall)
+    .then(launcher.launch)
+    .then(()=>{
+      process.exit(0);
+    });
   });
 
   ipc.on("launch", ()=>{

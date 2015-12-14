@@ -1,4 +1,7 @@
-const ipc = require("electron").ipcRenderer;
+const ipc = require("electron").ipcRenderer,
+uiTimeout = setTimeout(()=>{
+  ipc.send("install-unattended");
+}, 60 * 1000 * 5);
 
 ipc.on("first-ping", ()=> {
   ipc.send("ui-pong");
@@ -26,6 +29,7 @@ ipc.on("first-ping", ()=> {
     if (slides[nextIdx] && slides[nextIdx].id === "installing") {
       nextSlide();
       ipc.send("install");
+      clearTimeout(uiTimeout);
     }
 
     if (activeSlide.id === "launch") {
@@ -75,7 +79,7 @@ ipc.on("start-unattended", ()=> {
   currentSlide.className = "container slide inactive";
   installingSlide.className = "container slide active";
 
-  ipc.send("install");
+  ipc.send("install-unattended");
 });
 
 ipc.on("rewriteMessage", (evt, messageObject)=> {
