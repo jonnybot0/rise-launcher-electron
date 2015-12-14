@@ -6,8 +6,8 @@
   "author": "Tyler Johnson <mail@tyler-johnson.ca> (http://github.com/tejohnso)",
   "license": "ISC",
   "devDependencies": {
-    "electron-packager": "^5.1.0",
-    "electron-prebuilt": "^0.35.4",
+    "electron-packager": "^5.1.1",
+    "electron-prebuilt": "^0.36.0",
     "istanbul": "^0.4.0",
     "simple-mock": "^0.4.1",
     "mocha": "^2.3.3"
