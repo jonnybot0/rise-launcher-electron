@@ -1,5 +1,5 @@
 {
-  "osRequirementsNotMet": "Installation cannot proceed. Rise Player requires Windows 7 (or higher) or Ubuntu 14.04.  If you need assistance with your installation please post any questions that you might have to http://community.risevision.com. Thank You!",
+  "osRequirementsNotMet": "Installation cannot proceed. Rise Player requires Windows 7 (or higher) or Ubuntu 14.04 (or higher).  If you need assistance with your installation please post any questions that you might have to http://community.risevision.com. Thank You!",
   "unknownOS": "Could not determine operating system release.",
   "fileReadError": "There was a problem reading a system file.  Please try running the installer again or contact support.",
   "fileWriteError": "There was a problem writing a system file.  Please try running the installer again or contact support.",
