@@ -1,7 +1,6 @@
 var app = require("app"),
 ipc = require("electron").ipcMain,
 platform = require("./common/platform.js"),
-network = require("./common/network.js"),
 networkCheck = require("./network-check.js"),
 launcher = require("./launcher.js"),
 proxy = require("./common/proxy.js"),
@@ -61,17 +60,17 @@ app.on("ready", ()=>{
     .then(ui.enableContinue);
   });
 
-  ipc.on("set-autostart", (event, message)=>{
+  ipc.on("set-autostart", ()=>{
     autostart.requested(true);
     log.debug("autostart requested");
   });
 
-  ipc.on("unset-autostart", (event, message)=>{
+  ipc.on("unset-autostart", ()=>{
     autostart.requested(false);
     log.debug("autostart not requested");
   });
 
-  ipc.on("install", (event, message)=>{
+  ipc.on("install", ()=>{
     ui.disableContinue();
 
     if (isUnattended()) {
@@ -117,7 +116,7 @@ app.on("ready", ()=>{
 
   function postInstall() {
     return networkCheck.checkSitesWithJava()
-    .catch((err)=>{
+    .catch(()=>{
       ui.showProxyOption();
       throw new Error();
     })
