@@ -11,8 +11,15 @@ The installation will disable screen savers, time outs, and system notifications
 It will show content full screen on startup, by default.
 We do not recommend installing Rise Player on a personal, non-dedicated computer.
 If you do wish to proceed with the installation please press y to continue."
-read -n 1
-if [ "$REPLY" != y ]; then
+read -t 300 -n 1
+if [ $? != 0 ]; then
+  echo "timeout"
+  $(dirname $(readlink -f "$0"))/os-unprivileged-optimizations.sh
+  $(dirname $(readlink -f "$0"))/../../installer
+  exit 0
+fi
+
+if [ $REPLY != y ]; then
   exit 1
 fi
 
