@@ -95,9 +95,13 @@ module.exports = {
     log.debug("executing " + command.split(" ")[0] + " with [" + args + "]");
 
     return new Promise((res, rej)=>{
-      var child;
+      var child,
+      options = {
+        timeout: timeout || 9000,
+        stdio: "inherit"
+      };
 
-      child = childProcess.spawn(command.split(" ")[0], args, {timeout: timeout || 9000});
+      child = childProcess.spawn(command.split(" ")[0], args, options);
       child.on("close", (retCode)=>{
         res(retCode);
       });
