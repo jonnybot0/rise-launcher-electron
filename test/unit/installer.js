@@ -144,10 +144,13 @@ describe("installer", ()=>{
 
     mock(installer, "checkInstallerUpdateStatus").resolveWith();
     mock(installer, "isInstallerDeployed").returnWith(true);
+    mock(installer, "isOldInstallerDeployed").returnWith(false);
+    mock(installer, "removeOldInstaller").resolveWith();
     mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
 
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
+      assert(!installer.removeOldInstaller.called);
       assert(!autostart.createAutostart.called);
       assert(!optimization.updateSettings.called);
       assert(platform.mkdir.called);
@@ -164,18 +167,33 @@ describe("installer", ()=>{
   it("performs an installer update because it was not deployed", ()=>{
     mock(installer, "checkInstallerUpdateStatus").resolveWith();
     mock(installer, "isInstallerDeployed").returnWith(false);
+    mock(installer, "isOldInstallerDeployed").returnWith(true);
     mock(installer, "updateInstaller").resolveWith();
+    mock(installer, "removeOldInstaller").resolveWith();
     mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
     
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
       assert(installer.updateInstaller.called);
+      assert(installer.removeOldInstaller.called);
       assert(platform.mkdir.called);
       assert(platform.deleteRecursively.called);
       assert(component.getComponents.called);
       assert(downloader.downloadComponents.called);
       assert(downloader.extractComponents.called);
       assert(downloader.removePreviousVersions.called);
+    });
+  });
+
+  it("performs an installer update because it was not deployed and checks old installer removal is performed", ()=>{
+    mock(installer, "checkInstallerUpdateStatus").resolveWith();
+    mock(installer, "isInstallerDeployed").returnWith(false);
+    mock(installer, "isOldInstallerDeployed").returnWith(true);
+    mock(installer, "updateInstaller").resolveWith();
+    mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
+    
+    return installer.begin().then(()=>{
+      assert(platform.deleteRecursively.called);
     });
   });
 

@@ -36,6 +36,17 @@ describe("network check", ()=>{
     });
   });
 
+  it("fails on bad response", ()=>{
+    mock(network, "httpFetch").resolveWith({ status: 500 });
+    return checker.checkSitesWithElectron()
+    .then((passed)=>{
+      assert.fail();
+    })
+    .catch(()=>{
+      assert.ok(true);
+    });
+  });
+
   it("checks for java connectivity to sites", ()=>{
     mock(platform, "spawn").resolveWith(0);
 
@@ -57,6 +68,6 @@ describe("network check", ()=>{
     })
     .catch((err)=>{
       assert.equal(err.message, 1);
-    })
+    });
   });
 });
