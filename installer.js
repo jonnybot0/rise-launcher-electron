@@ -42,6 +42,21 @@ module.exports = {
 
           return downloader.extractComponents(changedComponents);
         })
+        .then(()={
+          log.all("stopping cache", changedNames, "52%");
+          return launcher.stopCache();
+        })
+        .then(()={
+          log.all("stopping player", changedNames, "55%");
+          return launcher.stopPlayer();
+        })
+        .then(()={
+          log.all("stopping viewer", changedNames, "58%");
+          return launcher.stopViewer();
+        })
+        .then(()=>{
+          return platform.waitForMillis(2500);
+        })
         .then(()=>{
           log.all("removing previous versions", changedNames, "60%");
 
