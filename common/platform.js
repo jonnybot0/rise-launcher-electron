@@ -90,7 +90,10 @@ module.exports = {
     }).unref();
   },
   spawn(command, timeout) {
-    var args = command.split(" ").map((val)=>{return val.trim();});
+    var args = command.split(" ")
+    .map((val)=>{return val.trim();})
+    .filter((val)=>{return val !== "";});
+
     args.splice(0, 1);
     log.debug("executing " + command.split(" ")[0] + " with [" + args + "]");
 
