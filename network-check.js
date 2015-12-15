@@ -16,6 +16,7 @@ siteList = [
 
 module.exports = {
   checkSitesWithElectron() {
+    promisesPct = 0;
     var siteConnections = siteList.map((site)=>{
       return network.httpFetch(site, {timeout: 9000})
       .then((res)=>{
