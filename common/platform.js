@@ -37,6 +37,14 @@ module.exports = {
   getTempDir() {
     return os.tmpdir();
   },
+  getCwd() {
+    return __dirname;
+  },
+  isDevMode() {
+    var currPath = module.exports.getCwd().split(path.sep);
+
+    return currPath.length < 2 || currPath[currPath.length - 2] !== "resources";
+  },
   getJavaExecutablePath() {
     if (module.exports.isWindows()) {
       return path.join(module.exports.getInstallDir(), "JRE", "bin", "java.exe");
@@ -112,6 +120,22 @@ module.exports = {
         rej(err);
       });
     });
+  },
+  killJava() {
+    if(module.exports.isWindows()) {
+      return module.exports.spawn("taskkill /f /im javaw.exe");
+    }
+    else {
+      return module.exports.spawn("pkill -f " + module.exports.getJavaExecutablePath() + "\n");
+    }
+  },
+  killChromium() {
+    if(module.exports.isWindows()) {
+      return module.exports.spawn("taskkill /f /im chrome.exe");
+    }
+    else {
+      return module.exports.spawn("pkill -f " + path.join(module.exports.getInstallDir(), "chrome-linux") + "\n");
+    }
   },
   readTextFile(path) {
     return new Promise((resolve, reject)=>{

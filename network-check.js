@@ -38,6 +38,8 @@ module.exports = {
   checkSitesWithJava() {
     var command = `${platform.getJavaExecutablePath()} ${network.getJavaProxyArgs().join(" ")} -jar ${path.join(platform.getInstallerDir(), "resources", "app", "java-network-test.jar")} ${siteList.join(" ")}`;
 
+    if(platform.isDevMode()) return Promise.resolve();
+
     return platform.spawn(command)
     .then((retCode)=>{
       if (retCode !== 0) {throw new Error(retCode);}

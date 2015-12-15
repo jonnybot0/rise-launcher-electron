@@ -42,17 +42,13 @@ module.exports = {
 
           return downloader.extractComponents(changedComponents);
         })
-        .then(()={
-          log.all("stopping cache", changedNames, "52%");
-          return launcher.stopCache();
+        .then(()=>{
+          log.all("stopping player and cache", changedNames, "52%");
+          return platform.killJava();
         })
-        .then(()={
-          log.all("stopping player", changedNames, "55%");
-          return launcher.stopPlayer();
-        })
-        .then(()={
-          log.all("stopping viewer", changedNames, "58%");
-          return launcher.stopViewer();
+        .then(()=>{
+          log.all("stopping chromium", changedNames, "56%");
+          return platform.killChromium();
         })
         .then(()=>{
           return platform.waitForMillis(2500);
@@ -121,17 +117,14 @@ module.exports = {
     return platform.deleteRecursively(platform.getOldInstallerPath());
   },
   getRunningInstallerDir() {
-    var currPath = module.exports.getCwd().split(path.sep);
-    var pathPrefix = module.exports.getCwd().startsWith(path.sep) ? path.sep : "";
+    var currPath = platform.getCwd().split(path.sep);
+    var pathPrefix = platform.getCwd().startsWith(path.sep) ? path.sep : "";
 
     if(currPath[currPath.length - 2] === "resources" && currPath[currPath.length - 1] === "app") {
       currPath = currPath.slice(0, currPath.length - 2);
     }
 
     return pathPrefix + path.join.apply(null, currPath);
-  },
-  getCwd() {
-    return __dirname;
   },
   getOptions() {
     return options;
