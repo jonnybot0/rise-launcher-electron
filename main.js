@@ -87,13 +87,13 @@ app.on("ready", ()=>{
     .then(postInstall)
     .then(launcher.launch)
     .then(()=>{
-      process.exit(0);
+      mainWindow.close();
     });
   });
 
   ipc.on("launch", ()=>{
     return launcher.launch().then(()=>{
-      process.exit(0);
+      mainWindow.close();
     });
   });
 
