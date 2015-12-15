@@ -40,7 +40,7 @@ app.on("window-all-closed", ()=>{
 app.on("error", (err)=>{log.error(err, messages.unknown);});
 
 function isUnattended() {
-  return process.argv.some((arg)=>{
+  return process.argv.slice(1).some((arg)=>{
     return (arg.indexOf("unattended") > -1 || arg.toUpperCase().indexOf("/S") > -1);
   });
 }
