@@ -38,7 +38,7 @@ module.exports = {
     return os.tmpdir();
   },
   getCwd() {
-    return __dirname;
+    return process.cwd();
   },
   isDevMode() {
     var currPath = module.exports.getCwd().split(path.sep);
