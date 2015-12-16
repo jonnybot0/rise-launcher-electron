@@ -47,9 +47,23 @@ describe("network check", ()=>{
     });
   });
 
+  it("does not call spawn on devMode", ()=>{
+    mock(platform, "spawn").resolveWith(0);
+    mock(platform, "isDevMode").returnWith(true);
+    
+    return checker.checkSitesWithJava()
+    .then(()=>{
+      assert(!platform.spawn.called);
+    })
+    .catch(()=>{
+      assert.ok(false);
+    });
+  });
+
   it("checks for java connectivity to sites", ()=>{
     mock(platform, "spawn").resolveWith(0);
-
+    mock(platform, "isDevMode").returnWith(false);
+    
     return checker.checkSitesWithJava()
     .then((retCode)=>{
       assert.ok(platform.spawn.calls[0].args[0].indexOf("java") > 0);
@@ -61,6 +75,7 @@ describe("network check", ()=>{
 
   it("throws on no java connectivity", ()=>{
     mock(platform, "spawn").resolveWith(1);
+    mock(platform, "isDevMode").returnWith(false);
 
     return checker.checkSitesWithJava()
     .then(()=>{

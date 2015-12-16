@@ -17,10 +17,6 @@ describe("launcher", ()=>{
     simpleMock.restore();
   });
 
-  it("properly replaces strings", ()=>{
-    assert.equal(launcher.replaceAll("this_is_a_test", "_", " "), "this is a test");
-  });
-
   it("returns the correct Java Path on Windows", ()=>{
     mock(platform, "getInstallDir").returnWith("test");
     mock(platform, "isWindows").returnWith(true);
@@ -83,6 +79,7 @@ describe("launcher", ()=>{
     mock(platform, "getInstallDir").returnWith("test");
     mock(platform, "startProcess").returnWith();
     mock(platform, "waitForMillis").resolveWith();
+    mock(platform, "killJava").resolveWith();
     mock(network, "httpFetch").resolveWith();
 
     return launcher.launch().then(()=>{
@@ -95,6 +92,7 @@ describe("launcher", ()=>{
     mock(platform, "getInstallDir").returnWith("test");
     mock(platform, "startProcess").returnWith();
     mock(platform, "waitForMillis").resolveWith();
+    mock(platform, "killJava").resolveWith();
     mock(network, "httpFetch").rejectWith();
 
     return launcher.launch().then(()=>{

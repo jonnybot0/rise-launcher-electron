@@ -68,7 +68,10 @@ describe("installer", ()=>{
     mock(platform, "execSync").returnWith();
     mock(platform, "onFirstRun").resolveWith();
     mock(platform, "writeTextFile").resolveWith();
-
+    mock(platform, "killJava").resolveWith();
+    mock(platform, "killChromium").resolveWith();
+    mock(platform, "waitForMillis").resolveWith();
+    
     mock(downloader, "downloadComponents").resolveWith();
     mock(downloader, "extractComponents").resolveWith();
     mock(downloader, "installComponent").resolveWith();
@@ -267,7 +270,7 @@ describe("installer", ()=>{
   });
 
   it("gets a valid running installer directory", ()=>{
-    mock(installer, "getCwd").returnWith(path.join("test", "installer"));
+    mock(platform, "getCwd").returnWith(path.join("test", "installer"));
 
     var installerDir = installer.getRunningInstallerDir();
 
@@ -275,7 +278,7 @@ describe("installer", ()=>{
   });
 
   it("gets a valid running installer directory when manually invoking node", ()=>{
-    mock(installer, "getCwd").returnWith(path.join("test", "installer", "resources", "app"));
+    mock(platform, "getCwd").returnWith(path.join("test", "installer", "resources", "app"));
 
     var installerDir = installer.getRunningInstallerDir();
 

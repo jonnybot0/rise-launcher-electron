@@ -63,6 +63,18 @@ describe("platform", ()=>{
     assert(os.tmpdir.called);
   });
 
+  it("validates application is running in devMode", ()=>{
+    mock(platform, "getCwd").returnWith(path.join("test"));
+
+    assert(platform.isDevMode());
+  });  
+
+  it("validates application is not running in devMode", ()=>{
+    mock(platform, "getCwd").returnWith(path.join("test", "resources", "app"));
+
+    assert(!platform.isDevMode());
+  });  
+
   it("waits for 100ms to resolve the promise", ()=>{
     var time0 = new Date().getTime();
 
@@ -79,6 +91,46 @@ describe("platform", ()=>{
     assert(childProcess.spawn.called);
     assert.equal(childProcess.spawn.lastCall.args[0], "ls");
     assert.equal(childProcess.spawn.lastCall.args[2].detached, true);
+  });
+
+  it("kills Java on Windows", ()=>{
+    mock(platform, "isWindows").returnWith(true);
+    mock(platform, "spawn").resolveWith();
+
+    return platform.killJava().then(()=>{
+      assert(platform.spawn.called);
+      assert(platform.spawn.lastCall.args[0].indexOf("javaw.exe") >= 0);
+    });
+  });
+
+  it("kills Java on Linux", ()=>{
+    mock(platform, "isWindows").returnWith(false);
+    mock(platform, "spawn").resolveWith();
+
+    return platform.killJava().then(()=>{
+      assert(platform.spawn.called);
+      assert(platform.spawn.lastCall.args[0].indexOf("pkill") >= 0);
+    });
+  });
+
+  it("kills Chromium on Windows", ()=>{
+    mock(platform, "isWindows").returnWith(true);
+    mock(platform, "spawn").resolveWith();
+
+    return platform.killChromium().then(()=>{
+      assert(platform.spawn.called);
+      assert(platform.spawn.lastCall.args[0].indexOf("chrome.exe") >= 0);
+    });
+  });
+
+  it("kills Chromium on Linux", ()=>{
+    mock(platform, "isWindows").returnWith(false);
+    mock(platform, "spawn").resolveWith();
+
+    return platform.killChromium().then(()=>{
+      assert(platform.spawn.called);
+      assert(platform.spawn.lastCall.args[0].indexOf("chrome-linux") >= 0);
+    });
   });
 
   it("reads a text file", ()=>{
