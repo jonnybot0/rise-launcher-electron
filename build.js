@@ -108,8 +108,8 @@ function createSelfExtractingInstallers() {
     var configFileData =
     ";!@Install@!UTF-8!" + "\n" +
     "Title=\"Rise Vision Player\"" + "\n" +
-    "Directory=\"\"" +  "\n" +
-    "RunProgram=\"builds\\installer-" + platform + "\\installer.exe\"" + "\n" +
+    "Directory=\"builds\\installer-" + platform + "\"" +  "\n" +
+    "RunProgram=\"installer.exe\"" + "\n" +
     ";!@InstallEnd@!" + "\n";
 
     console.log("Writing config file for " + platform);
