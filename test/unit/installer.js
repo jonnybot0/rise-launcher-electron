@@ -97,7 +97,6 @@ describe("installer", ()=>{
   });
 
   it("starts an installer update", ()=>{
-    mock(platform, "getInstallerDir").returnWith("test");
     mock(platform, "getInstallerPath").returnWith("test/test.sh");
 
     return installer.startInstallerUpdate().then(()=>{
@@ -105,7 +104,7 @@ describe("installer", ()=>{
       assert(platform.startProcess.called);
       
       assert.equal(platform.startProcess.lastCall.args[0], "test/test.sh");
-      assert.equal(platform.startProcess.lastCall.args[1].toString(), ["--unattended", "--update", "--path", "test"].toString());
+      assert.equal(platform.startProcess.lastCall.args[1].toString(), ["--unattended", "--update", "--path", path.join("temp", "Installer")].toString());
     });
   });
 
