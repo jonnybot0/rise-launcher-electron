@@ -1,6 +1,8 @@
 var log,
 uiWindow,
 externalLogger,
+platform = require("../../common/platform.js"),
+fs = require("fs"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock;
@@ -12,7 +14,9 @@ describe("launcher", ()=>{
 
     mock(uiWindow, "send").returnWith();
     mock(externalLogger, "log").returnWith();
-
+    mock(fs, "appendFileSync").returnWith();
+    mock(platform, "getInstallDir").returnWith("installDir");
+    
     log = require("../../logger/logger.js")(externalLogger);
   });
 
