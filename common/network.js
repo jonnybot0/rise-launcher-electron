@@ -10,7 +10,8 @@ urlParse = require("url").parse,
 path = require("path"),
 fs = require("fs"),
 downloadStats = {},
-observers = [];
+observers = [],
+maxRetries = 10;
 
 proxy.observe(setNodeHttpAgent);
 function setNodeHttpAgent(fields) {
@@ -82,7 +83,7 @@ module.exports = {
         });
         res.on("error", function(e) {
           file.end();
-          if (downloadStats[url].tries === 3) {
+          if (downloadStats[url].tries === maxRetries) {
             reject({ message: "Response error downloading file" + e.message, error: e });
           } else {
             tryDownload(resolve, reject);
@@ -95,7 +96,7 @@ module.exports = {
         socket.on("timeout", function() {
           if(!downloadStats[url].bytesReceived) {
             req.abort();
-            if (downloadStats[url].tries === 3) {
+            if (downloadStats[url].tries === maxRetries) {
               reject({ message: "Request timed out", error: url });
             } else {
               tryDownload(resolve, reject);
