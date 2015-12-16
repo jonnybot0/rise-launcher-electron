@@ -105,7 +105,7 @@ describe("installer", ()=>{
       assert(platform.startProcess.called);
       
       assert.equal(platform.startProcess.lastCall.args[0], "test/test.sh");
-      assert.equal(platform.startProcess.lastCall.args[1].toString(), ["--update", "--path", "test"].toString());
+      assert.equal(platform.startProcess.lastCall.args[1].toString(), ["--unattended", "--update", "--path", "test"].toString());
     });
   });
 
