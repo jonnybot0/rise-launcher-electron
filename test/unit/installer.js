@@ -103,7 +103,7 @@ describe("installer", ()=>{
       assert(platform.setFilePermissions.called);
       assert(platform.startProcess.called);
       
-      assert.equal(platform.startProcess.lastCall.args[0], "test/test.sh");
+      assert.equal(platform.startProcess.lastCall.args[0], path.join("temp", "Installer", platform.getInstallerName()));
       assert.equal(platform.startProcess.lastCall.args[1].toString(), ["--unattended", "--update", "--path", path.join("temp", "Installer")].toString());
     });
   });
