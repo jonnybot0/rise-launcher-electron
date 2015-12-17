@@ -28,6 +28,10 @@ module.exports = (externalLogger)=> {
       var eventsLog = path.join(platform.getInstallDir(), "installer-events.log");
       var detailsLog = path.join(platform.getInstallDir(), "installer-detail.log");
 
+      if(!platform.fileExists(platform.getInstallDir())) {
+        fs.mkdirSync(platform.getInstallDir());
+      }
+
       if(userFriendlyMessage) {
         fs.appendFileSync(eventsLog, getLogDatetime() + " - " + userFriendlyMessage + "\n");
       }
