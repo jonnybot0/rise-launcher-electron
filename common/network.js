@@ -107,7 +107,11 @@ module.exports = {
 
       req.on("error", function(e) {
         file.end();
-        reject({ message: "Request error downloading file" + e.message, error: e });
+        if (downloadStats[url].tries === maxRetries) {
+          reject({ message: "Request error downloading file" + e.message, error: e });
+        } else {
+          tryDownload(resolve, reject);
+        }
       });
     }
 
