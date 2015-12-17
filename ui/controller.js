@@ -1,6 +1,5 @@
-BrowserWindow = require("browser-window");
-
-var mainWindow;
+var BrowserWindow = require("browser-window"),
+mainWindow;
 
 module.exports = {
   init() {
@@ -25,7 +24,7 @@ module.exports = {
       mainWindow = null;
     });
 
-    mainWindow.webContents.on("did-finish-load", (event)=> {
+    mainWindow.webContents.on("did-finish-load", ()=> {
       mainWindow.webContents.send("first-ping");
     });
 

@@ -4,7 +4,8 @@ platform = require("./common/platform.js"),
 config = require("./common/config.js"),
 path = require("path"),
 yargs = require("yargs"),
-options = yargs.parse(process.argv.slice(1));
+options = yargs.parse(process.argv.slice(1)),
+mainWindow;
 
 module.exports = {
   begin() {
@@ -67,8 +68,11 @@ module.exports = {
           if(installerVersionChanged) {
             log.all("updating installer version", "", "95%");
 
-            module.exports.startInstallerUpdate().then(()=>{
-              process.exit(0);
+            return module.exports.startInstallerUpdate().then(()=>{
+              mainWindow.close();
+              return new Promise((res)=>{
+                setTimeout(()=>{res();}, 1000);
+              });
             });
           }
           else if(!installerDeployed) {
@@ -130,5 +134,8 @@ module.exports = {
   },
   getOptions() {
     return options;
+  },
+  setMainWindow(win) {
+    mainWindow = win;
   }
 };
