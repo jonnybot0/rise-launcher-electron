@@ -65,7 +65,7 @@ module.exports = {
     return path.join(module.exports.getInstallerDir(), module.exports.getInstallerName());
   },
   getOldInstallerPath() {
-    return path.join(module.exports.getInstallerDir(), module.exports.getOldInstallerName());
+    return path.join(module.exports.getInstallDir(), module.exports.getOldInstallerName());
   },
   getProgramsMenuPath() {
     if(module.exports.isWindows()) {
