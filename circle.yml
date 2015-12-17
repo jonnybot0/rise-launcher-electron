@@ -14,6 +14,7 @@ deployment:
       - node build.js
       - cp builds/*.exe $CIRCLE_ARTIFACTS
       - cp builds/*.sh $CIRCLE_ARTIFACTS
+      - cp builds/*.tar.gz $CIRCLE_ARTIFACTS
 
   production:
     branch: master
@@ -23,6 +24,7 @@ deployment:
       - node build.js
       - cp builds/*.exe $CIRCLE_ARTIFACTS
       - cp builds/*.sh $CIRCLE_ARTIFACTS
+      - cp builds/*.tar.gz $CIRCLE_ARTIFACTS
 
 #Update version.json with a new version number
 #node build

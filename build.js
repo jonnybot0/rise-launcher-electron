@@ -108,14 +108,13 @@ function createSelfExtractingInstallers() {
     var configFileData =
     ";!@Install@!UTF-8!" + "\n" +
     "Title=\"Rise Vision Player\"" + "\n" +
-    "Directory=\"\"" +  "\n" +
-    "RunProgram=\"builds\\installer-" + platform + "\\installer.exe\"" + "\n" +
+    "RunProgram=\"installer.exe\"" + "\n" +
     ";!@InstallEnd@!" + "\n";
 
     console.log("Writing config file for " + platform);
     fs.writeFileSync("builds/config.txt", configFileData);
     console.log("Generating 7zip file for " + platform);
-    execSync("7z a -mx4 builds/installer-" + platform + ".7z builds/installer-" + platform + "/*");
+    execSync("cd builds/installer-" + platform + " && 7z a -mx4 ../installer-" + platform + ".7z *");
     console.log("Generating self extracting installer for " + platform);
     execSync("cat external-deps/7zS.sfx builds/config.txt builds/installer-" + platform + ".7z > builds/installer-" + fileName + ".exe");
   }
