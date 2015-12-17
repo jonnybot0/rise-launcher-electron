@@ -100,6 +100,7 @@ app.on("ready", ()=>{
   ipc.on("ui-pong", (event)=>{
     log.debug("UI is ready");
     log.setUIWindow(event.sender);
+    installer.setMainWindow(mainWindow);
     event.sender.send("version", require("./version"));
 
     if (!(prereqs.validatePlatform() && prereqs.validateOS())) {
