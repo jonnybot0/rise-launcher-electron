@@ -23,7 +23,7 @@ module.exports = {
         return c;
       })
       .catch((err)=>{
-        return Promise.reject({ message: "Error downloading " + c.url, error: err });
+        return Promise.reject({ userFriendlyMessage: "Error downloading " + c.url + ". " + messages.genericSuggestion, error: err });
       });
     });
 
@@ -86,7 +86,7 @@ module.exports = {
         return component;
       })
       .catch((err)=>{
-        return Promise.reject({ message: "Error copying " + source + " to " + destination, error: err });
+        return Promise.reject({ userFriendlyMessage: "Error copying " + source + " to " + destination + ". " + messages.genericSuggestion, error: err });
       });
     }
     else {
@@ -96,7 +96,7 @@ module.exports = {
   unzipFile(filePath, subdir) {
     return platform.extractZipTo(filePath, path.join(platform.getTempDir(), subdir), true)
     .catch((err)=>{
-      return Promise.reject({ message: "Error unzipping " + filePath, error: err });
+      return Promise.reject({ userFriendlyMessage: "Error unzipping " + filePath + ". " + messages.genericSuggestion, error: err });
     });
   }
 };

@@ -127,7 +127,7 @@ describe("downloader", ()=>{
 
     return downloader.installComponents(componentsList).catch((err)=>{
       assert(platform.copyFolderRecursive.called);
-      assert(err.message);
+      assert(err.userFriendlyMessage);
     });
   });
 
@@ -234,7 +234,7 @@ describe("downloader", ()=>{
 
     return downloader.installComponent(components.Cache).catch((err)=>{
       assert(platform.copyFolderRecursive.called);
-      assert(err.message);
+      assert(err.userFriendlyMessage);
     });
   });
 

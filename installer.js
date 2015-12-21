@@ -89,8 +89,7 @@ module.exports = {
       });
     })
     .catch((err)=>{
-      log.error(require("util").inspect(err), messages.unknown);
-      console.log("Unexpected error", err);
+      log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
       return Promise.reject(err);
     });
   },
