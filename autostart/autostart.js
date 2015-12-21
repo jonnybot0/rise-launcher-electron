@@ -2,7 +2,8 @@ var platform = require("../common/platform.js"),
 path = require("path"),
 userWantsAutostart = true,
 windowsShortCutPath = path.join(platform.getAutoStartupPath(), "Rise Vision Player.lnk"),
-ubuntuAutostartPath = path.join(platform.getAutoStartupPath(), "rvplayer.desktop");
+ubuntuAutostartPath = path.join(platform.getAutoStartupPath(), "rvplayer.desktop"),
+oldShortCutPath = path.join(platform.getAutoStartupPath(), "Start Rise Vision Player.lnk");
 
 module.exports = {
   requested(yesOrNo) {userWantsAutostart = yesOrNo;},
@@ -11,7 +12,8 @@ module.exports = {
       log.debug("Removing autostart");
 
       if (platform.isWindows()) {
-        return platform.deleteRecursively(windowsShortCutPath);
+        return platform.deleteRecursively(windowsShortCutPath)
+        .then(platform.deleteRecursively.bind(null, oldShortCutPath));
       } else {
         return platform.deleteRecursively(ubuntuAutostartPath);
       }
@@ -28,7 +30,6 @@ module.exports = {
   },
   createWindowsAutostart() {
     var shortCutPathTemp = path.join(platform.getInstallDir(), "Rise Vision Player.lnk");
-    var oldShortCutPath = path.join(platform.getAutoStartupPath(), "Start Rise Vision Player.lnk");
     var launcherPath = platform.getInstallerPath();
 
     return platform.createWindowsShortcut(shortCutPathTemp, launcherPath, "--unattended")
