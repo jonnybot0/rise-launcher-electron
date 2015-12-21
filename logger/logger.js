@@ -82,8 +82,8 @@ module.exports = (externalLogger)=> {
 
       if (externalLogger) {externalLogger.log(evt, detail);}
     },
-    file() {
-      Array.prototype.slice.call(arguments).forEach(msg=>{console.log(msg);});
+    file(detail, userFriendlyMessage) {
+      appendToLog(detail, userFriendlyMessage);
     },
     progress(msg, pct) {
       if (uiWindow) {uiWindow.send("set-progress", {msg, pct});}
