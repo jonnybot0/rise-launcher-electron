@@ -110,7 +110,7 @@ describe("installer", ()=>{
 
   it("updates the Installer", ()=>{
     mock(platform, "copyFolderRecursive").resolveWith();
-    mock(autostart, "createAutostart").resolveWith();
+    mock(autostart, "setAutostart").resolveWith();
 
     return installer.updateInstaller("testPath", "1.2").then(()=>{
       assert(platform.copyFolderRecursive.called);
@@ -126,7 +126,7 @@ describe("installer", ()=>{
 
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
-      assert(!autostart.createAutostart.called);
+      assert(!autostart.setAutostart.called);
       assert(!optimization.updateSettings.called);
       assert(platform.mkdir.called);
       assert(platform.deleteRecursively.called);
@@ -153,7 +153,7 @@ describe("installer", ()=>{
     return installer.begin().then(()=>{
       assert(installer.checkInstallerUpdateStatus.called);
       assert(!installer.removeOldInstaller.called);
-      assert(!autostart.createAutostart.called);
+      assert(!autostart.setAutostart.called);
       assert(!optimization.updateSettings.called);
       assert(platform.mkdir.called);
       assert(platform.deleteRecursively.called);
