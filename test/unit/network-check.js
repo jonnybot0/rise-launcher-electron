@@ -27,7 +27,7 @@ describe("network check", ()=>{
 
   it("fails on bad connectivity in Electron", ()=>{
     mock(network, "httpFetch").rejectWith(false);
-    return checker.checkSitesWithElectron()
+    return checker.checkSitesWithElectron(0)
     .then((passed)=>{
       assert.fail();
     })
@@ -36,9 +36,17 @@ describe("network check", ()=>{
     });
   });
 
+  it("retries on bad connectivity in Electron", ()=>{
+    mock(network, "httpFetch").rejectWith(false);
+    return checker.checkSitesWithElectron(1, 100)
+    .catch(()=>{
+      assert.ok(network.httpFetch.callCount > 9);
+    });
+  });
+
   it("fails on bad response", ()=>{
     mock(network, "httpFetch").resolveWith({ status: 500 });
-    return checker.checkSitesWithElectron()
+    return checker.checkSitesWithElectron(0)
     .then((passed)=>{
       assert.fail();
     })
@@ -77,7 +85,7 @@ describe("network check", ()=>{
     mock(platform, "spawn").resolveWith(1);
     mock(platform, "isDevMode").returnWith(false);
 
-    return checker.checkSitesWithJava()
+    return checker.checkSitesWithJava(0)
     .then(()=>{
       assert.ok(false);
     })
