@@ -22,6 +22,7 @@ module.exports = {
   createWindowsAutostart() {
     var shortCutPathTemp = path.join(platform.getInstallDir(), "Rise Vision Player.lnk");
     var shortCutPath = path.join(platform.getAutoStartupPath(), "Rise Vision Player.lnk");
+    var oldShortCutPath = path.join(platform.getAutoStartupPath(), "Start Rise Vision Player.lnk");
     var launcherPath = platform.getInstallerPath();
 
     return platform.createWindowsShortcut(shortCutPathTemp, launcherPath, "--unattended")
@@ -31,9 +32,8 @@ module.exports = {
     .then(()=>{
       return platform.renameFile(shortCutPathTemp, shortCutPath);
     })
-    .catch((err)=>{
-      log.debug("error creating autostart", err);
-      log.external("error creating autostart", require("util").inspect(err));
+    .then(()=>{
+      return platform.deleteRecursively(oldShortCutPath);
     });
   },
   createUbuntuAutostart() {

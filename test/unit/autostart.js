@@ -44,11 +44,14 @@ describe("autostart", ()=>{
 
     mock(platform, "getInstallerPath").returnWith(exePath);
     mock(platform, "createWindowsShortcut").resolveWith();
+    mock(platform, "renameFile").resolveWith();
+    mock(platform, "deleteRecursively").resolveWith();
 
     return autostart.createWindowsAutostart()
     .then(()=>{
       assert.equal(platform.createWindowsShortcut.callCount, 1);
       assert.equal(platform.createWindowsShortcut.lastCall.args[1], exePath);
+      assert.equal(platform.deleteRecursively.callCount, 2);
     });
   });
 
