@@ -45,6 +45,7 @@ function createLinuxUninstallOption() {
   content += "rm -f " + autostartShortcut + "\n";
   content += "rm -f " + uninstallShortcut + "\n";
   content += "rm -rf " + platform.getInstallDir() + "\n";
+  content += "rm -rf $HOME/.config/rvplayer\n";
   content += "notify-send \"Rise Vision Player uninstalled\" --icon=dialog-information" + "\n";
 
   return platform.writeTextFile(uninstallerPath, content)
