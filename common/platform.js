@@ -159,7 +159,7 @@ module.exports = {
         log.error("Could not read file " + path + " " + require("util").inspect(e), messages.fileReadError);
       }
       else {
-        log.debug("Could not read file " + path + " " + require("util").inspect(e));
+        log.file("Could not read file " + path + " " + require("util").inspect(e));
       }
     }
 

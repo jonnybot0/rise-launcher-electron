@@ -72,7 +72,7 @@ module.exports = (network, platform)=>{
         });
       })
       .catch(e=>{
-        log.file("Could not log to bq", e);
+        log.file("Could not log to bq " + require("util").inspect(e));
       });
     }
   };

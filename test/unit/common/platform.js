@@ -158,12 +158,12 @@ describe("platform", ()=>{
 
   it("fails to synchronously reads a text file", ()=>{
     mock(fs, "readFileSync").throwWith("error");
-    mock(log, "debug").returnWith();
+    mock(log, "file").returnWith();
     mock(log, "error").returnWith();
 
     assert.equal(platform.readTextFileSync("file.txt"), "");
     assert(fs.readFileSync.called);
-    assert(log.debug.called);
+    assert(log.file.called);
     assert(!log.error.called);
   });
 
