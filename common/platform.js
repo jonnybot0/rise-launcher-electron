@@ -1,4 +1,5 @@
 var childProcess = require("child_process"),
+stream = require("stream"),
 path = require("path"),
 mkdirp = require("mkdirp"),
 os = require("os"),
@@ -203,11 +204,24 @@ module.exports = {
       });
     });
   },
-  extractZipTo(source, destination) {
+  extractZipTo(source, destination, progressCallback) {
+    function progress(fileStream, header) {
+      return fileStream.pipe(new stream.Transform({
+        transform(chunk, enc, next) {
+          progressCallback(chunk.length, header.name, header.size);
+          this.push(chunk);
+          next();
+        },
+        flush(done) {
+          done();
+        }
+      }));
+    }
+
     return new Promise((resolve, reject)=>{
       fs.createReadStream(source)
       .pipe(gunzip())
-      .pipe(tar.extract(destination, {fs: fs}))
+      .pipe(tar.extract(destination, {fs: fs, mapStream: progress}))
       .on("finish", resolve)
       .on("error", (err)=>{
         reject(err);
