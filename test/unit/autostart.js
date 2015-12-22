@@ -1,10 +1,15 @@
-var autostart = require("../../autostart/autostart.js"),
-platform = require("../../common/platform.js"),
+var autostart,
 path = require("path"),
+platform,
 assert = require("assert"),
 simpleMock = require("simple-mock"),
-mock = require("simple-mock").mock,
-autostart;
+mock = require("simple-mock").mock;
+
+platform = require("../../common/platform.js");
+mock(platform, "getHomeDir").returnWith(path.join("home", "testuser"));
+mock(platform, "getInstallerPath").returnWith(path.join("home", "testuser", "rvplayer2", "Installer", "installer"));
+
+autostart = require("../../autostart/autostart.js");
 
 describe("autostart", ()=>{
   afterEach("clean mocks", ()=>{
@@ -20,7 +25,7 @@ describe("autostart", ()=>{
     mock(autostart, "createUbuntuAutostart").resolveWith();
     mock(platform, "isWindows").returnWith(true);
 
-    return autostart.createAutostart()
+    return autostart.setAutostart()
     .then(()=>{
       assert.ok(autostart.createWindowsAutostart.callCount === 1);
       assert.ok(autostart.createUbuntuAutostart.callCount === 0);
@@ -32,7 +37,7 @@ describe("autostart", ()=>{
     mock(autostart, "createUbuntuAutostart").resolveWith();
     mock(platform, "isWindows").returnWith(false);
 
-    return autostart.createAutostart()
+    return autostart.setAutostart()
     .then(()=>{
       assert.ok(autostart.createWindowsAutostart.callCount === 0);
       assert.ok(autostart.createUbuntuAutostart.callCount === 1);
@@ -62,14 +67,11 @@ describe("autostart", ()=>{
     mock(platform, "writeTextFile").resolveWith(true);
     mock(platform, "readTextFile").resolveWith("fake\nautostart\nfile");
     mock(platform, "setFilePermissions").resolveWith(true);
-    mock(platform, "getHomeDir").returnWith(path.join("home", "testuser"));
-    mock(platform, "getInstallerPath").returnWith(path.join("home", "testuser", "rvplayer2", "Installer", "installer"));
 
     return autostart.createUbuntuAutostart()
     .then(()=>{
       assert.ok(platform.writeTextFile.callCount === 1);
       assert.ok(platform.setFilePermissions.callCount === 1);
-      assert.ok(platform.getInstallerPath.callCount === 1);
       assert.equal(platform.setFilePermissions.lastCall.args[0], expectedAutoStartPath);
     });
   });
@@ -80,7 +82,7 @@ describe("autostart", ()=>{
 
     autostart.requested(false);
     
-    return autostart.createAutostart().then(()=>{
+    return autostart.setAutostart().then(()=>{
       assert(!autostart.createWindowsAutostart.called);
       assert(!autostart.createUbuntuAutostart.called);
     });

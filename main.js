@@ -121,7 +121,7 @@ app.on("ready", ()=>{
       throw new Error();
     })
     .then(optimization.updateSettings)
-    .then(autostart.createAutostart)
+    .then(autostart.setAutostart)
     .then(uninstall.createUninstallOption)
     .then(editConfig.createEditConfig)
     .then(stop.createStopOption)
