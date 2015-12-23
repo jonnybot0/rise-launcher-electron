@@ -36,14 +36,22 @@ function createLinuxUninstallOption() {
   var uninstallerPath = path.join(platform.getInstallDir(), "uninstall.sh");
   var autostartShortcut = path.join(platform.getAutoStartupPath(), "rvplayer.desktop");
   var uninstallShortcut = path.join(riseProgramsDir, "rvplayer-uninstall.desktop");
+  var stopShortcut = path.join(riseProgramsDir, "rvplayer-stop.desktop");
+  var configShortcut = path.join(riseProgramsDir, "rvplayer-config.desktop");
   var content = "";
 
   content += "#!/bin/bash" + "\n";
   content += "notify-send \"Uninstalling Rise Vision Player\" --icon=dialog-information" + "\n";
-  content += "pkill -f " + platform.getInstallDir() + "\n";
-  content += "sleep 3" + "\n";
+  content += "pkill -f " + platform.getInstallDir() + "/chrome\n";
+  content += "sleep 1" + "\n";
+  content += "pkill -f " + platform.getInstallDir() + "/Rise\n";
+  content += "sleep 1" + "\n";
+  content += "pkill -f " + platform.getInstallDir() + "/Installer\n";
+  content += "sleep 1" + "\n";
   content += "rm -f " + autostartShortcut + "\n";
   content += "rm -f " + uninstallShortcut + "\n";
+  content += "rm -f " + configShortcut + "\n";
+  content += "rm -f " + stopShortcut + "\n";
   content += "rm -rf " + platform.getInstallDir() + "\n";
   content += "rm -rf $HOME/.config/rvplayer\n";
   content += "notify-send \"Rise Vision Player uninstalled\" --icon=dialog-information" + "\n";
