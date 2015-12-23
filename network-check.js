@@ -29,7 +29,6 @@ function checkSite(site, retryCount, timeout) {
     log.all("Checking network connectivity - " + site, "", promisesPct + "%");
   })
   .catch((err)=>{
-    console.log("error found" + retryCount);
     log.external("network prereq error", err);
     if (retryCount === 0) { throw new Error("not ok");}
     return platform.waitForMillis(timeout || 5000)
