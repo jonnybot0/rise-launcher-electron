@@ -10,7 +10,7 @@ optimization = require("./os-optimization.js"),
 installer = require("./installer.js"),
 prereqs = require("./prereqs.js"),
 uninstall = require("./uninstall.js"),
-stop = require("./stop.js"),
+stop = require("./stop-start.js"),
 editConfig = require("./edit-config.js"),
 launcher = require("./launcher.js"),
 ui = require("./ui/controller.js"),
@@ -124,7 +124,7 @@ app.on("ready", ()=>{
     .then(autostart.setAutostart)
     .then(uninstall.createUninstallOption)
     .then(editConfig.createEditConfig)
-    .then(stop.createStopOption)
+    .then(stop.createStopStartLinks)
     .then(()=>{log.all("install complete", "", "100%");});
   }
 

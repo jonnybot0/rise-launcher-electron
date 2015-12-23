@@ -1,5 +1,5 @@
 var platform = require("../../common/platform.js"),
-stop = require("../../stop.js"),
+stop = require("../../stop-start.js"),
 path = require("path"),
 mock = require("simple-mock").mock,
 simpleMock = require("simple-mock"),
@@ -17,7 +17,7 @@ describe("stop", ()=>{
     simpleMock.restore();
   });
 
-  it("adds stop option for Windows", ()=>{
+  it("adds stop start links for Windows", ()=>{
     mock(platform, "isWindows").returnWith(true);
     mock(platform, "getProgramsMenuPath").returnWith("programs");
     mock(platform, "getInstallDir").returnWith("install");
@@ -25,16 +25,17 @@ describe("stop", ()=>{
     mock(platform, "mkdir").resolveWith();
     mock(platform, "createWindowsShortcut").resolveWith();
 
-    return stop.createStopOption()
+    return stop.createStopStartLinks()
     .then(()=>{
       assert(platform.writeTextFile.called);
       assert(platform.mkdir.called);
       assert(platform.createWindowsShortcut.called);
-      assert.equal(platform.renameFile.lastCall.args[1], path.join("programs", "Rise Vision", "Stop Rise Vision Player.lnk"));
+      assert.equal(platform.renameFile.calls[0].args[1], path.join("programs", "Rise Vision", "Stop Rise Vision Player.lnk"));
+      assert.equal(platform.renameFile.lastCall.args[1], path.join("programs", "Rise Vision", "Restart Rise Vision Player.lnk"));
     });
   });
 
-  it("adds stop option for Linux", ()=>{
+  it("adds stop start links for Linux", ()=>{
     mock(platform, "isWindows").returnWith(false);
     mock(platform, "getHomeDir").returnWith("home");
     mock(platform, "getInstallDir").returnWith("install");
@@ -42,12 +43,12 @@ describe("stop", ()=>{
     mock(platform, "mkdir").resolveWith();
     mock(platform, "createWindowsShortcut").resolveWith();
 
-    return stop.createStopOption()
+    return stop.createStopStartLinks()
     .then(()=>{
-      assert.equal(platform.writeTextFile.callCount, 2);
+      assert.equal(platform.writeTextFile.callCount, 4);
       assert(platform.mkdir.called);
       assert(!platform.createWindowsShortcut.called);
-      assert.equal(platform.writeTextFile.lastCall.args[0], path.join("home", ".local", "share", "applications", "rvplayer-stop.desktop"));
+      assert.equal(platform.writeTextFile.lastCall.args[0], path.join("home", ".local", "share", "applications", "rvplayer-restart.desktop"));
     });
   });
 });

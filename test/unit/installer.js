@@ -8,7 +8,7 @@ optimization = require("../../os-optimization.js"),
 capCheck = require("../../cap-check.js"),
 watchdogCheck = require("../../watchdog-check.js"),
 uninstall = require("./uninstall.js"),
-stop = require("./stop.js"),
+stop = {},
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 path = require("path"),
@@ -87,7 +87,7 @@ describe("installer", ()=>{
 
     mock(uninstall, "createUninstallOption").resolveWith();
 
-    mock(stop, "createStopOption").resolveWith();
+    mock(stop, "createStopStartLinks").resolveWith();
 
     mock(process, "exit").returnWith();
   });
