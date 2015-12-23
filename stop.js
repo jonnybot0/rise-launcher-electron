@@ -34,8 +34,8 @@ function createLinuxStopOption() {
   var content = "";
 
   content += "#!/bin/bash" + "\n";
-  content += "pkill -f " + platform.getInstallDir() + "\n";
   content += "notify-send \"Rise Vision Player stopped\" --icon=dialog-information" + "\n";
+  content += "pkill -f " + platform.getInstallDir() + "\n";
   
   return platform.writeTextFile(stopScriptPath, content)
   .then(()=>{
