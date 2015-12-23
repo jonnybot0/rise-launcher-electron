@@ -30,11 +30,27 @@ module.exports = {
     return Promise.all(promises);
   },
   extractComponents(components) {
-    var promises = components.map((c)=>{
-      return module.exports.unzipFile(c.localPath, config.getComponentInfo(c.name).extractTo).then(()=>{
+    var names = [],
+    amountReceived = 0,
+    totalExpected = 0,
+    promises = components.map((c)=>{
+      var target = config.getComponentInfo(c.name).extractTo;
+
+      return module.exports.unzipFile(c.localPath, target, progress)
+      .then(()=>{
         return c;
       });
     });
+    
+    function progress(amount, name, total) {
+      if (names.indexOf(name) === -1) {
+        totalExpected += total;
+        names.push(name);
+      }
+      amountReceived += amount;
+
+      log.progress("extracting components", (amountReceived / totalExpected * 100) + "%");
+    }
 
     return Promise.all(promises);
   },
@@ -93,8 +109,8 @@ module.exports = {
       return Promise.resolve(component);
     }
   },
-  unzipFile(filePath, subdir) {
-    return platform.extractZipTo(filePath, path.join(platform.getTempDir(), subdir), true)
+  unzipFile(filePath, subdir, progress) {
+    return platform.extractZipTo(filePath, path.join(platform.getTempDir(), subdir), progress)
     .catch((err)=>{
       return Promise.reject({ userFriendlyMessage: "Error unzipping " + filePath + ". " + messages.genericSuggestion, error: err });
     });
