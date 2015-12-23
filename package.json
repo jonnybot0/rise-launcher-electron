@@ -7,7 +7,7 @@
   "license": "ISC",
   "devDependencies": {
     "electron-packager": "^5.1.1",
-    "electron-prebuilt": "^0.36.0",
+    "electron-prebuilt": "^0.36.1",
     "istanbul": "^0.4.0",
     "simple-mock": "^0.4.1",
     "mocha": "^2.3.3"
