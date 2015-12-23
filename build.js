@@ -105,10 +105,11 @@ function createSelfExtractingInstallers() {
   }
 
   function createWindows(platform, fileName) {
+    var command = platform === "win32-ia32" ? "installer.exe" : "resources\\app\\external-deps\\InstallerArchValidator.exe";
     var configFileData =
     ";!@Install@!UTF-8!" + "\n" +
     "Title=\"Rise Vision Player\"" + "\n" +
-    "RunProgram=\"installer.exe\"" + "\n" +
+    "RunProgram=\"" + command + "\"" + "\n" +
     ";!@InstallEnd@!" + "\n";
 
     console.log("Writing config file for " + platform);
