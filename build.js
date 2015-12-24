@@ -4,6 +4,7 @@ fs = require("fs"),
 path = require("path"),
 zlib = require("zlib"),
 tar = require("tar-fs"),
+rimraf = require("rimraf"),
 packager = require("electron-packager");
 
 var opts = {
@@ -25,7 +26,9 @@ packager(opts, function done (err, appPath) {
   if(!err) {
     console.log("Builds generated");
 
-    zipBuilds().then(()=>{
+    removeUnwantedDirs()
+    .then(zipBuilds)
+    .then(()=>{
       console.log("Done zipping builds");
 
       createSelfExtractingInstallers();
@@ -39,6 +42,31 @@ packager(opts, function done (err, appPath) {
     console.log("Errors during build: ", err);
   }
 });
+
+function removeUnwantedDirs() {
+  var artifacts = ["linux-ia32", "linux-x64", "win32-ia32", "win32-x64"];
+
+  return Promise.all(artifacts.map((platform)=>{
+    return removeNodeModule(platform, "istanbul");
+  }));
+
+  function removeNodeModule(platform, name) {
+    return removeDir(path.join("builds", "installer-" + platform, "resources", "app", "node_modules", name));
+  }
+
+  function removeDir(path) {
+    return new Promise((resolve, reject)=>{
+      rimraf(path, (err)=>{
+        if(!err) {
+          resolve();
+        }
+        else {
+          reject({ message: "Error recursively deleting path", error: err });
+        }
+      });
+    });
+  }
+}
 
 function zipBuilds() {
   var artifacts = [["linux-ia32", "lnx-32"], ["linux-x64", "lnx-64"], ["win32-ia32", "win-32"], ["win32-x64", "win-64"]];
