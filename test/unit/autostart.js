@@ -6,12 +6,15 @@ simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock;
 
 platform = require("../../common/platform.js");
-mock(platform, "getHomeDir").returnWith(path.join("home", "testuser"));
-mock(platform, "getInstallerPath").returnWith(path.join("home", "testuser", "rvplayer2", "Installer", "installer"));
 
 autostart = require("../../autostart/autostart.js");
 
 describe("autostart", ()=>{
+  beforeEach("setup mocks", ()=>{
+    mock(platform, "getHomeDir").returnWith(path.join("home", "testuser"));
+    mock(platform, "getInstallerPath").returnWith(path.join("home", "testuser", "rvplayer2", "Installer", "installer"));
+  });
+
   afterEach("clean mocks", ()=>{
     simpleMock.restore();
   });
@@ -24,6 +27,7 @@ describe("autostart", ()=>{
     mock(autostart, "createWindowsAutostart").resolveWith();
     mock(autostart, "createUbuntuAutostart").resolveWith();
     mock(platform, "isWindows").returnWith(true);
+    mock(platform, "getProgramsMenuPath").returnWith("test");
 
     return autostart.setAutostart()
     .then(()=>{
