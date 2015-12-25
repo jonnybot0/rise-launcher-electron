@@ -41,7 +41,6 @@ function createLinuxUninstallOption() {
   var content = "";
 
   content += "#!/bin/bash" + "\n";
-  content += "notify-send \"Uninstalling Rise Vision Player\" --icon=dialog-information" + "\n";
   content += "pkill -f " + platform.getInstallDir() + "/chrome\n";
   content += "sleep 1" + "\n";
   content += "pkill -f " + platform.getInstallDir() + "/Rise\n";
