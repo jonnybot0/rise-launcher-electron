@@ -43,24 +43,29 @@ function createWindowsLinks() {
   });
 }
 
-function createLinuxLinks() {
-  var riseProgramsDir = platform.getProgramsMenuPath();
-  var stopScriptPath = path.join(platform.getInstallDir(), "stop.sh");
-  var startScriptPath = path.join(platform.getInstallDir(), "start.sh");
-  var stopScriptShortcut = path.join(riseProgramsDir, "rvplayer-stop.desktop");
-  var startScriptShortcut = path.join(riseProgramsDir, "rvplayer-restart.desktop");
-  var content = "";
+function createLinuxScript(isRestart) {
+  var action = isRestart ? "Restarting" : "Stopping";
+  var content = "#!/bin/bash" + "\n";
 
-  content += "#!/bin/bash" + "\n";
-  content += "notify-send \"Stopping Rise Vision Player\" --icon=dialog-information" + "\n";
+  content += "notify-send \"" + action + " Rise Vision Player\" --icon=dialog-information" + "\n";
   content += "pkill -f " + platform.getInstallDir() + "/chrome\n";
   content += "sleep 1" + "\n";
   content += "pkill -f " + platform.getInstallDir() + "/Rise\n";
   content += "sleep 1" + "\n";
   content += "pkill -f " + platform.getInstallDir() + "/Installer\n";
   content += "sleep 1" + "\n";
-  content += "notify-send \"Rise Vision Player stopped\" --icon=dialog-information" + "\n";
-  
+
+  return content;
+}
+
+function createLinuxLinks() {
+  var riseProgramsDir = platform.getProgramsMenuPath();
+  var stopScriptPath = path.join(platform.getInstallDir(), "stop.sh");
+  var startScriptPath = path.join(platform.getInstallDir(), "start.sh");
+  var stopScriptShortcut = path.join(riseProgramsDir, "rvplayer-stop.desktop");
+  var startScriptShortcut = path.join(riseProgramsDir, "rvplayer-restart.desktop");
+  var content = createLinuxScript(false);
+
   return platform.writeTextFile(stopScriptPath, content)
   .then(()=>{
     return platform.setFilePermissions(stopScriptPath, 0755);
@@ -84,6 +89,7 @@ function createLinuxLinks() {
     return platform.writeTextFile(stopScriptShortcut, shortcutContent);
   })
   .then(()=>{
+    content = createLinuxScript(true);
     content += platform.getInstallerPath() + "\n";
     return platform.writeTextFile(startScriptPath, content);
   })

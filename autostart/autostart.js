@@ -1,13 +1,14 @@
 var platform = require("../common/platform.js"),
 path = require("path"),
-userWantsAutostart = true,
-windowsShortCutPath = path.join(platform.getAutoStartupPath(), "Rise Vision Player.lnk"),
-ubuntuAutostartPath = path.join(platform.getAutoStartupPath(), "rvplayer.desktop"),
-oldShortCutPath = path.join(platform.getAutoStartupPath(), "Start Rise Vision Player.lnk");
+userWantsAutostart = true;
 
 module.exports = {
   requested(yesOrNo) {userWantsAutostart = yesOrNo;},
   setAutostart() {
+    var ubuntuAutostartPath = path.join(platform.getAutoStartupPath(), "rvplayer.desktop");
+    var windowsShortCutPath = path.join(platform.getAutoStartupPath(), "Rise Vision Player.lnk");
+    var oldShortCutPath = path.join(platform.getAutoStartupPath(), "Start Rise Vision Player.lnk");
+
     if (!userWantsAutostart) {
       log.debug("Removing autostart");
 
@@ -29,6 +30,8 @@ module.exports = {
     }
   },
   createWindowsAutostart() {
+    var windowsShortCutPath = path.join(platform.getAutoStartupPath(), "Rise Vision Player.lnk");
+    var oldShortCutPath = path.join(platform.getAutoStartupPath(), "Start Rise Vision Player.lnk");
     var shortCutPathTemp = path.join(platform.getInstallDir(), "Rise Vision Player.lnk");
     var launcherPath = platform.getInstallerPath();
 
@@ -44,6 +47,7 @@ module.exports = {
     });
   },
   createUbuntuAutostart() {
+    var ubuntuAutostartPath = path.join(platform.getAutoStartupPath(), "rvplayer.desktop");
     var launcherPath = platform.getInstallerPath() + " --unattended";
     var fileText =
     `[Desktop Entry]
