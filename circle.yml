@@ -32,6 +32,13 @@ deployment:
       - cp builds/*.sh $CIRCLE_ARTIFACTS
       - cp builds/*.tar.gz $CIRCLE_ARTIFACTS
 
+test:
+  post:
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - mkdir -p $CIRCLE_TEST_REPORTS/mocha/
+    - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+    - cp test/test-results.xml $CIRCLE_TEST_REPORTS/mocha
+
 #Update version.json with a new version number
 #node build
 #Upload installer executables at install-versions.risevision.com

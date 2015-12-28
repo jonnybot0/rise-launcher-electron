@@ -8,8 +8,9 @@
   "devDependencies": {
     "electron-prebuilt": "^0.36.1",
     "istanbul": "^0.4.0",
-    "simple-mock": "^0.4.1",
-    "mocha": "^2.3.3"
+    "mocha": "^2.3.3",
+    "mocha-junit-reporter": "^1.9.1",
+    "simple-mock": "^0.4.1"
   },
   "dependencies": {
     "gunzip-maybe": "^1.2.1",
@@ -24,6 +25,6 @@
     "yargs": "3.28.0"
   },
   "scripts": {
-    "test": "istanbul cover node_modules/mocha/bin/_mocha -- --recursive test/unit"
+    "test": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter mocha-junit-reporter --reporter-options mochaFile=test/test-results.xml --recursive test/unit"
   }
 }
