@@ -4,10 +4,9 @@ fs = require("fs"),
 path = require("path"),
 zlib = require("zlib"),
 tar = require("tar-fs"),
-rimraf = require("rimraf"),
 packager = require("electron-packager");
 
-var opts = {
+var packageOpts = {
   dir: ".",
   name: "installer",
   platform: "linux,win32",
@@ -18,16 +17,13 @@ var opts = {
   overwrite: "true"
 };
 
-spawnSync("npm", ["install"], {stdio: "inherit", encoding: "utf8"});
-
 console.log("Generating builds");
 
-packager(opts, function done (err, appPath) {
+packager(packageOpts, function done (err) {
   if(!err) {
     console.log("Builds generated");
 
-    removeUnwantedDirs()
-    .then(zipBuilds)
+    zipBuilds()
     .then(()=>{
       console.log("Done zipping builds");
 
@@ -43,31 +39,6 @@ packager(opts, function done (err, appPath) {
   }
 });
 
-function removeUnwantedDirs() {
-  var artifacts = ["linux-ia32", "linux-x64", "win32-ia32", "win32-x64"];
-
-  return Promise.all(artifacts.map((platform)=>{
-    return removeNodeModule(platform, "istanbul");
-  }));
-
-  function removeNodeModule(platform, name) {
-    return removeDir(path.join("builds", "installer-" + platform, "resources", "app", "node_modules", name));
-  }
-
-  function removeDir(path) {
-    return new Promise((resolve, reject)=>{
-      rimraf(path, (err)=>{
-        if(!err) {
-          resolve();
-        }
-        else {
-          reject({ message: "Error recursively deleting path", error: err });
-        }
-      });
-    });
-  }
-}
-
 function zipBuilds() {
   var artifacts = [["linux-ia32", "lnx-32"], ["linux-x64", "lnx-64"], ["win32-ia32", "win-32"], ["win32-x64", "win-64"]];
 
@@ -82,7 +53,6 @@ function zipBuilds() {
 
 function zipBuild(platform, zipName) {
   var input = path.join(__dirname, "builds", "installer-" + platform);
-  var resources = path.join(input, "resources");
   var outputTar = path.join(__dirname, "builds", "rvplayer-installer-" + zipName + ".tar");
   var outputGz = path.join(__dirname, "builds", "rvplayer-installer-" + zipName + ".tar.gz");
 
@@ -96,7 +66,7 @@ function zipBuild(platform, zipName) {
     fs.unlinkSync(outputTar);
   });
 
-  function tarFolder(platform, zipName) {
+  function tarFolder() {
     return new Promise((resolve, reject)=>{
       tar.pack(input)
       .pipe(fs.createWriteStream(outputTar))
@@ -105,7 +75,7 @@ function zipBuild(platform, zipName) {
     });
   }
 
-  function gzipTar(zipName) {
+  function gzipTar() {
     var input = fs.createReadStream(outputTar);
     var output = fs.createWriteStream(outputGz);
 
