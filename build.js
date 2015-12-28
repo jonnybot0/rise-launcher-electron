@@ -12,12 +12,10 @@ var packageOpts = {
   platform: "linux,win32",
   arch: "all",
   version: "0.36.1",
-  ignore: ".git|builds|^test|node_modules/istanbul",
+  ignore: ".git|builds|^test",
   out: "builds",
   overwrite: "true"
 };
-
-spawnSync("npm", ["install"], {stdio: "inherit", encoding: "utf8"});
 
 console.log("Generating builds");
 

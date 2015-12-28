@@ -9,6 +9,9 @@ deployment:
   staging:
     branch: /(feature|fix|chore).*/
     commands:
+      - rm -rf node_modules
+      - npm install --production
+      - npm install electron-packager
       - cd java-network-test && mvn package
       - cp java-network-test/target/javanetworktest-1.0-SNAPSHOT-jar-with-dependencies.jar ./java-network-test.jar
       - node build.js
@@ -19,6 +22,9 @@ deployment:
   production:
     branch: master
     commands:
+      - rm -rf node_modules
+      - npm install --production
+      - npm install electron-packager
       - cd java-network-test && mvn package
       - cp java-network-test/target/javanetworktest-1.0-SNAPSHOT-jar-with-dependencies.jar ./java-network-test.jar
       - node build.js
