@@ -33,6 +33,7 @@ deployment:
       - cp builds/*.sh $CIRCLE_ARTIFACTS
       - cp builds/*.tar.gz $CIRCLE_ARTIFACTS
       - node -e 'console.log("deploying version " + require("./version.json"))'
+      - cd cfg && node update-version.js
 
 test:
   post:
@@ -42,5 +43,4 @@ test:
     - cp test/test-results.xml $CIRCLE_TEST_REPORTS/mocha
 
 #Upload installer executables at install-versions.risevision.com
-#Update .cfg files with the new version number
 #Upload .cfg files
