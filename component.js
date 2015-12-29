@@ -5,7 +5,7 @@ latestChannelProb = Math.round(Math.random() * 100),
 componentNames = [ "Browser", "Cache", "Java", "Player" ];
 
 function getComponentsUrl() {
-  var componentsUrl = "http://storage.googleapis.com/install-versions.risevision.com/electron-remote-components-platform-arch.cfg";
+  var componentsUrl = "http://storage.googleapis.com/install-versions.risevision.com/electron-remote-components-platform-arch.json";
 
   componentsUrl = componentsUrl.replace("platform", platform.isWindows() ? "win" : "lnx");
   componentsUrl = componentsUrl.replace("arch", platform.getArch() === "x64" ? "64" : "32");
@@ -27,10 +27,10 @@ function getChannel(components) {
   if(module.exports.isTestingChannelRequested()) {
     return "Testing";
   }
-  else if(components.ForceStable === "true") {
+  else if(components.ForceStable) {
     return "Stable";
   }
-  else if(module.exports.isPlayerOnLatestChannelVersion(components) || module.exports.getLatestChannelProb() < Number(components.LatestRolloutPercent)) {
+  else if(module.exports.isPlayerOnLatestChannelVersion(components) || module.exports.getLatestChannelProb() < components.LatestRolloutPercent) {
     return "Latest";
   }
   else {
@@ -93,7 +93,7 @@ function getComponents() {
   return new Promise((resolve, reject)=>{
     module.exports.getComponentsList()
     .then((list)=>{
-      var compsMap = config.parsePropertyList(list);
+      var compsMap = JSON.parse(list);
       var channel = getChannel(compsMap);
 
       getComponentsVersions()
