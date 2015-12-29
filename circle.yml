@@ -27,10 +27,12 @@ deployment:
       - npm install electron-packager
       - cd java-network-test && mvn package
       - cp java-network-test/target/javanetworktest-1.0-SNAPSHOT-jar-with-dependencies.jar ./java-network-test.jar
+      - node -e 'var d = new Date();console.log("\"" + d.getUTCFullYear() + "." + (d.getUTCMonth() + 1) + "." + d.getUTCDate() + "." + d.getUTCHours() + "." + d.getUTCMinutes() + "\"")' > version.json
       - node build.js
       - cp builds/*.exe $CIRCLE_ARTIFACTS
       - cp builds/*.sh $CIRCLE_ARTIFACTS
       - cp builds/*.tar.gz $CIRCLE_ARTIFACTS
+      - node -e 'console.log("deploying version " + require("./version.json"))'
 
 test:
   post:
@@ -39,8 +41,6 @@ test:
     - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
     - cp test/test-results.xml $CIRCLE_TEST_REPORTS/mocha
 
-#Update version.json with a new version number
-#node build
 #Upload installer executables at install-versions.risevision.com
 #Update .cfg files with the new version number
 #Upload .cfg files
