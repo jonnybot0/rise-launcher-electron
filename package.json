@@ -25,6 +25,6 @@
     "yargs": "3.28.0"
   },
   "scripts": {
-    "test": "cd java-network-test && mvn test && cd .. && istanbul cover node_modules/mocha/bin/_mocha -- --reporter mocha-junit-reporter --reporter-options mochaFile=test/test-results.xml --recursive test/unit"
+    "test": "cd external-deps/java-network-test && mvn test && cd ../.. && istanbul cover node_modules/mocha/bin/_mocha -r ./init.js -- --reporter mocha-junit-reporter --reporter-options mochaFile=test/test-results.xml --recursive test/unit"
   }
 }

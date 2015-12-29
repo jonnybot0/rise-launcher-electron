@@ -1,6 +1,6 @@
-var platform = require("./common/platform.js"),
-network = require("./common/network.js"),
-config = require("./common/config.js"),
+var platform = requireRoot("common/platform.js"),
+network = requireRoot("common/network.js"),
+config = requireRoot("common/config.js"),
 path = require("path");
 
 network.registerObserver((stats)=>{

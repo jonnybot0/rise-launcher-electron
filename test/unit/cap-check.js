@@ -1,5 +1,5 @@
-var capCheck = require("../../cap-check.js"),
-platform = require("../../common/platform.js"),
+var capCheck = requireRoot("installer/cap-check.js"),
+platform = requireRoot("common/platform.js"),
 fs = require("fs"),
 path = require("path"),
 assert = require("assert"),

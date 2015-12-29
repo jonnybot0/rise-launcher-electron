@@ -1,4 +1,4 @@
-var platform = require("../../../common/platform.js"),
+var platform = requireRoot("common/platform.js"),
 childProcess = require("child_process"),
 os = require("os"),
 path = require("path"),

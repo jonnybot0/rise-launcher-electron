@@ -4,4 +4,4 @@ coverage/
 test/test-results.xml
 *.zip
 *.jar
-java-network-test/target/
+external-deps/java-network-test/target/

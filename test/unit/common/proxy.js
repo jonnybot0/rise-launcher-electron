@@ -1,8 +1,8 @@
-var proxy = require("../../../common/proxy.js"),
+var proxy = requireRoot("common/proxy.js"),
 proxySetup = {},
 assert = require("assert"),
 simpleMock = require("simple-mock"),
-platform = require("../../../common/platform.js"),
+platform = requireRoot("common/platform.js"),
 mock = require("simple-mock").mock;
 
 proxy.observe((proxyFields)=>{proxySetup.proxyFields = proxyFields;});

@@ -1,13 +1,13 @@
-var platform = require("../../common/platform.js"),
-network = require("../../common/network.js"),
-config = require("../../common/config.js"),
-downloader = require("../../downloader.js"),
+var platform = requireRoot("common/platform.js"),
+network = requireRoot("common/network.js"),
+config = requireRoot("common/config.js"),
+downloader = requireRoot("installer/downloader.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 path = require("path"),
 mock = require("simple-mock").mock;
 
-global.log = require("../../logger/logger.js")();
+global.log = requireRoot("logger/logger.js")();
 
 describe("downloader", ()=>{
   var componentsList = [];

@@ -1,5 +1,5 @@
-var optimization = require("../../os-optimization.js"),
-platform = require("../../common/platform.js"),
+var optimization = requireRoot("installer/os-optimization.js"),
+platform = requireRoot("common/platform.js"),
 childProcess = require("child_process"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),

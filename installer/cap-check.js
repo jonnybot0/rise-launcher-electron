@@ -1,4 +1,4 @@
-var platform = require("./common/platform.js"),
+var platform = requireRoot("common/platform.js"),
 path = require("path"),
 fs = require("fs"),
 risePlayerAppIds = ["ilcmohdkjfcfekfmpdppgoaaemgdmhaa", "mfpgpdablffhbfofnhlpgmokokbahooi"];

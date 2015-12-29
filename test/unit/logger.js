@@ -1,7 +1,7 @@
 var log,
 uiWindow,
 externalLogger,
-platform = require("../../common/platform.js"),
+platform = requireRoot("common/platform.js"),
 fs = require("fs"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),

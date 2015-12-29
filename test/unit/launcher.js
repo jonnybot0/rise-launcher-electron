@@ -1,12 +1,12 @@
-var platform = require("../../common/platform.js"),
-network = require("../../common/network.js"),
-proxy = require("../../common/proxy.js"),
-launcher = require("../../launcher.js"),
+var platform = requireRoot("common/platform.js"),
+network = requireRoot("common/network.js"),
+proxy = requireRoot("common/proxy.js"),
+launcher = requireRoot("installer/launcher.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock;
 
-global.log = require("../../logger/logger.js")();
+global.log = requireRoot("logger/logger.js")();
 
 describe("launcher", ()=>{
   beforeEach("setup mocks", ()=>{

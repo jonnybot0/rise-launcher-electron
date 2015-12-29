@@ -1,5 +1,5 @@
-var platform = require("./common/platform.js"),
-network = require("./common/network.js"),
+var platform = requireRoot("common/platform.js"),
+network = requireRoot("common/network.js"),
 path = require("path");
 
 function getJavaPath() {

@@ -1,11 +1,11 @@
-var platform = require("../../common/platform.js"),
-uninstall = require("../../uninstall.js"),
+var platform = requireRoot("common/platform.js"),
+uninstall = requireRoot("installer/uninstall.js"),
 path = require("path"),
 mock = require("simple-mock").mock,
 simpleMock = require("simple-mock"),
 assert = require("assert");
 
-global.log = require("../../logger/logger.js")();
+global.log = requireRoot("logger/logger.js")();
 
 describe("uninstall", ()=>{
   beforeEach("setup mocks", ()=>{

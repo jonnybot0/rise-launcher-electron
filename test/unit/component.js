@@ -1,14 +1,14 @@
-var platform = require("../../common/platform.js"),
-network = require("../../common/network.js"),
-config = require("../../common/config.js"),
-component = require("../../component.js"),
+var platform = requireRoot("common/platform.js"),
+network = requireRoot("common/network.js"),
+config = requireRoot("common/config.js"),
+component = requireRoot("installer/component.js"),
 testRemoteComponentsFile = "test/unit/electron-remote-components-lnx-32.json",
 assert = require("assert"),
 simpleMock = require("simple-mock"),
-thisInstallerVersion = require("../../version.json"),
+thisInstallerVersion = requireRoot("version.json"),
 mock = require("simple-mock").mock;
 
-global.log = require("../../logger/logger.js")();
+global.log = requireRoot("logger/logger.js")();
 
 describe("component", ()=>{
   beforeEach("setup mocks", ()=>{

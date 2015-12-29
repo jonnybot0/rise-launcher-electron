@@ -1,11 +1,11 @@
-var platform = require("../../common/platform.js"),
-stop = require("../../stop-start.js"),
+var platform = requireRoot("common/platform.js"),
+stop = requireRoot("installer/stop-start.js"),
 path = require("path"),
 mock = require("simple-mock").mock,
 simpleMock = require("simple-mock"),
 assert = require("assert");
 
-global.log = require("../../logger/logger.js")();
+global.log = requireRoot("logger/logger.js")();
 
 describe("stop", ()=>{
   beforeEach("setup mocks", ()=>{

@@ -1,4 +1,4 @@
-var platform = require("./common/platform.js"),
+var platform = requireRoot("common/platform.js"),
 childProcess = require("child_process");
 
 var validationTokens = ["rvplayer", "ilcmohdkjfcfekfmpdppgoaaemgdmhaa", "mfpgpdablffhbfofnhlpgmokokbahooi"];

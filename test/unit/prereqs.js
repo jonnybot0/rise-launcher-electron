@@ -1,13 +1,13 @@
-var prereqs = require("../../prereqs.js"),
-platform = require("../../common/platform.js"),
-networkCheck = require("../../network-check.js"),
-capCheck = require("../../cap-check.js"),
-watchdogCheck = require("../../watchdog-check.js"),
+var prereqs = requireRoot("installer/prereqs.js"),
+platform = requireRoot("common/platform.js"),
+networkCheck = requireRoot("installer/network-check.js"),
+capCheck = requireRoot("installer/cap-check.js"),
+watchdogCheck = requireRoot("installer/watchdog-check.js"),
 mock = require("simple-mock").mock,
 simpleMock = require("simple-mock"),
 assert = require("assert");
 
-global.log = require("../../logger/logger.js")();
+global.log = requireRoot("logger/logger.js")();
 
 describe("prereqs", ()=>{
   afterEach("reset mocks", ()=>{

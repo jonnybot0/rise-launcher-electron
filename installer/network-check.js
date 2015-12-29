@@ -1,5 +1,5 @@
-var network = require("./common/network.js"),
-platform = require("./common/platform.js"),
+var network = requireRoot("common/network.js"),
+platform = requireRoot("common/platform.js"),
 path = require("path"),
 promisesPct = 0,
 siteList = [

@@ -1,6 +1,6 @@
-var platform = require("./common/platform.js"),
-network = require("./common/network.js"),
-config = require("./common/config.js"),
+var platform = requireRoot("common/platform.js"),
+network = requireRoot("common/network.js"),
+config = requireRoot("common/config.js"),
 latestChannelProb = Math.round(Math.random() * 100),
 componentNames = [ "Browser", "Cache", "Java", "Player" ];
 

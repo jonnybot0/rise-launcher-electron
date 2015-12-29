@@ -1,12 +1,12 @@
-var platform = require("../../common/platform.js"),
-autostart = require("../../autostart/autostart.js"),
-installer = require("../../installer.js"),
-component = require("../../component.js"),
-downloader = require("../../downloader.js"),
-launcher = require("../../launcher.js"),
-optimization = require("../../os-optimization.js"),
-capCheck = require("../../cap-check.js"),
-watchdogCheck = require("../../watchdog-check.js"),
+var platform = requireRoot("common/platform.js"),
+autostart = requireRoot("installer/autostart/autostart.js"),
+installer = requireRoot("installer/installer.js"),
+component = requireRoot("installer/component.js"),
+downloader = requireRoot("installer/downloader.js"),
+launcher = requireRoot("installer/launcher.js"),
+optimization = requireRoot("installer/os-optimization.js"),
+capCheck = requireRoot("installer/cap-check.js"),
+watchdogCheck = requireRoot("installer/watchdog-check.js"),
 uninstall = require("./uninstall.js"),
 stop = {},
 assert = require("assert"),
@@ -15,7 +15,7 @@ path = require("path"),
 mock = require("simple-mock").mock,
 components = {};
 
-global.log = require("../../logger/logger.js")();
+global.log = requireRoot("logger/logger.js")();
 global.options = {};
 
 describe("installer", ()=>{
