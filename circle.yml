@@ -47,20 +47,20 @@ deployment:
       - cp builds/*.exe $CIRCLE_ARTIFACTS
       - cp builds/*.sh $CIRCLE_ARTIFACTS
       - cp builds/*.tar.gz $CIRCLE_ARTIFACTS
-      - node -e 'console.log("deploying version " + require("./version.json"))'
+      - node -e 'console.log("deploying version " + require("./version.json") + " to master dir")'
       - gcloud auth activate-service-account 452091732215@developer.gserviceaccount.com --key-file ../private-keys/storage-server/rva-media-library-ce0d2bd78b54.json
-      - gsutil cp builds/*.sh gs://install-versions.risevision.com
-      - gsutil cp builds/*.exe gs://install-versions.risevision.com
-      - gsutil cp builds/*.tar* gs://install-versions.risevision.com
-      - gsutil cp cfg/*.json gs://install-versions.risevision.com
-      - gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/*.sh
-      - gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/*.exe
-      - gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/*.tar*
-      - gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/electron*.json
-      - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/*.sh
-      - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/*.exe
-      - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/*.tar*
-      - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/electron*.json 
+      - gsutil cp builds/*.sh gs://install-versions.risevision.com/master/
+      - gsutil cp builds/*.exe gs://install-versions.risevision.com/master/
+      - gsutil cp builds/*.tar* gs://install-versions.risevision.com/master/
+      - gsutil cp cfg/*.json gs://install-versions.risevision.com/master/
+      - gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/master/*.sh
+      - gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/master/*.exe
+      - gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/master/*.tar*
+      - gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/master/electron*.json
+      - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/master/*.sh
+      - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/master/*.exe
+      - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/master/*.tar*
+      - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/master/electron*.json 
 
 test:
   post:
