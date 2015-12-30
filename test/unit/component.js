@@ -26,22 +26,21 @@ describe("component", ()=>{
     assert(channelProb <= 100);
   });
 
-  it("checks the testing channel has been requested", ()=>{
-    mock(platform, "readTextFileSync").returnWith("ForceTesting=true");
-
-    assert(component.isTestingChannelRequested());
+  it("expects the override to provide a version in the proper format", ()=>{
+    mock(platform, "readTextFileSync").returnWith("ForceTestingVersion=this.is.not.a.valid.versino");
+    assert(!component.getTestingVersion());
   });
 
-  it("checks the testing channel has been disabled", ()=>{
-    mock(platform, "readTextFileSync").returnWith("ForceTesting=false");
+  it("checks the testing channel has been requested", ()=>{
+    mock(platform, "readTextFileSync").returnWith("ForceTestingVersion=2015.01.01.12.12");
 
-    assert(!component.isTestingChannelRequested());
+    assert(component.getTestingVersion());
   });
 
   it("checks the testing channel has not been requested", ()=>{
     mock(platform, "readTextFileSync").returnWith("");
 
-    assert(!component.isTestingChannelRequested());
+    assert(!component.getTestingVersion());
   });
 
   it("returns forced testing channel", ()=>{
@@ -50,7 +49,7 @@ describe("component", ()=>{
       LatestRolloutPercent: "10"
     };
 
-    mock(component, "isTestingChannelRequested").returnWith(true);
+    mock(component, "getTestingVersion").returnWith("1234.12.12.12.12");
 
     assert.equal(component.getChannel(comps), "Testing");
   });
@@ -87,6 +86,7 @@ describe("component", ()=>{
   });
 
   it("returns Windows 32bit components url", ()=>{
+    mock(config, "getDisplaySettingsSync").returnWith({});
     mock(platform, "getOS").returnWith("win32");
     mock(platform, "getArch").returnWith("ia32");
 
@@ -94,6 +94,7 @@ describe("component", ()=>{
   });
 
   it("returns Windows 64bit components url", ()=>{
+    mock(config, "getDisplaySettingsSync").returnWith({});
     mock(platform, "getOS").returnWith("win32");
     mock(platform, "getArch").returnWith("x64");
 
@@ -101,6 +102,7 @@ describe("component", ()=>{
   });
 
   it("returns Linux 32bit components url", ()=>{
+    mock(config, "getDisplaySettingsSync").returnWith({});
     mock(platform, "getOS").returnWith("linux");
     mock(platform, "getArch").returnWith("ia32");
 
@@ -108,11 +110,21 @@ describe("component", ()=>{
   });
 
   it("returns Linux 64bit components url", ()=>{
+    mock(config, "getDisplaySettingsSync").returnWith({});
     mock(platform, "getOS").returnWith("linux");
     mock(platform, "getArch").returnWith("x64");
 
     assert.equal(component.getComponentsUrl(), "http://storage.googleapis.com/install-versions.risevision.com/electron-remote-components-lnx-64.json");
   });
+
+  it("returns components url with testing version", ()=>{
+    mock(config, "getDisplaySettingsSync").returnWith({ForceTestingVersion: "1212.12.12.12.12"});
+    mock(platform, "getOS").returnWith("win32");
+    mock(platform, "getArch").returnWith("ia32");
+
+    assert.equal(component.getComponentsUrl(), "http://storage.googleapis.com/install-versions.risevision.com/1212.12.12.12.12/electron-remote-components-win-32.json");
+  });
+
 
   it("returns browser is upgradeable because of new install", ()=>{
     return component.isBrowserUpgradeable().then((result)=>{
@@ -274,7 +286,7 @@ describe("component", ()=>{
       mock(platform, "getArch").returnWith("32");
       mock(component, "getComponentsList").resolveWith(data);
       mock(component, "isBrowserUpgradeable").resolveWith(false);
-      mock(component, "isTestingChannelRequested").returnWith(false);
+      mock(component, "getTestingVersion").returnWith(false);
       mock(component, "getLatestChannelProb").returnWith(50);
       mock(config, "getDisplaySettings").resolveWith({ displayid: "test" });
       mock(config, "getComponentVersion", (componentName)=>{
@@ -341,7 +353,7 @@ describe("component", ()=>{
       mock(platform, "getOS").returnWith("linux");
       mock(platform, "getArch").returnWith("32");
       mock(component, "getComponentsList").resolveWith(data);
-      mock(component, "isTestingChannelRequested").returnWith(true);
+      mock(component, "getTestingVersion").returnWith(true);
       mock(component, "isBrowserUpgradeable").resolveWith(true);
       mock(config, "getDisplaySettings").resolveWith({ displayid: "test" });
       mock(config, "getComponentVersion", (componentName)=>{

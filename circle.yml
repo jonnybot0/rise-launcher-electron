@@ -20,6 +20,20 @@ deployment:
       - cp builds/*.exe $CIRCLE_ARTIFACTS
       - cp builds/*.sh $CIRCLE_ARTIFACTS
       - cp builds/*.tar.gz $CIRCLE_ARTIFACTS
+      - node -e 'console.log("deploying staging version " + require("./version.json"))'
+      - gcloud auth activate-service-account 452091732215@developer.gserviceaccount.com --key-file ../private-keys/storage-server/rva-media-library-ce0d2bd78b54.json
+      - testVer=$(cat version.json |tr -d '"') && gsutil cp builds/*.sh gs://install-versions.risevision.com/$testVer/
+      - testVer=$(cat version.json |tr -d '"') && gsutil cp builds/*.exe gs://install-versions.risevision.com/$testVer/
+      - testVer=$(cat version.json |tr -d '"') && gsutil cp builds/*.tar* gs://install-versions.risevision.com/$testVer/
+      - testVer=$(cat version.json |tr -d '"') && gsutil cp cfg/*.json gs://install-versions.risevision.com/$testVer/
+      - testVer=$(cat version.json |tr -d '"') && gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/$testVer/*.sh
+      - testVer=$(cat version.json |tr -d '"') && gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/$testVer/*.exe
+      - testVer=$(cat version.json |tr -d '"') && gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/$testVer/*.tar*
+      - testVer=$(cat version.json |tr -d '"') && gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/$testVer/electron*.json
+      - testVer=$(cat version.json |tr -d '"') && gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/$testVer/*.sh
+      - testVer=$(cat version.json |tr -d '"') && gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/$testVer/*.exe
+      - testVer=$(cat version.json |tr -d '"') && gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/$testVer/*.tar*
+      - testVer=$(cat version.json |tr -d '"') && gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/$testVer/electron*.json 
 
   production:
     branch: master

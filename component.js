@@ -5,7 +5,8 @@ latestChannelProb = Math.round(Math.random() * 100),
 componentNames = [ "Browser", "Cache", "Java", "Player" ];
 
 function getComponentsUrl() {
-  var componentsUrl = "http://storage.googleapis.com/install-versions.risevision.com/electron-remote-components-platform-arch.json";
+  var testVersion = module.exports.getTestingVersion() || "",
+  componentsUrl = "http://storage.googleapis.com/install-versions.risevision.com/" + testVersion + "electron-remote-components-platform-arch.json";
 
   componentsUrl = componentsUrl.replace("platform", platform.isWindows() ? "win" : "lnx");
   componentsUrl = componentsUrl.replace("arch", platform.getArch() === "x64" ? "64" : "32");
@@ -17,14 +18,19 @@ function isPlayerOnLatestChannelVersion(components) {
   return config.getComponentVersionSync("Player") === components.PlayerVersionLatest;
 }
 
-function isTestingChannelRequested() {
+function getTestingVersion() {
   var props = config.getDisplaySettingsSync();
 
-  return props.ForceTesting === "true";
+  if (props.ForceTestingVersion && /\d\d\d\d.\d\d.\d\d.\d\d.\d\d/.test(props.ForceTestingVersion)) {
+    log.all("test version", props.ForceTestingVersion);
+    return props.ForceTestingVersion + "/";
+  } else {
+    return undefined;
+  }
 }
 
 function getChannel(components) {
-  if(module.exports.isTestingChannelRequested()) {
+  if(module.exports.getTestingVersion()) {
     return "Testing";
   }
   else if(components.ForceStable) {
@@ -43,12 +49,12 @@ function isBrowserUpgradeable(displayId) {
     return Promise.resolve(true);
   }
   else {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve)=>{
       network.httpFetch(platform.getCoreUrl() + "/player/isBrowserUpgradeable?displayId=" + displayId)
       .then(function(resp) {
         resolve(resp.text().indexOf("true") >= 0);
       })
-      .catch(function(err) {
+      .catch(function() {
         resolve(false);
       });
     });    
@@ -56,7 +62,7 @@ function isBrowserUpgradeable(displayId) {
 }
 
 function updateVersionStatus(compsMap, componentName, channel) {
-  return new Promise((resolve, reject)=>{
+  return new Promise((resolve)=>{
     config.getComponentVersion(componentName)
     .then((localVersion)=>{
       var remoteVersion = compsMap[componentName + "Version" + channel];
@@ -149,7 +155,7 @@ module.exports = {
   getLatestChannelProb() { return latestChannelProb; },
   getComponentNames() { return componentNames; },
   getComponentsUrl,
-  isTestingChannelRequested,
+  getTestingVersion,
   isPlayerOnLatestChannelVersion,
   getChannel,
   isBrowserUpgradeable,
