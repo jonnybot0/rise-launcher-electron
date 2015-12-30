@@ -5,3 +5,4 @@ test/test-results.xml
 *.zip
 *.jar
 java-network-test/target/
+cfg/

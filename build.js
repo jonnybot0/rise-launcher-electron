@@ -1,5 +1,4 @@
-var spawnSync= require("child_process").spawnSync,
-execSync= require("child_process").execSync,
+var execSync= require("child_process").execSync,
 fs = require("fs"),
 path = require("path"),
 zlib = require("zlib"),
@@ -16,6 +15,23 @@ var packageOpts = {
   out: "builds",
   overwrite: "true"
 };
+
+(function updateVersionNumber() {
+  var d = new Date(),
+  dateString = d.getUTCFullYear() + "." + (d.getUTCMonth() + 1) + "." +
+  d.getUTCDate() + "." + d.getUTCHours() + "." + d.getUTCMinutes();
+
+  console.log("Setting version to " + dateString);
+  fs.writeFileSync("./version.json", JSON.stringify(dateString));
+
+  ["lnx-32", "lnx-64", "win-32", "win-64"].forEach((suff)=>{
+    var fileName = "./cfg/electron-remote-components-" + suff + ".json",
+    componentSet = require(fileName);
+
+    componentSet.InstallerElectronVersion = require("./version.json");
+    fs.writeFileSync(fileName, JSON.stringify(componentSet, null, 2));
+  });
+}());
 
 console.log("Generating builds");
 

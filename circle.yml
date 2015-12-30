@@ -29,8 +29,6 @@ deployment:
       - npm install electron-packager
       - cd java-network-test && mvn package
       - cp java-network-test/target/javanetworktest-1.0-SNAPSHOT-jar-with-dependencies.jar ./java-network-test.jar
-      - node -e 'var d = new Date();console.log("\"" + d.getUTCFullYear() + "." + (d.getUTCMonth() + 1) + "." + d.getUTCDate() + "." + d.getUTCHours() + "." + d.getUTCMinutes() + "\"")' > version.json
-      - cd cfg && node update-version.js
       - node build.js
       - cp builds/*.exe $CIRCLE_ARTIFACTS
       - cp builds/*.sh $CIRCLE_ARTIFACTS
