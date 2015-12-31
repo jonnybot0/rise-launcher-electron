@@ -1,0 +1,22 @@
+{
+  "ForceStable": false,
+  "LatestRolloutPercent": 50,
+  "InstallerElectronVersion": "2015.12.30.12.39",
+  "InstallerElectronURL": "http://install-versions.risevision.com/rvplayer-installer-lnx-32.tar.gz",
+  "BrowserVersionStable": "2015.11.13.06.14",
+  "BrowserVersionLatest": "2015.11.13.06.14",
+  "BrowserURLStable": "http://install-versions.risevision.com/chromium-lnx-32-2015.11.13.06.14.tar.gz",
+  "BrowserURLLatest": "http://install-versions.risevision.com/chromium-lnx-32-2015.11.13.06.14.tar.gz",
+  "CacheVersionStable": "2015.08.26.12.00",
+  "CacheVersionLatest": "2015.08.26.12.00",
+  "CacheURLStable": "http://install-versions.risevision.com/RiseCache.tar.gz",
+  "CacheURLLatest": "http://install-versions.risevision.com/RiseCache.tar.gz",
+  "JavaVersionStable": "7.80",
+  "JavaVersionLatest": "7.80",
+  "JavaURLStable": "http://install-versions.risevision.com/jre-7u80-lnx-32.tar.gz",
+  "JavaURLLatest": "http://install-versions.risevision.com/jre-7u80-lnx-32.tar.gz",
+  "PlayerVersionStable": "2015.12.17.16.00",
+  "PlayerVersionLatest": "2015.12.17.16.00",
+  "PlayerURLStable": "http://install-versions.risevision.com/RisePlayer-2015-12-17-16-00.tar.gz",
+  "PlayerURLLatest": "http://install-versions.risevision.com/RisePlayer-2015-12-17-16-00.tar.gz"
+}

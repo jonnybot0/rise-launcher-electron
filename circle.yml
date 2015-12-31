@@ -5,6 +5,8 @@ dependencies:
   pre:
     - sudo apt-get update; sudo apt-get install makeself p7zip-full;
     - npm install -g istanbul
+    - git clone git@github.com:Rise-Vision/private-keys.git
+    - mv private-keys ..
 deployment:
   staging:
     branch: /(feature|fix|chore).*/
@@ -18,6 +20,20 @@ deployment:
       - cp builds/*.exe $CIRCLE_ARTIFACTS
       - cp builds/*.sh $CIRCLE_ARTIFACTS
       - cp builds/*.tar.gz $CIRCLE_ARTIFACTS
+      - node -e 'console.log("deploying staging version " + require("./version.json"))'
+      - gcloud auth activate-service-account 452091732215@developer.gserviceaccount.com --key-file ../private-keys/storage-server/rva-media-library-ce0d2bd78b54.json
+      - testVer=$(cat version.json |tr -d '"') && gsutil cp builds/*.sh gs://install-versions.risevision.com/$testVer/
+      - testVer=$(cat version.json |tr -d '"') && gsutil cp builds/*.exe gs://install-versions.risevision.com/$testVer/
+      - testVer=$(cat version.json |tr -d '"') && gsutil cp builds/*.tar* gs://install-versions.risevision.com/$testVer/
+      - testVer=$(cat version.json |tr -d '"') && gsutil cp cfg/*.json gs://install-versions.risevision.com/$testVer/
+      - testVer=$(cat version.json |tr -d '"') && gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/$testVer/*.sh
+      - testVer=$(cat version.json |tr -d '"') && gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/$testVer/*.exe
+      - testVer=$(cat version.json |tr -d '"') && gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/$testVer/*.tar*
+      - testVer=$(cat version.json |tr -d '"') && gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/$testVer/electron*.json
+      - testVer=$(cat version.json |tr -d '"') && gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/$testVer/*.sh
+      - testVer=$(cat version.json |tr -d '"') && gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/$testVer/*.exe
+      - testVer=$(cat version.json |tr -d '"') && gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/$testVer/*.tar*
+      - testVer=$(cat version.json |tr -d '"') && gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/$testVer/electron*.json 
 
   production:
     branch: master
@@ -31,6 +47,20 @@ deployment:
       - cp builds/*.exe $CIRCLE_ARTIFACTS
       - cp builds/*.sh $CIRCLE_ARTIFACTS
       - cp builds/*.tar.gz $CIRCLE_ARTIFACTS
+      - node -e 'console.log("deploying version " + require("./version.json") + " to master dir")'
+      - gcloud auth activate-service-account 452091732215@developer.gserviceaccount.com --key-file ../private-keys/storage-server/rva-media-library-ce0d2bd78b54.json
+      - gsutil cp builds/*.sh gs://install-versions.risevision.com/master/
+      - gsutil cp builds/*.exe gs://install-versions.risevision.com/master/
+      - gsutil cp builds/*.tar* gs://install-versions.risevision.com/master/
+      - gsutil cp cfg/*.json gs://install-versions.risevision.com/master/
+      - gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/master/*.sh
+      - gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/master/*.exe
+      - gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/master/*.tar*
+      - gsutil setmeta -h "Cache-Control:private, max-age=0" gs://install-versions.risevision.com/master/electron*.json
+      - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/master/*.sh
+      - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/master/*.exe
+      - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/master/*.tar*
+      - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/master/electron*.json 
 
 test:
   post:
@@ -38,9 +68,3 @@ test:
     - mkdir -p $CIRCLE_TEST_REPORTS/mocha/
     - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
     - cp test/test-results.xml $CIRCLE_TEST_REPORTS/mocha
-
-#Update version.json with a new version number
-#node build
-#Upload installer executables at install-versions.risevision.com
-#Update .cfg files with the new version number
-#Upload .cfg files
