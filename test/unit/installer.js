@@ -1,4 +1,4 @@
-var platform = requireRoot("common/platform.js"),
+var platform = require("rise-common-electron").platform,
 autostart = requireRoot("installer/autostart/autostart.js"),
 installer = requireRoot("installer/installer.js"),
 component = requireRoot("installer/component.js"),
@@ -15,7 +15,7 @@ path = require("path"),
 mock = require("simple-mock").mock,
 components = {};
 
-global.log = requireRoot("logger/logger.js")();
+global.log = require("rise-common-electron").logger();
 global.options = {};
 
 describe("installer", ()=>{

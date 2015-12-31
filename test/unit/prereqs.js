@@ -1,5 +1,5 @@
 var prereqs = requireRoot("installer/prereqs.js"),
-platform = requireRoot("common/platform.js"),
+platform = require("rise-common-electron").platform,
 networkCheck = requireRoot("installer/network-check.js"),
 capCheck = requireRoot("installer/cap-check.js"),
 watchdogCheck = requireRoot("installer/watchdog-check.js"),
@@ -7,7 +7,7 @@ mock = require("simple-mock").mock,
 simpleMock = require("simple-mock"),
 assert = require("assert");
 
-global.log = requireRoot("logger/logger.js")();
+global.log = require("rise-common-electron").logger();
 
 describe("prereqs", ()=>{
   afterEach("reset mocks", ()=>{

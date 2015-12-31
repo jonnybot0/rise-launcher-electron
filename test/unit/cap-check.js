@@ -1,5 +1,5 @@
 var capCheck = requireRoot("installer/cap-check.js"),
-platform = requireRoot("common/platform.js"),
+platform = require("rise-common-electron").platform,
 fs = require("fs"),
 path = require("path"),
 assert = require("assert"),

@@ -1,6 +1,6 @@
-var platform = requireRoot("common/platform.js"),
-network = requireRoot("common/network.js"),
-config = requireRoot("common/config.js"),
+var platform = require("rise-common-electron").platform,
+network = require("rise-common-electron").network,
+config = requireRoot("installer/config.js"),
 component = requireRoot("installer/component.js"),
 testRemoteComponentsFile = "test/unit/electron-remote-components-lnx-32.json",
 assert = require("assert"),
@@ -8,7 +8,7 @@ simpleMock = require("simple-mock"),
 thisInstallerVersion = requireRoot("version.json"),
 mock = require("simple-mock").mock;
 
-global.log = requireRoot("logger/logger.js")();
+global.log = require("rise-common-electron").logger();
 
 describe("component", ()=>{
   beforeEach("setup mocks", ()=>{
@@ -216,6 +216,7 @@ describe("component", ()=>{
     mock(network, "httpFetch").rejectWith("error");
     
     return component.getComponentsList().catch((err)=>{
+      console.log("errrrrrrrrrrrrrrr", err);
       assert(err.message);
     });
   });

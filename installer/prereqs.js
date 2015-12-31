@@ -1,4 +1,4 @@
-var platform = requireRoot("common/platform.js"),
+var platform = require("rise-common-electron").platform,
 networkCheck = requireRoot("installer/network-check.js"),
 capCheck = requireRoot("installer/cap-check.js"),
 watchdogCheck = requireRoot("installer/watchdog-check.js");

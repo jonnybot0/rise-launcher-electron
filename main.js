@@ -2,11 +2,12 @@ require("./init");
 
 var app = require("app"),
 ipc = require("electron").ipcMain,
-platform = requireRoot("common/platform.js"),
+platform = require("rise-common-electron").platform,
+network = require("rise-common-electron").network,
+proxy = require("rise-common-electron").proxy,
+config = requireRoot("installer/config.js"),
 networkCheck = requireRoot("installer/network-check.js"),
 launcher = requireRoot("installer/launcher.js"),
-proxy = requireRoot("common/proxy.js"),
-config = requireRoot("common/config.js"),
 autostart = requireRoot("installer/autostart/autostart.js"),
 optimization = requireRoot("installer/os-optimization.js"),
 installer = requireRoot("installer/installer.js"),
@@ -18,9 +19,11 @@ ui = requireRoot("installer/ui/controller.js"),
 displaySettings,
 mainWindow;
 
-global.log = requireRoot("logger/logger.js")
-(requireRoot("logger/bigquery/external-logger-bigquery.js")
-(requireRoot("common/network.js"), platform));
+var version = requireRoot("version.json");
+var externalLogger = require("rise-common-electron").externalLogger
+  (network, platform.getOS(), platform.getArch(), version);
+
+global.log = require("rise-common-electron").logger(externalLogger, platform.getInstallDir());
 
 displaySettings = config.getDisplaySettingsSync();
 log.setDisplaySettings(displaySettings);

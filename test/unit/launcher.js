@@ -1,12 +1,12 @@
-var platform = requireRoot("common/platform.js"),
-network = requireRoot("common/network.js"),
-proxy = requireRoot("common/proxy.js"),
+var platform = require("rise-common-electron").platform,
+network = require("rise-common-electron").network,
+proxy = require("rise-common-electron").proxy,
 launcher = requireRoot("installer/launcher.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock;
 
-global.log = requireRoot("logger/logger.js")();
+global.log = require("rise-common-electron").logger();
 
 describe("launcher", ()=>{
   beforeEach("setup mocks", ()=>{

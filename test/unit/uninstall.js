@@ -1,11 +1,11 @@
-var platform = requireRoot("common/platform.js"),
+var platform = require("rise-common-electron").platform,
 uninstall = requireRoot("installer/uninstall.js"),
 path = require("path"),
 mock = require("simple-mock").mock,
 simpleMock = require("simple-mock"),
 assert = require("assert");
 
-global.log = requireRoot("logger/logger.js")();
+global.log = require("rise-common-electron").logger();
 
 describe("uninstall", ()=>{
   beforeEach("setup mocks", ()=>{

@@ -1,4 +1,4 @@
-var platform = requireRoot("common/platform.js"),
+var platform = require("rise-common-electron").platform,
 childProcess = require("child_process");
 
 var validationTokens = ["rvplayer", "ilcmohdkjfcfekfmpdppgoaaemgdmhaa", "mfpgpdablffhbfofnhlpgmokokbahooi"];

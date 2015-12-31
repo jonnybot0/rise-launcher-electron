@@ -1,4 +1,4 @@
-var platform = requireRoot("common/platform.js"),
+var platform = require("rise-common-electron").platform,
 path = require("path"),
 fs = require("fs"),
 risePlayerAppIds = ["ilcmohdkjfcfekfmpdppgoaaemgdmhaa", "mfpgpdablffhbfofnhlpgmokokbahooi"];

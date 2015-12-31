@@ -5,7 +5,7 @@ assert = require("assert"),
 simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock;
 
-platform = requireRoot("common/platform.js");
+platform = require("rise-common-electron").platform;
 
 autostart = requireRoot("installer/autostart/autostart.js");
 

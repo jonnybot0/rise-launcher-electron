@@ -1,5 +1,5 @@
-var platform = requireRoot("common/platform.js"),
-network = requireRoot("common/network.js"),
+var platform = require("rise-common-electron").platform,
+network = require("rise-common-electron").network,
 path = require("path");
 
 function getJavaPath() {
