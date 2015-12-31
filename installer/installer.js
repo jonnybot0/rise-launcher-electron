@@ -108,10 +108,9 @@ module.exports = {
     return platform.fileExists(platform.getOldInstallerPath());
   },
   startInstallerUpdate() {
-    return platform.setFilePermissions(platform.getInstallerPath(), 0755)
+    var newInstallerPath = path.join(platform.getTempDir(), config.getComponentInfo("InstallerElectron").extractTo, platform.getInstallerName());
+    return platform.setFilePermissions(newInstallerPath, 0755)
     .then(()=>{
-      var newInstallerPath = path.join(platform.getTempDir(), config.getComponentInfo("InstallerElectron").extractTo, platform.getInstallerName());
-
       platform.startProcess(newInstallerPath, ["--unattended", "--update", "--path", path.join(platform.getTempDir(), config.getComponentInfo("InstallerElectron").extractTo)]);
     });
   },

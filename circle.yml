@@ -5,6 +5,7 @@ dependencies:
   pre:
     - sudo apt-get update; sudo apt-get install makeself p7zip-full;
     - npm install -g istanbul
+    - npm install -g jshint@2.9.1-rc2
     - git clone git@github.com:Rise-Vision/private-keys.git
     - mv private-keys ..
 deployment:
