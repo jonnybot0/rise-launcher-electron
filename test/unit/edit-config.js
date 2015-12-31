@@ -1,5 +1,5 @@
-var editConfig = require("../../edit-config.js"),
-platform = require("../../common/platform.js"),
+var editConfig = requireRoot("installer/edit-config.js"),
+platform = require("rise-common-electron").platform,
 path = require("path"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),

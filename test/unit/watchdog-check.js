@@ -1,5 +1,5 @@
-var watchdogCheck = require("../../watchdog-check.js"),
-platform = require("../../common/platform.js"),
+var watchdogCheck = requireRoot("installer/watchdog-check.js"),
+platform = require("rise-common-electron").platform,
 childProcess = require("child_process"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),

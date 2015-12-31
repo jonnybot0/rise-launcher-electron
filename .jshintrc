@@ -25,6 +25,7 @@
     "logger": false,
     "it": false,
     "afterEach": false,
-    "beforeEach": false
+    "beforeEach": false,
+    "requireRoot": false
   }
 }

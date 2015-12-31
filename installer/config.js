@@ -1,7 +1,7 @@
-var platform = require("../common/platform.js"),
-network = require("../common/network.js"),
-proxy = require("../common/proxy.js"),
-thisInstallerVersion = require("../version.json"),
+var platform = require("rise-common-electron").platform,
+network = require("rise-common-electron").network,
+proxy = require("rise-common-electron").proxy,
+thisInstallerVersion = requireRoot("version.json"),
 path = require("path");
 
 function getComponents() {

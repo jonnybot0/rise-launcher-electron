@@ -1,5 +1,5 @@
 var assert = require("assert"),
-downloader = require("../downloader.js");
+downloader = requireRoot("installer/downloader.js");
 
 describe("downloader", ()=>{
   var componentsList = "", listObject;

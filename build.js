@@ -130,6 +130,6 @@ function createSelfExtractingInstallers() {
     console.log("Generating 7zip file for " + platform);
     execSync("cd builds/installer-" + platform + " && 7z a -mx4 ../installer-" + platform + ".7z *");
     console.log("Generating self extracting installer for " + platform);
-    execSync("cat external-deps/7zS.sfx builds/config.txt builds/installer-" + platform + ".7z > builds/installer-" + fileName + ".exe");
+    execSync("cat external-deps/win-sfx/7zS.sfx builds/config.txt builds/installer-" + platform + ".7z > builds/installer-" + fileName + ".exe");
   }
 }

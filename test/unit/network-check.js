@@ -1,6 +1,6 @@
-var checker = require("../../network-check.js"),
-platform = require("../../common/platform.js"),
-network = require("../../common/network.js"),
+var checker = requireRoot("installer/network-check.js"),
+platform = require("rise-common-electron").platform,
+network = require("rise-common-electron").network,
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 mock = require("simple-mock").mock;

@@ -1,5 +1,5 @@
-var network = require("./common/network.js"),
-platform = require("./common/platform.js"),
+var network = require("rise-common-electron").network,
+platform = require("rise-common-electron").platform,
 path = require("path"),
 promisesPct = 0,
 siteList = [

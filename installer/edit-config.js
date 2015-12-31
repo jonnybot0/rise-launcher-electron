@@ -1,4 +1,4 @@
-var platform = require("./common/platform.js"),
+var platform = require("rise-common-electron").platform,
 path = require("path"),
 ws = require("windows-shortcuts");
 

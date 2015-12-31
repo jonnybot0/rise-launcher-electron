@@ -1,6 +1,6 @@
-var platform = require("./common/platform.js"),
-network = require("./common/network.js"),
-config = require("./common/config.js"),
+var platform = require("rise-common-electron").platform,
+network = require("rise-common-electron").network,
+config = requireRoot("installer/config.js"),
 latestChannelProb = Math.round(Math.random() * 100),
 componentNames = [ "Browser", "Cache", "Java", "Player" ];
 

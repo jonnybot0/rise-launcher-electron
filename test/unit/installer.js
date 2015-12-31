@@ -1,12 +1,12 @@
-var platform = require("../../common/platform.js"),
-autostart = require("../../autostart/autostart.js"),
-installer = require("../../installer.js"),
-component = require("../../component.js"),
-downloader = require("../../downloader.js"),
-launcher = require("../../launcher.js"),
-optimization = require("../../os-optimization.js"),
-capCheck = require("../../cap-check.js"),
-watchdogCheck = require("../../watchdog-check.js"),
+var platform = require("rise-common-electron").platform,
+autostart = requireRoot("installer/autostart/autostart.js"),
+installer = requireRoot("installer/installer.js"),
+component = requireRoot("installer/component.js"),
+downloader = requireRoot("installer/downloader.js"),
+launcher = requireRoot("installer/launcher.js"),
+optimization = requireRoot("installer/os-optimization.js"),
+capCheck = requireRoot("installer/cap-check.js"),
+watchdogCheck = requireRoot("installer/watchdog-check.js"),
 uninstall = require("./uninstall.js"),
 stop = {},
 assert = require("assert"),
@@ -15,7 +15,7 @@ path = require("path"),
 mock = require("simple-mock").mock,
 components = {};
 
-global.log = require("../../logger/logger.js")();
+global.log = require("rise-common-electron").logger();
 global.options = {};
 
 describe("installer", ()=>{

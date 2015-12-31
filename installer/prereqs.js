@@ -1,7 +1,7 @@
-var platform = require("./common/platform.js"),
-networkCheck = require("./network-check.js"),
-capCheck = require("./cap-check.js"),
-watchdogCheck = require("./watchdog-check.js");
+var platform = require("rise-common-electron").platform,
+networkCheck = requireRoot("installer/network-check.js"),
+capCheck = requireRoot("installer/cap-check.js"),
+watchdogCheck = requireRoot("installer/watchdog-check.js");
 
 module.exports = {
   validatePlatform() {

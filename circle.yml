@@ -14,8 +14,8 @@ deployment:
       - rm -rf node_modules
       - npm install --production
       - npm install electron-packager
-      - cd java-network-test && mvn package
-      - cp java-network-test/target/javanetworktest-1.0-SNAPSHOT-jar-with-dependencies.jar ./java-network-test.jar
+      - cd external-deps/java-network-test && mvn package
+      - cp external-deps/java-network-test/target/javanetworktest-1.0-SNAPSHOT-jar-with-dependencies.jar ./java-network-test.jar
       - node build.js
       - cp builds/*.exe $CIRCLE_ARTIFACTS
       - cp builds/*.sh $CIRCLE_ARTIFACTS
@@ -41,8 +41,8 @@ deployment:
       - rm -rf node_modules
       - npm install --production
       - npm install electron-packager
-      - cd java-network-test && mvn package
-      - cp java-network-test/target/javanetworktest-1.0-SNAPSHOT-jar-with-dependencies.jar ./java-network-test.jar
+      - cd external-deps/java-network-test && mvn package
+      - cp external-deps/java-network-test/target/javanetworktest-1.0-SNAPSHOT-jar-with-dependencies.jar ./java-network-test.jar
       - node build.js
       - cp builds/*.exe $CIRCLE_ARTIFACTS
       - cp builds/*.sh $CIRCLE_ARTIFACTS

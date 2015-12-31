@@ -1,31 +1,35 @@
+require("./init");
+
 var app = require("app"),
 ipc = require("electron").ipcMain,
-platform = require("./common/platform.js"),
-networkCheck = require("./network-check.js"),
-launcher = require("./launcher.js"),
-proxy = require("./common/proxy.js"),
-config = require("./common/config.js"),
-autostart = require("./autostart/autostart.js"),
-optimization = require("./os-optimization.js"),
-installer = require("./installer.js"),
-prereqs = require("./prereqs.js"),
-uninstall = require("./uninstall.js"),
-stop = require("./stop-start.js"),
-editConfig = require("./edit-config.js"),
-launcher = require("./launcher.js"),
-ui = require("./ui/controller.js"),
+platform = require("rise-common-electron").platform,
+network = require("rise-common-electron").network,
+proxy = require("rise-common-electron").proxy,
+config = requireRoot("installer/config.js"),
+networkCheck = requireRoot("installer/network-check.js"),
+launcher = requireRoot("installer/launcher.js"),
+autostart = requireRoot("installer/autostart/autostart.js"),
+optimization = requireRoot("installer/os-optimization.js"),
+installer = requireRoot("installer/installer.js"),
+prereqs = requireRoot("installer/prereqs.js"),
+uninstall = requireRoot("installer/uninstall.js"),
+stop = requireRoot("installer/stop-start.js"),
+editConfig = requireRoot("installer/edit-config.js"),
+ui = requireRoot("installer/ui/controller.js"),
 displaySettings,
 mainWindow;
 
-global.log = require("./logger/logger.js")
-(require("./logger/bigquery/external-logger-bigquery.js")
-(require("./common/network.js"), platform));
+var version = requireRoot("version.json");
+var externalLogger = require("rise-common-electron").externalLogger
+  (network, platform.getOS(), platform.getArch(), version);
+
+global.log = require("rise-common-electron").logger(externalLogger, platform.getInstallDir());
 
 displaySettings = config.getDisplaySettingsSync();
 log.setDisplaySettings(displaySettings);
 proxy.setEndpoint(displaySettings.proxy);
 
-global.messages = require("./ui/messages.json");
+global.messages = requireRoot("installer/ui/messages.json");
 
 log.external("started");
 log.debug("Electron " + process.versions.electron);

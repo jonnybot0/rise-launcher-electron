@@ -1,6 +1,6 @@
-var platform = require("./common/platform.js"),
-network = require("./common/network.js"),
-config = require("./common/config.js"),
+var platform = require("rise-common-electron").platform,
+network = require("rise-common-electron/network.js"),
+config = requireRoot("installer/config.js"),
 path = require("path");
 
 network.registerObserver((stats)=>{

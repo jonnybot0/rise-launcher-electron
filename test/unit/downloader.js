@@ -1,13 +1,13 @@
-var platform = require("../../common/platform.js"),
-network = require("../../common/network.js"),
-config = require("../../common/config.js"),
-downloader = require("../../downloader.js"),
+var platform = require("rise-common-electron").platform,
+network = require("rise-common-electron").network,
+config = requireRoot("installer/config.js"),
+downloader = requireRoot("installer/downloader.js"),
 assert = require("assert"),
 simpleMock = require("simple-mock"),
 path = require("path"),
 mock = require("simple-mock").mock;
 
-global.log = require("../../logger/logger.js")();
+global.log = require("rise-common-electron").logger();
 
 describe("downloader", ()=>{
   var componentsList = [];
@@ -234,6 +234,7 @@ describe("downloader", ()=>{
 
     return downloader.installComponent(components.Cache).catch((err)=>{
       assert(platform.copyFolderRecursive.called);
+      console.log("AAAAAAAAAAAAAAAAAA", err);
       assert(err.userFriendlyMessage);
     });
   });
