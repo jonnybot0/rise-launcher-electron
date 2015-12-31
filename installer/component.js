@@ -66,6 +66,7 @@ function updateVersionStatus(compsMap, componentName, channel) {
     config.getComponentVersion(componentName)
     .then((localVersion)=>{
       var remoteVersion = compsMap[componentName + "Version" + channel];
+      if (!remoteVersion) {remoteVersion = compsMap[componentName + "Version" + "Stable"];}
 
       resolve({
         name: componentName,
@@ -122,8 +123,13 @@ function getComponents() {
 
       function buildComponentsResponse(versions) {
         var components = versions.reduce((map, version)=>{
+          var componentUrlKey = version.name + "URL" + (version.name !== "InstallerElectron" ? channel : "");
           map[version.name] = version;
-          map[version.name].url = compsMap[version.name + "URL" + (version.name !== "InstallerElectron" ? channel : "")];
+          if (compsMap[componentUrlKey]) {
+            map[version.name].url = compsMap[componentUrlKey];
+          } else {
+            map[version.name].url = compsMap[version.name + "URL" + (version.name !== "InstallerElectron" ? "Stable" : "")];
+          }
 
           return map;
         }, {});
