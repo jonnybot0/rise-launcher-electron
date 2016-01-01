@@ -3,15 +3,20 @@ machine:
     version: 4.1.0
 dependencies:
   pre:
-    - sudo apt-get update; sudo apt-get install makeself p7zip-full;
     - npm install -g istanbul
     - npm install -g jshint@2.9.1-rc2
-    - git clone git@github.com:Rise-Vision/private-keys.git
-    - mv private-keys ..
 deployment:
-  staging:
+  development:
     branch: /(feature|fix|chore).*/
     commands:
+      - echo "Not staging anything  -  use branch name 'stage/branch-description' to stage"
+
+  staging:
+    branch: /stage\/.*/
+    commands:
+      - sudo apt-get update; sudo apt-get install makeself p7zip-full
+      - git clone git@github.com:Rise-Vision/private-keys.git
+      - mv private-keys ..
       - rm -rf node_modules
       - npm install --production
       - npm install electron-packager
@@ -39,6 +44,9 @@ deployment:
   production:
     branch: master
     commands:
+      - sudo apt-get update; sudo apt-get install makeself p7zip-full
+      - git clone git@github.com:Rise-Vision/private-keys.git
+      - mv private-keys ..
       - rm -rf node_modules
       - npm install --production
       - npm install electron-packager
