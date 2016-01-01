@@ -77,3 +77,9 @@ test:
     - mkdir -p $CIRCLE_TEST_REPORTS/mocha/
     - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
     - cp test/test-results.xml $CIRCLE_TEST_REPORTS/mocha
+
+
+# SIGNTOOL
+# cd C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin
+# signtool sign /t http://timestamp.digicert.com /a "path-to-executable"
+# Enter password in the ui pop up.  Credentials are on the Rise Vision Credentials Google doc
