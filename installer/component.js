@@ -5,13 +5,19 @@ latestChannelProb = Math.round(Math.random() * 100),
 componentNames = [ "Browser", "Cache", "Java", "Player" ];
 
 function getComponentsUrl() {
-  var testVersion = module.exports.getTestingVersion() || "",
-  componentsUrl = "http://storage.googleapis.com/install-versions.risevision.com/" + testVersion + "electron-remote-components-platform-arch.json";
+  var testVersion = module.exports.getTestingVersion(),
+  os = platform.isWindows() ? "win" : "lnx",
+  arch = platform.getArch() === "x64" ? "64" : "32",
+  componentsPath = "http://storage.googleapis.com/install-versions.risevision.com",
+  componentsFile = `electron-remote-components-${os}-${arch}.json`;
 
-  componentsUrl = componentsUrl.replace("platform", platform.isWindows() ? "win" : "lnx");
-  componentsUrl = componentsUrl.replace("arch", platform.getArch() === "x64" ? "64" : "32");
+  if (testVersion) {
+    log.all("test version", testVersion);
+  }
 
-  return componentsUrl;
+  return [componentsPath, testVersion, componentsFile]
+  .filter((el)=>{return el;})
+  .join("/");
 }
 
 function isPlayerOnLatestChannelVersion(components) {
@@ -22,8 +28,7 @@ function getTestingVersion() {
   var props = config.getDisplaySettingsSync();
 
   if (props.ForceTestingVersion && /\d\d\d\d.\d\d.\d\d.\d\d.\d\d/.test(props.ForceTestingVersion)) {
-    log.all("test version", props.ForceTestingVersion);
-    return props.ForceTestingVersion + "/";
+    return props.ForceTestingVersion;
   } else {
     return undefined;
   }
