@@ -27,7 +27,7 @@ function isPlayerOnLatestChannelVersion(components) {
 function getTestingVersion() {
   var props = config.getDisplaySettingsSync();
 
-  if (props.ForceTestingVersion && /\d\d\d\d.\d\d.\d\d.\d\d.\d\d/.test(props.ForceTestingVersion)) {
+  if (/^\d{4}.\d{1,2}.\d{1,2}.\d{1,2}.\d{1,2}$/.test(props.ForceTestingVersion)) {
     return props.ForceTestingVersion;
   } else {
     return undefined;
