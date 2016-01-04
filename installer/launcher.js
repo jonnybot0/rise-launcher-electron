@@ -1,4 +1,5 @@
 var platform = require("rise-common-electron").platform,
+player = require("rise-player-electron"),
 network = require("rise-common-electron").network,
 path = require("path");
 
@@ -17,6 +18,7 @@ function startCache() {
 
 function startPlayer() {
   platform.startProcess(getJavaPath(), network.getJavaProxyArgs().concat(["-jar", path.join(platform.getInstallDir(), "RisePlayer.jar")]));
+  player.start();
 }
 
 module.exports = {
