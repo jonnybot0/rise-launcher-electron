@@ -1,6 +1,9 @@
 # Rise Installer (Electron)
 
 ### Run it
+
+You need to install Maven before running the test or build tasks.
+
 ```
 npm install
 ./node_modules/.bin/electron .
