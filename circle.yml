@@ -19,7 +19,6 @@ deployment:
       - mv private-keys ..
       - rm -rf node_modules
       - npm install --production
-      - npm install electron-packager
       - cd external-deps/java-network-test && mvn package
       - cp external-deps/java-network-test/target/javanetworktest-1.0-SNAPSHOT-jar-with-dependencies.jar ./java-network-test.jar
       - node build.js
@@ -39,7 +38,7 @@ deployment:
       - testVer=$(cat version.json |tr -d '"') && gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/$testVer/*.sh
       - testVer=$(cat version.json |tr -d '"') && gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/$testVer/*.exe
       - testVer=$(cat version.json |tr -d '"') && gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/$testVer/*.tar*
-      - testVer=$(cat version.json |tr -d '"') && gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/$testVer/electron*.json 
+      - testVer=$(cat version.json |tr -d '"') && gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/$testVer/electron*.json
 
   production:
     branch: master
@@ -69,7 +68,7 @@ deployment:
       - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/master/*.sh
       - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/master/*.exe
       - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/master/*.tar*
-      - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/master/electron*.json 
+      - gsutil acl ch -u AllUsers:R gs://install-versions.risevision.com/master/electron*.json
 
 test:
   post:
