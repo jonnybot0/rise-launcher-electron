@@ -3,6 +3,7 @@ require("./init");
 var app = require("app"),
 ipc = require("electron").ipcMain,
 platform = require("rise-common-electron").platform,
+player = require("rise-player-electron"),
 network = require("rise-common-electron").network,
 proxy = require("rise-common-electron").proxy,
 config = requireRoot("installer/config.js"),
@@ -36,9 +37,12 @@ log.debug("Electron " + process.versions.electron);
 log.debug("Chromium " + process.versions.chrome);
 
 app.on("window-all-closed", ()=>{
-  log.debug("All windows closed. quitting...");
+  log.debug("All windows closed");
   log.external("all closed");
-  setTimeout(()=>{app.quit();}, 500);
+
+  if (!player.isRunning()) {
+    setTimeout(()=>{app.quit();}, 500);
+  }
 });
 
 app.on("error", (err)=>{log.error(err, messages.unknown);});

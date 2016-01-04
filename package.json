@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "rise-common-electron": "git://github.com/Rise-Vision/rise-common-electron.git",
+    "rise-player-electron": "git://github.com/Rise-Vision/rise-player-electron.git",
     "gunzip-maybe": "^1.2.1",
     "http-proxy-agent": "^1.0.0",
     "https-proxy-agent": "^1.0.0",
