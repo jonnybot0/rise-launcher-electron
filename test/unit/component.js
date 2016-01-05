@@ -33,7 +33,9 @@ describe("component", ()=>{
 
   it("checks the testing channel has been requested", ()=>{
     mock(platform, "readTextFileSync").returnWith("ForceTestingVersion=2015.01.01.12.12");
+    assert(component.getTestingVersion());
 
+    mock(platform, "readTextFileSync").returnWith("ForceTestingVersion=2015.1.2.33.44");
     assert(component.getTestingVersion());
   });
 
@@ -56,10 +58,11 @@ describe("component", ()=>{
 
   it("returns forced stable channel", ()=>{
     var comps = {
-      ForceStable: "true",
-      LatestRolloutPercent: "10"
+      ForceStable: true,
+      LatestRolloutPercent: 10
     };
 
+    mock(component, "getTestingVersion").returnWith("");
     assert.equal(component.getChannel(comps), "Stable");
   });
 
@@ -70,6 +73,7 @@ describe("component", ()=>{
     };
 
     mock(component, "getLatestChannelProb").returnWith(20);
+    mock(component, "getTestingVersion").returnWith("");
 
     assert.equal(component.getChannel(comps), "Stable");
   });
@@ -81,6 +85,7 @@ describe("component", ()=>{
     };
 
     mock(component, "getLatestChannelProb").returnWith(5);
+    mock(component, "getTestingVersion").returnWith("");
 
     assert.equal(component.getChannel(comps), "Latest");
   });
@@ -216,7 +221,7 @@ describe("component", ()=>{
     mock(network, "httpFetch").rejectWith("error");
     
     return component.getComponentsList().catch((err)=>{
-      console.log("errrrrrrrrrrrrrrr", err);
+      console.log("err", err);
       assert(err.message);
     });
   });
@@ -229,6 +234,7 @@ describe("component", ()=>{
       mock(component, "getChannel").returnWith("Stable");
       mock(component, "isBrowserUpgradeable").resolveWith(false);
       mock(component, "getLatestChannelProb").returnWith(50);
+      mock(component, "getTestingVersion").returnWith("");
       mock(config, "getDisplaySettings").resolveWith({ displayid: "test" });
       mock(config, "getComponentVersion", (componentName)=>{
         return Promise.resolve({
@@ -416,6 +422,7 @@ describe("component", ()=>{
       mock(component, "getChannel").returnWith("Stable");
       mock(component, "isBrowserUpgradeable").resolveWith(true);
       mock(component, "getLatestChannelProb").returnWith(50);
+      mock(component, "getTestingVersion").returnWith("");
       mock(config, "getDisplaySettings").resolveWith({});
       mock(config, "getComponentVersion", (componentName)=>{
         return Promise.resolve({
