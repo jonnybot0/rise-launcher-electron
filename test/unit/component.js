@@ -136,10 +136,10 @@ describe("component", ()=>{
       assert.equal(result, true);
     });
   });
-
+  
   it("returns browser is upgradeable because display id is configured that way", ()=>{
     mock(network, "httpFetch").resolveWith({
-      text() { return "true"; }
+      text() { return Promise.resolve("true"); }
     });
     
     return component.isBrowserUpgradeable("test").then((result)=>{
@@ -150,7 +150,7 @@ describe("component", ()=>{
 
   it("returns browser is not upgradeable because display id is not configured that way", ()=>{
     mock(network, "httpFetch").resolveWith({
-      text() { return "false"; }
+      text() { return Promise.resolve("false"); }
     });
     
     return component.isBrowserUpgradeable("test").then((result)=>{

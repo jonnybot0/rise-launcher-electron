@@ -57,7 +57,9 @@ function isBrowserUpgradeable(displayId) {
     return new Promise((resolve)=>{
       network.httpFetch(platform.getCoreUrl() + "/player/isBrowserUpgradeable?displayId=" + displayId)
       .then(function(resp) {
-        resolve(resp.text().indexOf("true") >= 0);
+        resp.text().then((val)=>{
+          resolve(val.indexOf("true") >= 0);
+        });
       })
       .catch(function() {
         resolve(false);
