@@ -86,7 +86,11 @@ module.exports = {
         destination = destination.replace("JRE", "jre");
       }
 
-      return platform.copyFolderRecursive(source, destination).then(()=>{
+      return platform.deleteRecursively(destination)
+      .then(()=>{
+        return platform.copyFolderRecursive(source, destination);
+      })
+      .then(()=>{
         component.destination = destination;
         return config.saveVersion(component.name, component.remoteVersion);
       })
