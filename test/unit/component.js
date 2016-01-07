@@ -238,7 +238,7 @@ describe("component", ()=>{
       mock(config, "getDisplaySettings").resolveWith({ displayid: "test" });
       mock(config, "getComponentVersion", (componentName)=>{
         return Promise.resolve({
-          "InstallerElectron": thisInstallerVersion,
+          "InstallerElectron": "2015.12.30.12.39",
           "Browser": "44.0.1200.000", // Changed, but will be versionChanged==false because of isBrowserUpgradeable
           "Cache": "2015.02.01.12.00",
           "Java": "7.80",
@@ -262,7 +262,7 @@ describe("component", ()=>{
             "versionChanged": true
           },
           "InstallerElectron": {
-            "localVersion": thisInstallerVersion,
+            "localVersion": "2015.12.30.12.39",
             "name": "InstallerElectron",
             "remoteVersion": "2015.12.30.12.39",
             "url": "http://install-versions.risevision.com/rvplayer-installer-lnx-32.tar.gz",
@@ -298,7 +298,7 @@ describe("component", ()=>{
       mock(config, "getDisplaySettings").resolveWith({ displayid: "test" });
       mock(config, "getComponentVersion", (componentName)=>{
         return Promise.resolve({
-          "InstallerElectron": thisInstallerVersion,
+          "InstallerElectron": "2015.12.30.12.39",
           "Browser": "44.0.3500.000",
           "Cache": "2015.03.04.12.00",
           "Java": "7.81",
@@ -306,7 +306,7 @@ describe("component", ()=>{
       });
       mock(config, "getComponentVersionSync", (componentName)=>{
         return {
-          "InstallerElectron": thisInstallerVersion,
+          "InstallerElectron": "2015.12.30.12.39",
           "Browser": "44.0.3500.000",
           "Cache": "2015.03.04.12.00",
           "Java": "7.81",
@@ -330,7 +330,7 @@ describe("component", ()=>{
             "versionChanged": false
           },
           "InstallerElectron": {
-            "localVersion": thisInstallerVersion,
+            "localVersion": "2015.12.30.12.39",
             "name": "InstallerElectron",
             "remoteVersion": "2015.12.30.12.39",
             "url": "http://install-versions.risevision.com/rvplayer-installer-lnx-32.tar.gz",
@@ -365,7 +365,7 @@ describe("component", ()=>{
       mock(config, "getDisplaySettings").resolveWith({ displayid: "test" });
       mock(config, "getComponentVersion", (componentName)=>{
         return Promise.resolve({
-          "InstallerElectron": thisInstallerVersion,
+          "InstallerElectron": "2015.12.30.12.39",
           "Browser": "44.0.1200.000",
           "Cache": "2015.04.05.12.00",
           "Java": "7.80",
@@ -389,7 +389,7 @@ describe("component", ()=>{
             "versionChanged": true
           },
           "InstallerElectron": {
-            "localVersion": thisInstallerVersion,
+            "localVersion": "2015.12.30.12.39",
             "name": "InstallerElectron",
             "remoteVersion": "2015.12.30.12.39",
             "url": "http://install-versions.risevision.com/rvplayer-installer-lnx-32.tar.gz",
@@ -426,7 +426,7 @@ describe("component", ()=>{
       mock(config, "getDisplaySettings").resolveWith({});
       mock(config, "getComponentVersion", (componentName)=>{
         return Promise.resolve({
-          "InstallerElectron": thisInstallerVersion,
+          "InstallerElectron": "2015.12.30.12.39",
           "Browser": "44.0.1200.000", // Changed, but will be versionChanged==false because of isBrowserUpgradeable
           "Cache": "2015.02.01.12.00",
           "Java": "7.80",
@@ -450,7 +450,7 @@ describe("component", ()=>{
             "versionChanged": true
           },
           "InstallerElectron": {
-            "localVersion": thisInstallerVersion,
+            "localVersion": "2015.12.30.12.39",
             "name": "InstallerElectron",
             "remoteVersion": "2015.12.30.12.39",
             "url": "http://install-versions.risevision.com/rvplayer-installer-lnx-32.tar.gz",
