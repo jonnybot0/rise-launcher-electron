@@ -12,6 +12,9 @@ module.exports = {
     log.all("beginning install", "", "5%");
     return module.exports.checkInstallerUpdateStatus()
     .then(()=>{
+      return platform.mkdir(platform.getTempDir());
+    })
+    .then(()=>{
       return platform.mkdir(platform.getInstallDir());
     })
     .then(()=>{
