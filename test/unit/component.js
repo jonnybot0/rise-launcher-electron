@@ -26,6 +26,16 @@ describe("component", ()=>{
     assert(channelProb <= 100);
   });
 
+  it("checks the stable channel has been requested", ()=>{
+    mock(platform, "readTextFileSync").returnWith("ForceStable=true");
+    assert.equal(component.getChannel({}), "Stable");
+  });
+
+  it("checks the latest channel has been requested", ()=>{
+    mock(platform, "readTextFileSync").returnWith("ForceLatest=true");
+    assert.equal(component.getChannel({}), "Latest");
+  });
+
   it("expects the override to provide a version in the proper format", ()=>{
     mock(platform, "readTextFileSync").returnWith("ForceTestingVersion=this.is.not.a.valid.versino");
     assert(!component.getTestingVersion());
@@ -129,7 +139,6 @@ describe("component", ()=>{
 
     assert.equal(component.getComponentsUrl(), "http://storage.googleapis.com/install-versions.risevision.com/1212.12.12.12.12/electron-remote-components-win-32.json");
   });
-
 
   it("returns browser is upgradeable because of new install", ()=>{
     return component.isBrowserUpgradeable().then((result)=>{

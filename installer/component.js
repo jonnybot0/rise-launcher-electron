@@ -24,6 +24,18 @@ function isPlayerOnLatestChannelVersion(components) {
   return config.getComponentVersionSync("Player") === components.PlayerVersionLatest;
 }
 
+function forceStableChannel() {
+  var props = config.getDisplaySettingsSync();
+
+  return props.ForceStable === "true";
+}
+
+function forceLatestChannel() {
+  var props = config.getDisplaySettingsSync();
+
+  return props.ForceLatest === "true";
+}
+
 function getTestingVersion() {
   var props = config.getDisplaySettingsSync();
 
@@ -35,7 +47,13 @@ function getTestingVersion() {
 }
 
 function getChannel(components) {
-  if(module.exports.getTestingVersion()) {
+  if(module.exports.forceStableChannel()) {
+    return "Stable";
+  }
+  else if(module.exports.forceLatestChannel()) {
+    return "Latest";
+  }
+  else if(module.exports.getTestingVersion()) {
     return "Testing";
   }
   else if(components.ForceStable) {
@@ -168,6 +186,8 @@ module.exports = {
   getLatestChannelProb() { return latestChannelProb; },
   getComponentNames() { return componentNames; },
   getComponentsUrl,
+  forceStableChannel,
+  forceLatestChannel,
   getTestingVersion,
   isPlayerOnLatestChannelVersion,
   getChannel,
