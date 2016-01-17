@@ -199,18 +199,12 @@ describe("installer", ()=>{
     });
   });
 
-  it("performs an installer restart to overwrite current version and exits", ()=>{
-    var closed = false;
-    mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
-    
+  it("performs an installer restart to overwrite current version", ()=>{
     components.InstallerElectron.versionChanged = true;
-    installer.setMainWindow({close(){closed = true;}});
 
     return installer.begin().then(()=>{
-      
       assert(platform.setFilePermissions.called);
       assert(platform.startProcess.called);
-      assert(closed);
     });
   });
 

@@ -71,12 +71,7 @@ module.exports = {
           if(installerVersionChanged) {
             log.all("updating installer version", "", "95%");
 
-            return module.exports.startInstallerUpdate().then(()=>{
-              mainWindow.close();
-              return new Promise((res)=>{
-                setTimeout(()=>{res();}, 1000);
-              });
-            });
+            return module.exports.startInstallerUpdate();
           }
           else if(!installerDeployed) {
             log.all("installing launcher", "", "95%");

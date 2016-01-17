@@ -53,6 +53,11 @@ function isUnattended() {
   });
 }
 
+app.makeSingleInstance(()=>{
+  log.debug("Another instance was started.  Quitting.");
+  app.quit();
+});
+
 app.on("ready", ()=>{
   log.debug("app ready event received");
 
