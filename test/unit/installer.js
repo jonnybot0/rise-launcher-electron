@@ -97,7 +97,10 @@ describe("installer", ()=>{
   });
 
   it("starts an installer update", ()=>{
+    var closed = false;
     mock(platform, "getInstallerPath").returnWith("test/test.sh");
+    installer.setMainWindow({close(){closed = true;}});
+
 
     return installer.startInstallerUpdate().then(()=>{
       assert(platform.setFilePermissions.called);
@@ -105,6 +108,7 @@ describe("installer", ()=>{
       
       assert.equal(platform.startProcess.lastCall.args[0], path.join("temp", "Installer", platform.getInstallerName()));
       assert.equal(platform.startProcess.lastCall.args[1].toString(), ["--unattended", "--update", "--path", path.join("temp", "Installer")].toString());
+      assert(closed);
     });
   });
 
@@ -122,6 +126,7 @@ describe("installer", ()=>{
   it("performs a normal startup without installing/updating", ()=>{
     mock(installer, "checkInstallerUpdateStatus").resolveWith();
     mock(installer, "isInstallerDeployed").returnWith(true);
+    mock(platform, "getRunningPlatformDir").returnWith(platform.getInstallerDir());
     mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
 
     return installer.begin().then(()=>{
@@ -148,6 +153,7 @@ describe("installer", ()=>{
     mock(installer, "isInstallerDeployed").returnWith(true);
     mock(installer, "isOldInstallerDeployed").returnWith(false);
     mock(installer, "removeOldInstaller").resolveWith();
+    mock(platform, "getRunningPlatformDir").returnWith(platform.getInstallerDir());
     mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
 
     return installer.begin().then(()=>{
@@ -208,7 +214,23 @@ describe("installer", ()=>{
     });
   });
 
-  it("performs an installer update based on command line arguments", ()=>{
+  it("performs an installer update from a new downloaded version", ()=>{
+    mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
+    mock(installer, "isInstallerDeployed").returnWith(true);
+    mock(installer, "updateInstaller").resolveWith();
+    mock(platform, "getRunningPlatformDir").returnWith(platform.getInstallerDir());
+    mock(installer, "getOptions").returnWith({
+      update: true,
+      path: "installerPath"
+    });
+
+    return installer.begin().then(()=>{
+      assert(installer.updateInstaller.called);
+      assert.equal(installer.updateInstaller.lastCall.args[0], "installerPath");
+    });
+  });
+
+  it("performs an installer update because it wasn't running from the correct directory", ()=>{
     mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
     mock(installer, "isInstallerDeployed").returnWith(true);
     mock(installer, "updateInstaller").resolveWith();
@@ -219,7 +241,7 @@ describe("installer", ()=>{
 
     return installer.begin().then(()=>{
       assert(installer.updateInstaller.called);
-      assert.equal(installer.updateInstaller.lastCall.args[0], "installerPath");
+      assert.equal(installer.updateInstaller.lastCall.args[0], installer.getRunningInstallerDir());
     });
   });
 
@@ -283,6 +305,7 @@ describe("installer", ()=>{
 
   it("does not start player if CAP is installed", ()=>{
     mock(installer, "isInstallerDeployed").returnWith(true);
+    mock(platform, "getRunningPlatformDir").returnWith(platform.getInstallerDir());
     mock(capCheck, "isCAPInstalled").returnWith(true);
 
     return installer.begin().catch(()=>{
@@ -293,6 +316,7 @@ describe("installer", ()=>{
 
   it("does not start player if watchdog is running", ()=>{
     mock(installer, "isInstallerDeployed").returnWith(true);
+    mock(platform, "getRunningPlatformDir").returnWith(platform.getInstallerDir());
     mock(watchdogCheck, "isWatchdogRunning").returnWith(true);
 
     return installer.begin().catch(()=>{
