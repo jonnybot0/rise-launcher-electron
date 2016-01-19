@@ -3,26 +3,15 @@ player = require("rise-player-electron"),
 network = require("rise-common-electron").network,
 path = require("path");
 
-function getJavaPath() {
-  if(platform.isWindows()) {
-    return platform.getInstallDir() + "\\JRE\\bin\\javaw.exe";
-  }
-  else {
-    return platform.getInstallDir() + "/jre/bin/java";
-  }
-}
-
 function startCache() {
-  platform.startProcess(getJavaPath(), network.getJavaProxyArgs().concat(["-jar", path.join(platform.getInstallDir(), "RiseCache", "RiseCache.jar")]));
+  platform.startProcess(platform.getJavaExecutablePath(), network.getJavaProxyArgs().concat(["-jar", path.join(platform.getInstallDir(), "RiseCache", "RiseCache.jar")]));
 }
 
 function startPlayer() {
-  platform.startProcess(getJavaPath(), network.getJavaProxyArgs().concat(["-jar", path.join(platform.getInstallDir(), "RisePlayer.jar")]));
   player.start();
 }
 
 module.exports = {
-  getJavaPath,
   startCache,
   startPlayer,
   launch() {
@@ -32,13 +21,12 @@ module.exports = {
     })
     .then(()=>{
       log.all("cache start", "", "50%");
-      startCache();
+      module.exports.startCache();
       return platform.waitForMillis(1000);
     })
     .then(()=>{
       log.all("player start", "", "100%");
-      startPlayer();
-      return platform.waitForMillis(1000);
+      return module.exports.startPlayer();
     });
   }
 };
