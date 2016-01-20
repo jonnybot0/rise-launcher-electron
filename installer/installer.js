@@ -30,6 +30,8 @@ module.exports = {
         var installerVersionChanged = compsMap.InstallerElectron.versionChanged;
         var installerDeployed = module.exports.isInstallerDeployed();
         var runningInstallerDir = module.exports.getRunningInstallerDir();
+
+        platform.componentsInfo = compsMap;
         
         if(compsMap.InstallerElectron.versionChanged) {
           log.all("upgrading installer", "", "20%");
