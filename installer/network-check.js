@@ -7,7 +7,6 @@ siteList = [
   "http://rvashow.appspot.com",
   "http://storage-dot-rvaserver2.appspot.com",
   "https://store.risevision.com",
-  "http://googleapis.com",
   "https://accounts.google.com/ManageAccount",
   "https://talkgadget.google.com",
   "http://s3.amazonaws.com",
@@ -21,18 +20,12 @@ function checkSite(site, retryCount, timeout) {
   .then((res)=>{
     if (res.status < 200 || res.status > 299) {
       log.external("network prereq error", res.status + " - " + site);
-      if (retryCount === 0) { throw new Error("not ok");}
+      if (retryCount === 0) { return Promise.reject("status not ok - " + res.status);}
       return platform.waitForMillis(timeout || 5000)
       .then(checkSite.bind(null, site, retryCount - 1, timeout));
     }
     promisesPct += 9;
     log.all("Checking network connectivity - " + site, "", promisesPct + "%");
-  })
-  .catch((err)=>{
-    log.external("network prereq error", err);
-    if (retryCount === 0) { throw new Error("not ok");}
-    return platform.waitForMillis(timeout || 5000)
-    .then(checkSite.bind(null, site, retryCount - 1, timeout));
   });
 }
 
