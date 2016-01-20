@@ -28,7 +28,6 @@ module.exports = {
         var changedComponents = components.filter((c)=>{ return c.versionChanged; });
         var changedNames = changedComponents.map((c)=>{ return c.name; }).toString();
         var installerVersionChanged = compsMap.InstallerElectron.versionChanged;
-        var installerDeployed = module.exports.isInstallerDeployed();
         var runningInstallerDir = module.exports.getRunningInstallerDir();
         
         if(compsMap.InstallerElectron.versionChanged) {
@@ -68,17 +67,14 @@ module.exports = {
           return downloader.installComponents(changedComponents);
         })
         .then(()=>{
+          var runningInFinalInstallerDir = platform.getRunningPlatformDir().indexOf(platform.getInstallerDir()) === 0;
+
           if(installerVersionChanged) {
             log.all("updating installer version", "", "95%");
 
-            return module.exports.startInstallerUpdate().then(()=>{
-              mainWindow.close();
-              return new Promise((res)=>{
-                setTimeout(()=>{res();}, 1000);
-              });
-            });
+            return module.exports.startInstallerUpdate();
           }
-          else if(!installerDeployed) {
+          else if (!runningInFinalInstallerDir) {
             log.all("installing launcher", "", "95%");
 
             return module.exports.updateInstaller(runningInstallerDir);
@@ -104,9 +100,6 @@ module.exports = {
       return Promise.resolve();
     }
   },
-  isInstallerDeployed() {
-    return platform.fileExists(platform.getInstallerPath());
-  },
   isOldInstallerDeployed() {
     return platform.fileExists(platform.getOldInstallerPath());
   },
@@ -115,10 +108,16 @@ module.exports = {
     return platform.setFilePermissions(newInstallerPath, 0755)
     .then(()=>{
       platform.startProcess(newInstallerPath, ["--unattended", "--update", "--path", path.join(platform.getTempDir(), config.getComponentInfo("InstallerElectron").extractTo)]);
+    })
+    .then(()=>{
+      mainWindow.close();
+      return new Promise(function haltForClose(res) {setTimeout(()=>{res();}, 1000);});
     });
   },
   updateInstaller(installerPkgTempPath) {
-    return platform.copyFolderRecursive(installerPkgTempPath, path.join(platform.getInstallDir(), config.getComponentInfo("InstallerElectron").copy));
+    var targetDir = path.join(platform.getInstallDir(), config.getComponentInfo("InstallerElectron").copy);
+
+    return platform.copyFolderRecursive(installerPkgTempPath, targetDir);
   },
   removeOldInstaller() {
     return platform.deleteRecursively(platform.getOldInstallerPath());
