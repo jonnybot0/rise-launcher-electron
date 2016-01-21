@@ -1,6 +1,7 @@
 var component = requireRoot("installer/component.js"),
 downloader = requireRoot("installer/downloader.js"),
 config = requireRoot("installer/config.js"),
+player = require("rise-player-electron"),
 platform = require("rise-common-electron").platform,
 path = require("path"),
 yargs = require("yargs"),
@@ -31,7 +32,7 @@ module.exports = {
         var installerDeployed = module.exports.isInstallerDeployed();
         var runningInstallerDir = module.exports.getRunningInstallerDir();
 
-        platform.componentsInfo = compsMap;
+        player.setComponentsVersions(compsMap);
         
         if(compsMap.InstallerElectron.versionChanged) {
           log.all("upgrading installer", "", "20%");
