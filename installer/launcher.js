@@ -18,7 +18,6 @@ function startCache() {
 
 function startPlayer() {
   platform.startProcess(getJavaPath(), network.getJavaProxyArgs().concat(["-jar", path.join(platform.getInstallDir(), "RisePlayer.jar")]));
-  player.start();
 }
 
 module.exports = {
