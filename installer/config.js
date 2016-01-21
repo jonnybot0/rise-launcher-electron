@@ -1,5 +1,4 @@
 var platform = require("rise-common-electron").platform,
-network = require("rise-common-electron").network,
 proxy = require("rise-common-electron").proxy,
 thisInstallerVersion = requireRoot("version.json"),
 path = require("path");
@@ -37,7 +36,7 @@ function getComponentVersionFileName(componentName) {
 }
 
 function getComponentVersion(componentName) {
-  return new Promise((resolve, reject)=>{
+  return new Promise((resolve)=>{
     if (componentName === "InstallerElectron") {return resolve(thisInstallerVersion);}
 
     platform.readTextFile(getComponentVersionFileName(componentName))
@@ -94,7 +93,7 @@ function getDisplaySettingsSync() {
 }
 
 function getDisplaySettings() {
-  return new Promise((resolve, reject)=>{
+  return new Promise((resolve)=>{
     platform.readTextFile(getDisplaySettingsFileName())
     .then((contents)=>{
       resolve(parsePropertyList(contents));

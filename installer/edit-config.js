@@ -1,6 +1,5 @@
 var platform = require("rise-common-electron").platform,
-path = require("path"),
-ws = require("windows-shortcuts");
+path = require("path");
 
 module.exports = {
   createEditConfig() {
