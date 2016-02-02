@@ -2,6 +2,7 @@ var platform = require("rise-common-electron").platform,
 autostart = requireRoot("installer/autostart/autostart.js"),
 installer = requireRoot("installer/installer.js"),
 component = requireRoot("installer/component.js"),
+config = requireRoot("installer/config.js"),
 downloader = requireRoot("installer/downloader.js"),
 launcher = requireRoot("installer/launcher.js"),
 optimization = requireRoot("installer/os-optimization.js"),
@@ -125,7 +126,8 @@ describe("installer", ()=>{
 
   it("performs a normal startup without installing/updating", ()=>{
     mock(installer, "checkInstallerUpdateStatus").resolveWith();
-    mock(platform, "getRunningPlatformDir").returnWith(platform.getInstallerDir());
+    mock(installer, "isInstallerDeployed").returnWith(true);
+    mock(config, "getRunningInstallerDir").returnWith(platform.getInstallerDir());
     mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
 
     return installer.begin().then(()=>{
@@ -151,7 +153,7 @@ describe("installer", ()=>{
     mock(installer, "checkInstallerUpdateStatus").resolveWith();
     mock(installer, "isOldInstallerDeployed").returnWith(false);
     mock(installer, "removeOldInstaller").resolveWith();
-    mock(platform, "getRunningPlatformDir").returnWith(platform.getInstallerDir());
+    mock(config, "getRunningInstallerDir").returnWith(platform.getInstallerDir());
     mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
 
     return installer.begin().then(()=>{
@@ -213,7 +215,7 @@ describe("installer", ()=>{
   it("performs an installer update from a new downloaded version", ()=>{
     mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
     mock(installer, "updateInstaller").resolveWith();
-    mock(platform, "getRunningPlatformDir").returnWith(platform.getInstallerDir());
+    mock(config, "getRunningInstallerDir").returnWith(platform.getInstallerDir());
     mock(installer, "getOptions").returnWith({
       update: true,
       path: "installerPath"
@@ -228,6 +230,7 @@ describe("installer", ()=>{
   it("performs an installer update because it wasn't running from the correct directory", ()=>{
     mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
     mock(installer, "updateInstaller").resolveWith();
+    mock(config, "getRunningInstallerDir").returnWith("installerDir");
     mock(installer, "getOptions").returnWith({
       update: true,
       path: "installerPath"
@@ -235,7 +238,7 @@ describe("installer", ()=>{
 
     return installer.begin().then(()=>{
       assert(installer.updateInstaller.called);
-      assert.equal(installer.updateInstaller.lastCall.args[0], installer.getRunningInstallerDir());
+      assert.equal(installer.updateInstaller.lastCall.args[0], "installerDir");
     });
   });
 
@@ -280,24 +283,9 @@ describe("installer", ()=>{
     });
   });
 
-  it("gets a valid running installer directory", ()=>{
-    mock(platform, "getCwd").returnWith(path.join("test", "installer"));
-
-    var installerDir = installer.getRunningInstallerDir();
-
-    assert.equal(installerDir, path.join("test", "installer"));
-  });
-
-  it("gets a valid running installer directory when manually invoking node", ()=>{
-    mock(platform, "getCwd").returnWith(path.join("test", "installer", "resources", "app"));
-
-    var installerDir = installer.getRunningInstallerDir();
-
-    assert.equal(installerDir, path.join("test", "installer"));
-  });
-
   it("does not start player if CAP is installed", ()=>{
-    mock(platform, "getRunningPlatformDir").returnWith(platform.getInstallerDir());
+    mock(installer, "isInstallerDeployed").returnWith(true);
+    mock(config, "getRunningInstallerDir").returnWith(platform.getInstallerDir());
     mock(capCheck, "isCAPInstalled").returnWith(true);
 
     return installer.begin().catch(()=>{
@@ -307,7 +295,8 @@ describe("installer", ()=>{
   });
 
   it("does not start player if watchdog is running", ()=>{
-    mock(platform, "getRunningPlatformDir").returnWith(platform.getInstallerDir());
+    mock(installer, "isInstallerDeployed").returnWith(true);
+    mock(config, "getRunningInstallerDir").returnWith(platform.getInstallerDir());
     mock(watchdogCheck, "isWatchdogRunning").returnWith(true);
 
     return installer.begin().catch(()=>{

@@ -2,6 +2,7 @@ var platform = require("rise-common-electron").platform,
 network = require("rise-common-electron").network,
 proxy = require("rise-common-electron").proxy,
 thisInstallerVersion = requireRoot("version.json"),
+electronAppPath = "",
 path = require("path");
 
 function getComponents() {
@@ -116,12 +117,22 @@ function parsePropertyList(list) {
   return result;
 }
 
+function setAppPath(appPath) {
+  electronAppPath = appPath;
+}
+
+function getRunningInstallerDir() {
+  return path.resolve(electronAppPath, "..", "..");
+}
+
 module.exports = {
   getVerFilePrefix,
   getComponentInfo,
   getComponentVersionFileName,
   getComponentVersion,
   getComponentVersionSync,
+  getRunningInstallerDir,
+  setAppPath,
   saveVersion,
   getDisplaySettingsFileName,
   getDisplaySettings,
