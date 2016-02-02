@@ -30,7 +30,7 @@ displaySettings = config.getDisplaySettingsSync();
 log.setDisplaySettings(displaySettings);
 proxy.setEndpoint(displaySettings.proxy);
 
-global.messages = requireRoot("installer/ui/messages.json");
+global.messages = requireRoot("installer/ui/messages");
 
 log.external("started");
 log.debug("Electron " + process.versions.electron);
