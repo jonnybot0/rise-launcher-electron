@@ -28,9 +28,9 @@
     "rise-player-electron": "git://github.com/Rise-Vision/rise-player-electron.git",
     "tar-fs": "^1.8.1",
     "windows-shortcuts": "git://github.com/Rise-Vision/windows-shortcuts.git",
-    "yargs": "3.28.0"
+    "yargs": "~3.28.0"
   },
   "scripts": {
-    "test": "./node_modules/jshint/bin/jshint cfg/* && cd external-deps/java-network-test && mvn test && cd ../.. && istanbul cover node_modules/mocha/bin/_mocha -r ./init.js -- --reporter mocha-junit-reporter --reporter-options mochaFile=test/test-results.xml --recursive test/unit"
+    "test": "./node_modules/.bin/jshint cfg/* && cd external-deps/java-network-test && mvn test && cd ../.. && ./node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -r ./init.js -- --reporter mocha-junit-reporter --reporter-options mochaFile=test/test-results.xml --recursive test/unit"
   }
 }

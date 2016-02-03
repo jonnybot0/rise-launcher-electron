@@ -157,7 +157,7 @@ app.on("ready", ()=>{
       log.all("Checking Chrome App Player", "", "45%");
       return prereqs.checkCAPNotInstalled()
       .catch(()=>{
-        log.error("cap found", messages.CAPInstalled);
+        log.error("cap found", messages.capInstalled);
         throw new Error();
       });
     })
