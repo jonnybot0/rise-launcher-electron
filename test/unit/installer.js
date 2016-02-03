@@ -315,4 +315,30 @@ describe("installer", ()=>{
       assert(!launcher.launch.called);
     });
   });
+
+  it("continues start up process if connectivity fails but player is already installed", ()=>{
+    mock(platform, "fileExists").returnWith(true);
+    mock(component, "getComponents").rejectWith({ userFriendlyMessage: messages.noNetworkConnection });
+
+    return installer.begin().then(()=>{
+      assert(component.getComponents.called);
+      assert(!downloader.downloadComponents.called);
+      assert(!downloader.extractComponents.called);
+      assert(!downloader.removePreviousVersions.called);
+      assert(!downloader.installComponent.called);
+    });
+  });
+
+  it("does not continue start up process if connectivity fails and player is not already installed", ()=>{
+    mock(platform, "fileExists").returnWith(true);
+    mock(component, "getComponents").rejectWith({ userFriendlyMessage: "Generic error" });
+
+    return installer.begin().catch(()=>{
+      assert(component.getComponents.called);
+      assert(!downloader.downloadComponents.called);
+      assert(!downloader.extractComponents.called);
+      assert(!downloader.removePreviousVersions.called);
+      assert(!downloader.installComponent.called);
+    });
+  });
 });
