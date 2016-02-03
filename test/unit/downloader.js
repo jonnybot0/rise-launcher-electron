@@ -234,7 +234,6 @@ describe("downloader", ()=>{
 
     return downloader.installComponent(components.Cache).catch((err)=>{
       assert(platform.copyFolderRecursive.called);
-      console.log("AAAAAAAAAAAAAAAAAA", err);
       assert(err.userFriendlyMessage);
     });
   });
