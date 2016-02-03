@@ -111,12 +111,11 @@ function getComponentsList() {
         resolve(resp.text());
       }
       else {
-        reject({ message: "Component list request rejected with code: " + resp.status, error: resp });
+        reject({ message: "Component list request rejected with code: " + resp.status, userFriendlyMessage: messages.noNetworkConnection, error: resp });
       }
     })
     .catch(function(err) {
-      log.error(err, messages.unknown);
-      reject({ message: "Error getting components list", error: err});
+      reject({ message: "Error getting components list", userFriendlyMessage: messages.noNetworkConnection, error: err});
     });
   });
 }

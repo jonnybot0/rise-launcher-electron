@@ -6,5 +6,6 @@
   "legacyWatchdog": "Installation cannot proceed. There appears to be an application monitor that will automatically restart Chrome if it shuts down unexpectedly and this monitor will conflict with this installation. The application monitor must be removed in order for this installation to complete.  If you need assistance with your installation please post any questions that you might have to http://community.risevision.com. Thank You!",
   "CAPInstalled": "Installation cannot proceed. There appears to be an installation of Rise Chrome App Player on this computer and it must be removed in order for this installation to complete.  If you need assistance with your installation please post any questions that you might have to http://community.risevision.com. Thank You!",
   "unknown": "An unknown error has occurred.  Please try again or post a question to http://community.risevision.com.",
-  "genericSuggestion": "Please try again or post a question to http://community.risevision.com."
+  "genericSuggestion": "Please try again or post a question to http://community.risevision.com.",
+  "noNetworkConnection": "There was a problem connecting to the Internet."
 }
