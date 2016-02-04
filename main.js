@@ -134,7 +134,10 @@ app.on("ready", ()=>{
       throw new Error();
     })
     .then(optimization.updateSettings)
-    .then(autostart.setAutostart)
+    .then(()=>{
+      autostart.setUnattended(isUnattended());
+      autostart.setAutostart();
+    })
     .then(uninstall.createUninstallOption)
     .then(editConfig.createEditConfig)
     .then(stop.createStopStartLinks)

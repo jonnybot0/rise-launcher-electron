@@ -91,4 +91,18 @@ describe("autostart", ()=>{
       assert(!autostart.createUbuntuAutostart.called);
     });
   });
+
+  it("does not remove or create an autostart entry since it's running on unattended mode", ()=>{
+    mock(autostart, "createWindowsAutostart").resolveWith();
+    mock(autostart, "createUbuntuAutostart").resolveWith();
+    mock(platform, "deleteRecursively").resolveWith();
+
+    autostart.setUnattended(true);
+    
+    return autostart.setAutostart().then(()=>{
+      assert(!autostart.createWindowsAutostart.called);
+      assert(!autostart.createUbuntuAutostart.called);
+      assert(!platform.deleteRecursively.called);
+    });
+  });
 });
