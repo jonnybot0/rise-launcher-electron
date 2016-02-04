@@ -267,7 +267,7 @@ label.css-label {
   background-color: #DDD;
   padding: 22px 0;
   text-align: right;
-  position: fixed;
+  position: absolute;
   bottom: 0;
 }
 
@@ -297,6 +297,17 @@ label.css-label {
   -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
   -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
   transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.window-border {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border: 2px #4ab767 solid;
 }
 
 #proxyOptions {
