@@ -1,4 +1,4 @@
-We have detected a previous installation of Rise Chrome App Player. You need to uninstall it before it proceeding with this installation.
+We have detected a previous installation of Rise Chrome App Player. You need to uninstall it before proceeding with this installation.
 
 To uninstall it:
 - open chrome://apps in Chrome
