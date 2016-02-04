@@ -85,6 +85,14 @@ module.exports = {
             return module.exports.removeOldInstaller();
           }
         });
+      })
+      .catch((err)=>{
+        if(err.userFriendlyMessage === messages.noNetworkConnection && platform.fileExists(platform.getInstallerPath())) {
+          return Promise.resolve();
+        }
+        else {
+          return Promise.reject(err);
+        }
       });
     })
     .catch((err)=>{
