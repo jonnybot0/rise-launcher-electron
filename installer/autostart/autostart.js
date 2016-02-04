@@ -1,13 +1,19 @@
 var platform = require("rise-common-electron").platform,
 path = require("path"),
-userWantsAutostart = true;
+userWantsAutostart = true,
+unattended = false;
 
 module.exports = {
   requested(yesOrNo) {userWantsAutostart = yesOrNo;},
+  setUnattended(yesOrNo) {unattended = yesOrNo;},
   setAutostart() {
     var ubuntuAutostartPath = path.join(platform.getAutoStartupPath(), "rvplayer.desktop");
     var windowsShortCutPath = path.join(platform.getAutoStartupPath(), "Rise Vision Player.lnk");
     var oldShortCutPath = path.join(platform.getAutoStartupPath(), "Start Rise Vision Player.lnk");
+
+    if (unattended) {
+      return Promise.resolve();
+    }
 
     if (!userWantsAutostart) {
       log.debug("Removing autostart");
