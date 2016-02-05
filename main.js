@@ -104,22 +104,34 @@ app.on("ready", ()=>{
     });
   });
 
-  ipc.on("install-unattended", (event, message)=>{
+  ipc.on("install-unattended", (event)=>{
+    var countDown = 10, timer = null;
+
     ui.disableContinue();
 
-    prereqCheck()
-    .then(()=>{
-      return installer.begin()
-      .then(postInstall)
-      .then(launcher.launch)
-      .then(()=>{
-        log.setUIWindow(null);
-        mainWindow.close();
-      })
-      .catch((err)=>{
-        log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
-      });
-    });
+    timer = setInterval(()=>{
+      if(countDown === 0) {
+        clearInterval(timer);
+        ui.startUnattended();
+
+        prereqCheck()
+        .then(installer.begin)
+        .then(postInstall)
+        .then(platform.killExplorer)
+        .then(launcher.launch)
+        .then(()=>{
+          mainWindow.close();
+        })
+        .catch((err)=>{
+          log.setUIWindow(null);
+          log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
+        });        
+      }
+      else {
+        countDown--;
+        event.sender.send("set-unattended-countdown", countDown);
+      }
+    }, 1000);
   });
 
   ipc.on("launch", ()=>{
@@ -140,7 +152,7 @@ app.on("ready", ()=>{
     }
 
     if (isUnattended()) {
-      ui.startUnattended();
+      ui.startUnattendedCountdown();
     }
   });
 
