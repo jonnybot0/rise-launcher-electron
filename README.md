@@ -9,10 +9,15 @@ npm install
 ./node_modules/.bin/electron .
 ```
 
-### Test
+### Unit Test
 ```
 npm install -g istanbul mocha
 npm run test
+```
+
+### Integration Test
+```
+npm run integration
 ```
 
 ### Build it

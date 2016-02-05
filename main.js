@@ -1,6 +1,6 @@
 require("./init");
 
-var app = require("app"),
+var app = require("electron").app,
 ipc = require("electron").ipcMain,
 platform = require("rise-common-electron").platform,
 player = require("rise-player-electron"),
@@ -27,6 +27,7 @@ var externalLogger = require("rise-common-electron").externalLogger
 global.log = require("rise-common-electron").logger(externalLogger, platform.getInstallDir());
 
 displaySettings = config.getDisplaySettingsSync();
+config.setAppPath(app.getAppPath());
 log.setDisplaySettings(displaySettings);
 proxy.setEndpoint(displaySettings.proxy);
 

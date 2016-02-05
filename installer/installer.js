@@ -28,7 +28,6 @@ module.exports = {
         var changedComponents = components.filter((c)=>{ return c.versionChanged; });
         var changedNames = changedComponents.map((c)=>{ return c.name; }).toString();
         var installerVersionChanged = compsMap.InstallerElectron.versionChanged;
-        var runningInstallerDir = module.exports.getRunningInstallerDir();
         
         if(compsMap.InstallerElectron.versionChanged) {
           log.all("upgrading installer", "", "20%");
@@ -67,7 +66,9 @@ module.exports = {
           return downloader.installComponents(changedComponents);
         })
         .then(()=>{
-          var runningInFinalInstallerDir = platform.getRunningPlatformDir().indexOf(platform.getInstallerDir()) === 0;
+          var runningDir = config.getRunningInstallerDir(),
+          finalInstallerDir = platform.getInstallerDir(),
+          runningInFinalInstallerDir = runningDir.toLowerCase().startsWith(finalInstallerDir.toLowerCase());
 
           if(installerVersionChanged) {
             log.all("updating installer version", "", "95%");
@@ -77,7 +78,7 @@ module.exports = {
           else if (!runningInFinalInstallerDir) {
             log.all("installing launcher", "", "95%");
 
-            return module.exports.updateInstaller(runningInstallerDir);
+            return module.exports.updateInstaller(runningDir);
           }
         })
         .then(()=>{
@@ -129,16 +130,6 @@ module.exports = {
   },
   removeOldInstaller() {
     return platform.deleteRecursively(platform.getOldInstallerPath());
-  },
-  getRunningInstallerDir() {
-    var currPath = platform.getCwd().split(path.sep);
-    var pathPrefix = platform.getCwd().startsWith(path.sep) ? path.sep : "";
-
-    if(currPath[currPath.length - 2] === "resources" && currPath[currPath.length - 1] === "app") {
-      currPath = currPath.slice(0, currPath.length - 2);
-    }
-
-    return pathPrefix + path.join.apply(null, currPath);
   },
   getOptions() {
     return options;
