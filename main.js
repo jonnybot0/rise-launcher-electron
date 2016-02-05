@@ -89,7 +89,10 @@ app.on("ready", ()=>{
     prereqCheck()
     .then(installer.begin)
     .then(postInstall)
-    .then(ui.enableContinue);
+    .then(ui.enableContinue)
+    .catch((err)=>{
+      log.error(require("util").inspect(err), messages.unknown);
+    });
   });
 
   ipc.on("install-unattended", (event, message)=>{
@@ -101,6 +104,9 @@ app.on("ready", ()=>{
     .then(launcher.launch)
     .then(()=>{
       mainWindow.close();
+    })
+    .catch((err)=>{
+      log.error(require("util").inspect(err), messages.unknown);
     });
   });
 

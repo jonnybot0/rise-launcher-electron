@@ -41,7 +41,10 @@ module.exports = {
     var shortCutPathTemp = path.join(platform.getInstallDir(), "Rise Vision Player.lnk");
     var launcherPath = platform.getInstallerPath();
 
-    return platform.createWindowsShortcut(shortCutPathTemp, launcherPath, "--unattended")
+    return platform.mkdirRecursively(platform.getAutoStartupPath())
+    .then(()=>{
+      return platform.createWindowsShortcut(shortCutPathTemp, launcherPath, "--unattended");
+    })
     .then(()=>{
       return platform.deleteRecursively(windowsShortCutPath);
     })
@@ -69,7 +72,10 @@ module.exports = {
     X-GNOME-Autostart-Delay=10
     X-Ubuntu-Gettext-Domain=rvplayer`;
 
-    return platform.writeTextFile(ubuntuAutostartPath, fileText)
+    return platform.mkdirRecursively(platform.getAutoStartupPath())
+    .then(()=>{
+      return platform.writeTextFile(ubuntuAutostartPath, fileText);
+    })
     .then(()=>{
       return platform.setFilePermissions(ubuntuAutostartPath, 0755);
     });
