@@ -92,7 +92,7 @@ app.on("ready", ()=>{
     .then(postInstall)
     .then(ui.enableContinue)
     .catch((err)=>{
-      log.file(require("util").inspect(err), messages.unknown);
+      log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
     });
   });
 
@@ -107,7 +107,7 @@ app.on("ready", ()=>{
       mainWindow.close();
     })
     .catch((err)=>{
-      log.file(require("util").inspect(err), messages.unknown);
+      log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
     });
   });
 
