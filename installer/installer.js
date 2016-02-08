@@ -88,7 +88,10 @@ module.exports = {
         });
       })
       .catch((err)=>{
-        if(err.userFriendlyMessage === messages.noNetworkConnection && platform.fileExists(platform.getInstallerPath())) {
+        var componentFailure = (err.userFriendlyMessage === messages.noNetworkConnection) ||
+                               err.userFriendlyMessage.startsWith("Error downloading");
+
+        if(componentFailure && platform.fileExists(platform.getInstallerPath())) {
           return Promise.resolve();
         }
         else {
