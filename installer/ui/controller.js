@@ -1,4 +1,5 @@
 var BrowserWindow = require("browser-window"),
+shell = require("electron").shell,
 mainWindow;
 
 module.exports = {
@@ -26,6 +27,11 @@ module.exports = {
 
     mainWindow.webContents.on("did-finish-load", ()=> {
       mainWindow.webContents.send("first-ping");
+    });
+
+    mainWindow.webContents.on("new-window", (evt, url)=>{
+      evt.preventDefault();
+      shell.openExternal(url);
     });
 
     return mainWindow;
