@@ -69,9 +69,14 @@ app.on("ready", ()=>{
   ipc.on("set-proxy", (event, message)=>{
     proxy.setEndpoint(message);
     prereqCheck()
-    .then(installer.begin)
-    .then(postInstall)
-    .then(ui.enableContinue);
+    .then(()=>{
+      return installer.begin()
+      .then(postInstall)
+      .then(ui.enableContinue)
+      .catch((err)=>{
+        log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
+      });
+    })
   });
 
   ipc.on("set-autostart", ()=>{
@@ -88,11 +93,13 @@ app.on("ready", ()=>{
     ui.disableContinue();
 
     prereqCheck()
-    .then(installer.begin)
-    .then(postInstall)
-    .then(ui.enableContinue)
-    .catch((err)=>{
-      log.error(require("util").inspect(err), messages.unknown);
+    .then(()=>{
+      return installer.begin()
+      .then(postInstall)
+      .then(ui.enableContinue)
+      .catch((err)=>{
+        log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
+      });
     });
   });
 
@@ -100,14 +107,14 @@ app.on("ready", ()=>{
     ui.disableContinue();
 
     prereqCheck()
-    .then(installer.begin)
-    .then(postInstall)
-    .then(launcher.launch)
     .then(()=>{
-      mainWindow.close();
-    })
-    .catch((err)=>{
-      log.error(require("util").inspect(err), messages.unknown);
+      return installer.begin()
+      .then(postInstall)
+      .then(launcher.launch)
+      .then(()=>{mainWindow.close();})
+      .catch((err)=>{
+        log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
+      });
     });
   });
 

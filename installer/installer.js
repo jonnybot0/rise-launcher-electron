@@ -95,10 +95,6 @@ module.exports = {
           return Promise.reject(err);
         }
       });
-    })
-    .catch((err)=>{
-      log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
-      return Promise.reject(err);
     });
   },
   checkInstallerUpdateStatus() {
