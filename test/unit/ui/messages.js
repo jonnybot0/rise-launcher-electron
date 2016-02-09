@@ -22,4 +22,9 @@ describe ('messages', ()=>{
     });
     assert(messageCount > 0);
   });
+
+  it('should render links with target="_blank"', ()=>{
+    console.log(messages.genericSuggestion);
+    assert(messages.genericSuggestion.indexOf(' target="_blank"') > -1);
+  });
 });
