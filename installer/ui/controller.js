@@ -9,7 +9,6 @@ module.exports = {
       "height": 600,
       "center": true,
       "fullscreen": false,
-      "skip-taskbar": true,
       "frame": false,
       "web-preferences": {
         "preload": __dirname + "/ipc.js",
