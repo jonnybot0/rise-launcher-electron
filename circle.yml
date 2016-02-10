@@ -79,6 +79,6 @@ test:
 
 
 # SIGNTOOL
-# cd C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin
+# cd "C:\Program Files (x86)\Windows Kits\10\bin\x64"
 # signtool sign /t http://timestamp.digicert.com /a "path-to-executable"
 # Enter password in the ui pop up.  Credentials are on the Rise Vision Credentials Google doc

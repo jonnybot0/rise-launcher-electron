@@ -13,6 +13,7 @@ describe("autostart", ()=>{
   beforeEach("setup mocks", ()=>{
     mock(platform, "getHomeDir").returnWith(path.join("home", "testuser"));
     mock(platform, "getInstallerPath").returnWith(path.join("home", "testuser", "rvplayer2", "Installer", "installer"));
+    mock(platform, "mkdirRecursively").resolveWith();
   });
 
   afterEach("clean mocks", ()=>{
@@ -48,6 +49,28 @@ describe("autostart", ()=>{
     });
   });
 
+  it("fails to create shortcuts because containing folder could not be created (Windows)", ()=>{
+    mock(platform, "isWindows").returnWith(true);
+    mock(platform, "getAutoStartupPath").returnWith("startup");
+    mock(platform, "mkdirRecursively").rejectWith({ error: "mkdir" });
+
+    return autostart.setAutostart()
+    .catch((err)=>{
+      assert.equal(err.error, "mkdir");
+    });
+  });
+
+  it("fails to create shortcuts because containing folder could not be created (Linux)", ()=>{
+    mock(platform, "isWindows").returnWith(false);
+    mock(platform, "getAutoStartupPath").returnWith("startup");
+    mock(platform, "mkdirRecursively").rejectWith({ error: "mkdir" });
+
+    return autostart.setAutostart()
+    .catch((err)=>{
+      assert.equal(err.error, "mkdir");
+    });
+  });
+
   it("creates Windows autostart file", ()=>{
     var exePath = path.join("C:", "Users", "rvuser", "AppData", "Local", "rvplayer2", "Installer", "installer.exe");
 
@@ -58,6 +81,7 @@ describe("autostart", ()=>{
 
     return autostart.createWindowsAutostart()
     .then(()=>{
+      assert.equal(platform.mkdirRecursively.callCount, 1);
       assert.equal(platform.createWindowsShortcut.callCount, 1);
       assert.equal(platform.createWindowsShortcut.lastCall.args[1], exePath);
       assert.equal(platform.deleteRecursively.callCount, 2);
@@ -74,8 +98,9 @@ describe("autostart", ()=>{
 
     return autostart.createUbuntuAutostart()
     .then(()=>{
-      assert.ok(platform.writeTextFile.callCount === 1);
-      assert.ok(platform.setFilePermissions.callCount === 1);
+      assert.equal(platform.mkdirRecursively.callCount, 1);
+      assert.equal(platform.writeTextFile.callCount, 1);
+      assert.equal(platform.setFilePermissions.callCount, 1);
       assert.equal(platform.setFilePermissions.lastCall.args[0], expectedAutoStartPath);
     });
   });
@@ -89,6 +114,20 @@ describe("autostart", ()=>{
     return autostart.setAutostart().then(()=>{
       assert(!autostart.createWindowsAutostart.called);
       assert(!autostart.createUbuntuAutostart.called);
+    });
+  });
+
+  it("does not remove or create an autostart entry since it's running on unattended mode", ()=>{
+    mock(autostart, "createWindowsAutostart").resolveWith();
+    mock(autostart, "createUbuntuAutostart").resolveWith();
+    mock(platform, "deleteRecursively").resolveWith();
+
+    autostart.setUnattended(true);
+    
+    return autostart.setAutostart().then(()=>{
+      assert(!autostart.createWindowsAutostart.called);
+      assert(!autostart.createUbuntuAutostart.called);
+      assert(!platform.deleteRecursively.called);
     });
   });
 });

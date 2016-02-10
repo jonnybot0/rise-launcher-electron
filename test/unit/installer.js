@@ -2,6 +2,7 @@ var platform = require("rise-common-electron").platform,
 autostart = requireRoot("installer/autostart/autostart.js"),
 installer = requireRoot("installer/installer.js"),
 component = requireRoot("installer/component.js"),
+config = requireRoot("installer/config.js"),
 downloader = requireRoot("installer/downloader.js"),
 launcher = requireRoot("installer/launcher.js"),
 optimization = requireRoot("installer/os-optimization.js"),
@@ -126,7 +127,7 @@ describe("installer", ()=>{
   it("performs a normal startup without installing/updating", ()=>{
     mock(installer, "checkInstallerUpdateStatus").resolveWith();
     mock(installer, "isInstallerDeployed").returnWith(true);
-    mock(platform, "getRunningPlatformDir").returnWith(platform.getInstallerDir());
+    mock(config, "getRunningInstallerDir").returnWith(platform.getInstallerDir());
     mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
 
     return installer.begin().then(()=>{
@@ -150,10 +151,9 @@ describe("installer", ()=>{
     components.Player.versionChanged = true;
 
     mock(installer, "checkInstallerUpdateStatus").resolveWith();
-    mock(installer, "isInstallerDeployed").returnWith(true);
     mock(installer, "isOldInstallerDeployed").returnWith(false);
     mock(installer, "removeOldInstaller").resolveWith();
-    mock(platform, "getRunningPlatformDir").returnWith(platform.getInstallerDir());
+    mock(config, "getRunningInstallerDir").returnWith(platform.getInstallerDir());
     mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
 
     return installer.begin().then(()=>{
@@ -174,7 +174,6 @@ describe("installer", ()=>{
 
   it("performs an installer update because it was not deployed", ()=>{
     mock(installer, "checkInstallerUpdateStatus").resolveWith();
-    mock(installer, "isInstallerDeployed").returnWith(false);
     mock(installer, "isOldInstallerDeployed").returnWith(true);
     mock(installer, "updateInstaller").resolveWith();
     mock(installer, "removeOldInstaller").resolveWith();
@@ -195,7 +194,6 @@ describe("installer", ()=>{
 
   it("performs an installer update because it was not deployed and checks old installer removal is performed", ()=>{
     mock(installer, "checkInstallerUpdateStatus").resolveWith();
-    mock(installer, "isInstallerDeployed").returnWith(false);
     mock(installer, "isOldInstallerDeployed").returnWith(true);
     mock(installer, "updateInstaller").resolveWith();
     mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
@@ -216,9 +214,8 @@ describe("installer", ()=>{
 
   it("performs an installer update from a new downloaded version", ()=>{
     mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
-    mock(installer, "isInstallerDeployed").returnWith(true);
     mock(installer, "updateInstaller").resolveWith();
-    mock(platform, "getRunningPlatformDir").returnWith(platform.getInstallerDir());
+    mock(config, "getRunningInstallerDir").returnWith(platform.getInstallerDir());
     mock(installer, "getOptions").returnWith({
       update: true,
       path: "installerPath"
@@ -232,8 +229,8 @@ describe("installer", ()=>{
 
   it("performs an installer update because it wasn't running from the correct directory", ()=>{
     mock(watchdogCheck, "isWatchdogRunning").returnWith(false);
-    mock(installer, "isInstallerDeployed").returnWith(true);
     mock(installer, "updateInstaller").resolveWith();
+    mock(config, "getRunningInstallerDir").returnWith("installerDir");
     mock(installer, "getOptions").returnWith({
       update: true,
       path: "installerPath"
@@ -241,7 +238,7 @@ describe("installer", ()=>{
 
     return installer.begin().then(()=>{
       assert(installer.updateInstaller.called);
-      assert.equal(installer.updateInstaller.lastCall.args[0], installer.getRunningInstallerDir());
+      assert.equal(installer.updateInstaller.lastCall.args[0], "installerDir");
     });
   });
 
@@ -255,7 +252,6 @@ describe("installer", ()=>{
 
   it("handles errors on components list fetch", ()=>{
     mock(component, "getComponents").rejectWith();
-    mock(installer, "isInstallerDeployed").returnWith(false);
     mock(capCheck, "isCAPInstalled").returnWith(false);
 
     return installer.begin().catch(()=>{
@@ -287,25 +283,9 @@ describe("installer", ()=>{
     });
   });
 
-  it("gets a valid running installer directory", ()=>{
-    mock(platform, "getCwd").returnWith(path.join("test", "installer"));
-
-    var installerDir = installer.getRunningInstallerDir();
-
-    assert.equal(installerDir, path.join("test", "installer"));
-  });
-
-  it("gets a valid running installer directory when manually invoking node", ()=>{
-    mock(platform, "getCwd").returnWith(path.join("test", "installer", "resources", "app"));
-
-    var installerDir = installer.getRunningInstallerDir();
-
-    assert.equal(installerDir, path.join("test", "installer"));
-  });
-
   it("does not start player if CAP is installed", ()=>{
     mock(installer, "isInstallerDeployed").returnWith(true);
-    mock(platform, "getRunningPlatformDir").returnWith(platform.getInstallerDir());
+    mock(config, "getRunningInstallerDir").returnWith(platform.getInstallerDir());
     mock(capCheck, "isCAPInstalled").returnWith(true);
 
     return installer.begin().catch(()=>{
@@ -316,12 +296,38 @@ describe("installer", ()=>{
 
   it("does not start player if watchdog is running", ()=>{
     mock(installer, "isInstallerDeployed").returnWith(true);
-    mock(platform, "getRunningPlatformDir").returnWith(platform.getInstallerDir());
+    mock(config, "getRunningInstallerDir").returnWith(platform.getInstallerDir());
     mock(watchdogCheck, "isWatchdogRunning").returnWith(true);
 
     return installer.begin().catch(()=>{
       assert(watchdogCheck.isWatchdogRunning.called);
       assert(!launcher.launch.called);
+    });
+  });
+
+  it("continues start up process if connectivity fails but player is already installed", ()=>{
+    mock(platform, "fileExists").returnWith(true);
+    mock(component, "getComponents").rejectWith({ userFriendlyMessage: messages.noNetworkConnection });
+
+    return installer.begin().then(()=>{
+      assert(component.getComponents.called);
+      assert(!downloader.downloadComponents.called);
+      assert(!downloader.extractComponents.called);
+      assert(!downloader.removePreviousVersions.called);
+      assert(!downloader.installComponent.called);
+    });
+  });
+
+  it("does not continue start up process if connectivity fails and player is not already installed", ()=>{
+    mock(platform, "fileExists").returnWith(true);
+    mock(component, "getComponents").rejectWith({ userFriendlyMessage: "Generic error" });
+
+    return installer.begin().catch(()=>{
+      assert(component.getComponents.called);
+      assert(!downloader.downloadComponents.called);
+      assert(!downloader.extractComponents.called);
+      assert(!downloader.removePreviousVersions.called);
+      assert(!downloader.installComponent.called);
     });
   });
 });

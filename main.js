@@ -1,6 +1,6 @@
 require("./init");
 
-var app = require("app"),
+var app = require("electron").app,
 ipc = require("electron").ipcMain,
 platform = require("rise-common-electron").platform,
 player = require("rise-player-electron"),
@@ -27,10 +27,11 @@ var externalLogger = require("rise-common-electron").externalLogger
 global.log = require("rise-common-electron").logger(externalLogger, platform.getInstallDir());
 
 displaySettings = config.getDisplaySettingsSync();
+config.setAppPath(app.getAppPath());
 log.setDisplaySettings(displaySettings);
 proxy.setEndpoint(displaySettings.proxy);
 
-global.messages = requireRoot("installer/ui/messages.json");
+global.messages = requireRoot("installer/ui/messages");
 
 log.external("started");
 log.debug("Electron " + process.versions.electron);
@@ -68,9 +69,14 @@ app.on("ready", ()=>{
   ipc.on("set-proxy", (event, message)=>{
     proxy.setEndpoint(message);
     prereqCheck()
-    .then(installer.begin)
-    .then(postInstall)
-    .then(ui.enableContinue);
+    .then(()=>{
+      return installer.begin()
+      .then(postInstall)
+      .then(ui.enableContinue)
+      .catch((err)=>{
+        log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
+      });
+    })
   });
 
   ipc.on("set-autostart", ()=>{
@@ -87,20 +93,28 @@ app.on("ready", ()=>{
     ui.disableContinue();
 
     prereqCheck()
-    .then(installer.begin)
-    .then(postInstall)
-    .then(ui.enableContinue);
+    .then(()=>{
+      return installer.begin()
+      .then(postInstall)
+      .then(ui.enableContinue)
+      .catch((err)=>{
+        log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
+      });
+    });
   });
 
   ipc.on("install-unattended", (event, message)=>{
     ui.disableContinue();
 
     prereqCheck()
-    .then(installer.begin)
-    .then(postInstall)
-    .then(launcher.launch)
     .then(()=>{
-      mainWindow.close();
+      return installer.begin()
+      .then(postInstall)
+      .then(launcher.launch)
+      .then(()=>{mainWindow.close();})
+      .catch((err)=>{
+        log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
+      });
     });
   });
 
@@ -134,7 +148,10 @@ app.on("ready", ()=>{
       throw new Error();
     })
     .then(optimization.updateSettings)
-    .then(autostart.setAutostart)
+    .then(()=>{
+      autostart.setUnattended(isUnattended());
+      autostart.setAutostart();
+    })
     .then(uninstall.createUninstallOption)
     .then(editConfig.createEditConfig)
     .then(stop.createStopStartLinks)
@@ -154,7 +171,7 @@ app.on("ready", ()=>{
       log.all("Checking Chrome App Player", "", "45%");
       return prereqs.checkCAPNotInstalled()
       .catch(()=>{
-        log.error("cap found", messages.CAPInstalled);
+        log.error("cap found", messages.capInstalled);
         throw new Error();
       });
     })

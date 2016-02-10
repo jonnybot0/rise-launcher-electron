@@ -1,0 +1,1 @@
+Installation cannot proceed. Rise Player requires Windows 7 (or higher) or Ubuntu 14.04 (or higher).  If you need assistance with your installation please post any questions that you might have to http://community.risevision.com. Thank You!
