@@ -63,6 +63,7 @@ app.on("ready", ()=>{
   log.debug("app ready event received");
 
   ipc.on("close", ()=>{
+    log.setUIWindow(null);
     mainWindow.close();
   });
 
@@ -111,7 +112,10 @@ app.on("ready", ()=>{
       return installer.begin()
       .then(postInstall)
       .then(launcher.launch)
-      .then(()=>{mainWindow.close();})
+      .then(()=>{
+        log.setUIWindow(null);
+        mainWindow.close();
+      })
       .catch((err)=>{
         log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
       });
@@ -120,6 +124,7 @@ app.on("ready", ()=>{
 
   ipc.on("launch", ()=>{
     return launcher.launch().then(()=>{
+      log.setUIWindow(null);
       mainWindow.close();
     });
   });
