@@ -135,10 +135,12 @@ app.on("ready", ()=>{
   });
 
   ipc.on("launch", ()=>{
-    return launcher.launch().then(()=>{
-      log.setUIWindow(null);
-      mainWindow.close();
-    });
+    return platform.killExplorer()
+      .then(launcher.launch)
+      .then(()=>{
+        log.setUIWindow(null);
+        mainWindow.close();
+      });
   });
 
   ipc.on("ui-pong", (event)=>{
