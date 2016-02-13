@@ -54,6 +54,12 @@ function isUnattended() {
   });
 }
 
+function isTestingMode() {
+  return process.argv.slice(1).some((arg)=>{
+    return arg.indexOf("testing-mode") > -1;
+  });
+}
+
 app.makeSingleInstance(()=>{
   log.debug("Another instance was started.  Quitting.");
   app.quit();
@@ -105,7 +111,8 @@ app.on("ready", ()=>{
   });
 
   ipc.on("install-unattended", (event)=>{
-    var countDown = 10, timer = null;
+    var countDown = isTestingMode() ? 0 : 10;
+    var timer = null;
 
     ui.disableContinue();
 
@@ -131,7 +138,7 @@ app.on("ready", ()=>{
         countDown--;
         event.sender.send("set-unattended-countdown", countDown);
       }
-    }, 1000);
+    }, isTestingMode() ? 0 : 1000);
   });
 
   ipc.on("launch", ()=>{
