@@ -50,5 +50,8 @@ module.exports = {
   },
   startUnattended() {
     mainWindow.webContents.send("start-unattended");
+  },
+  startUnattendedCountdown() {
+    mainWindow.webContents.send("start-unattended-countdown");
   }
 };

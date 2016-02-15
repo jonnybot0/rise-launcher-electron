@@ -74,6 +74,14 @@ ipc.on("start-unattended", ()=> {
 
   currentSlide.className = "container slide inactive";
   installingSlide.className = "container slide active";
+});
+
+ipc.on("start-unattended-countdown", ()=> {
+  var currentSlide = document.querySelector(".container.slide.active"),
+  unattendedCountdownSlide = document.querySelector("#unattendedCountdown");
+
+  currentSlide.className = "container slide inactive";
+  unattendedCountdownSlide.className = "container slide active";
 
   ipc.send("install-unattended");
 });
@@ -139,4 +147,10 @@ ipc.on("set-progress", (evt, detail)=>{
   message = document.querySelector("#statusLabel");
   bar.style.width = detail.pct;
   message.innerHTML = detail.msg;
+});
+
+ipc.on("set-unattended-countdown", (evt, detail)=>{
+  var message = document.querySelector("#unattendedCountdownLabel");
+  
+  message.innerHTML = detail;
 });
