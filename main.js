@@ -136,7 +136,9 @@ app.on("ready", ()=>{
       }
       else {
         countDown--;
-        event.sender.send("set-unattended-countdown", countDown);
+        if (!event.sender.isDestroyed()) {
+          event.sender.send("set-unattended-countdown", countDown);
+        }
       }
     }, isTestingMode() ? 0 : 1000);
   });
