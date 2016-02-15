@@ -92,6 +92,7 @@ module.exports = {
                                err.userFriendlyMessage.startsWith("Error downloading");
 
         if(componentFailure && platform.fileExists(platform.getInstallerPath())) {
+          log.external("recoverable update failure", require("util").inspect(err));
           return Promise.resolve();
         }
         else {
