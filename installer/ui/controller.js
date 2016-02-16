@@ -27,7 +27,9 @@ module.exports = {
     });
 
     mainWindow.webContents.on("did-finish-load", ()=> {
-      mainWindow.webContents.send("first-ping");
+      var details = { isWindows: platform.isWindows(), version: platform.getWindowsVersion() };
+
+      mainWindow.webContents.send("first-ping", details);
     });
 
     mainWindow.webContents.on("new-window", (evt, url)=>{
@@ -53,8 +55,6 @@ module.exports = {
     mainWindow.webContents.send("start-unattended");
   },
   startUnattendedCountdown() {
-    var details = { isWindows: platform.isWindows(), version: platform.getWindowsVersion() };
-
-    mainWindow.webContents.send("start-unattended-countdown", details);
+    mainWindow.webContents.send("start-unattended-countdown");
   }
 };
