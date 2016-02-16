@@ -1,4 +1,5 @@
 var BrowserWindow = require("browser-window"),
+platform = require("rise-common-electron").platform,
 shell = require("electron").shell,
 mainWindow;
 
@@ -7,7 +8,7 @@ module.exports = {
     mainWindow = new BrowserWindow(
     {
       "width": 600,
-      "height": 600,
+      "height": 700,
       "center": true,
       "fullscreen": false,
       "skip-taskbar": true,
@@ -52,6 +53,8 @@ module.exports = {
     mainWindow.webContents.send("start-unattended");
   },
   startUnattendedCountdown() {
-    mainWindow.webContents.send("start-unattended-countdown");
+    var details = { isWindows: platform.isWindows(), version: platform.getWindowsVersion() };
+
+    mainWindow.webContents.send("start-unattended-countdown", details);
   }
 };

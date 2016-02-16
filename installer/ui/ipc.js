@@ -76,13 +76,21 @@ ipc.on("start-unattended", ()=> {
   installingSlide.className = "container slide active";
 });
 
-ipc.on("start-unattended-countdown", ()=> {
+ipc.on("start-unattended-countdown", (evt, detail)=> {
   var currentSlide = document.querySelector(".container.slide.active"),
-  unattendedCountdownSlide = document.querySelector("#unattendedCountdown");
+  unattendedCountdownSlide = document.querySelector("#unattendedCountdown"),
+  playerInstallationHeader = document.querySelector("#playerInstallationHeader"),
+  restartBlocks = document.querySelectorAll(".restartBlock"),
+  requiresReboot = detail.isWindows && detail.version !== "7";
 
   currentSlide.className = "container slide inactive";
   unattendedCountdownSlide.className = "container slide active";
+  playerInstallationHeader.style.display = !requiresReboot ? "block" : "none";
 
+  for(var i = 0; i < restartBlocks.length; i++) {
+    restartBlocks[i].style.display = requiresReboot ? "block" : "none";
+  }
+  
   ipc.send("install-unattended");
 });
 
