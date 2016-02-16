@@ -8,7 +8,7 @@ module.exports = {
     mainWindow = new BrowserWindow(
     {
       "width": 600,
-      "height": 600,
+      "height": 700,
       "center": true,
       "fullscreen": false,
       "skip-taskbar": true,
