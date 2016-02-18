@@ -10,7 +10,7 @@ var packageOpts = {
   name: "installer",
   platform: "linux,win32",
   arch: "all",
-  version: "0.36.1",
+  version: "0.36.7",
   ignore: ".git|builds|^test",
   out: "builds",
   overwrite: "true"

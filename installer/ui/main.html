@@ -14,7 +14,7 @@
                 <img src="img/close.svg">
             </button>
         </section>
-        <h3>Rise Player Installation</h3>
+        <h3 id="playerInstallationHeader">Rise Player Installation</h3>
         <div class="errors error"></div>
         <div class="messages"></div>
     </div>
@@ -22,7 +22,11 @@
     <div id="" class="container slide active">
         <div class="centeredBox marginTop">
             <p>
-            The Rise Player is designed to work on a dedicated computer attached to a Display. The installation will disable screen savers, time outs, and system notifications. It will show content full screen on startup, by default. We do not recommend installing Rise Player on a personal, non-dedicated computer. If you do wish to proceed with the installation please press <b>Continue</b>. Otherwise, select <b>Cancel</b> to quit.
+            The Rise Player is designed to work on a dedicated computer attached to a Display. The installation will disable screen savers, time outs, and system notifications. It will show content full screen on startup, by default.
+            </p>
+            <p class="restartBlock"><b>To stop Rise Player once started you will need to reboot/restart the computer by pressing CTRL-ALT-DEL on the keyboard.</b></p>
+            <p>
+            We do not recommend installing Rise Player on a personal, non-dedicated computer. If you do wish to proceed with the installation please press <b>Continue</b>. Otherwise, select <b>Cancel</b> to quit.
             </p>
             <div class="checkAction">
             <input type="checkbox" class="css-checkbox" name="addToStartup" id="addToStartup" checked />
@@ -46,7 +50,7 @@
     </div>
     <!-- Proxy... -->
     <div id="proxyOptions" class="container slide inactive">
-      <p>It seems this player cannot connect to the internet. If you're running behind a proxy please complete the following fields. Otherwise please click continue below to try again, or go to <a href="http://community.risevision.com">community.risevision.com</a> for support.</p>
+      <p>It seems this player cannot connect to the internet. If you're running behind a proxy please complete the following fields. Otherwise please click continue below to try again, or go to <a href="http://community.risevision.com" target="_blank">community.risevision.com</a> for support.</p>
       <p>Proxy server address:
       <input id="proxyAddress" type="text" class="form-control"></input>
       </p>
@@ -62,6 +66,16 @@
             <br/>
             <input type="checkbox" class="css-checkbox" name="startPlayer" id="startPlayer" checked />
             <label class="css-label" for="startPlayer">Start Player</label>
+        </div>
+    </div>
+    <!-- Unattended launch countdown -->
+    <div id="unattendedCountdown" class="container slide inactive">
+        <div class="centeredBox textCenter">
+            <h2>Rise Player Starts In</h2>
+            <h3 id="unattendedCountdownLabel">10</h3>
+            <h2>(seconds)</h2>
+
+            <p class="restartBlock"><b>To stop Rise Player once started you will need to reboot/restart the computer by pressing CTRL-ALT-DEL on the keyboard.</b></p>
         </div>
     </div>
     <div class="footer">

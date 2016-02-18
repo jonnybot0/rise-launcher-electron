@@ -54,6 +54,12 @@ function isUnattended() {
   });
 }
 
+function isTestingMode() {
+  return process.argv.slice(1).some((arg)=>{
+    return arg.indexOf("testing-mode") > -1;
+  });
+}
+
 app.makeSingleInstance(()=>{
   log.debug("Another instance was started.  Quitting.");
   app.quit();
@@ -63,6 +69,7 @@ app.on("ready", ()=>{
   log.debug("app ready event received");
 
   ipc.on("close", ()=>{
+    log.setUIWindow(null);
     mainWindow.close();
   });
 
@@ -103,25 +110,46 @@ app.on("ready", ()=>{
     });
   });
 
-  ipc.on("install-unattended", (event, message)=>{
+  ipc.on("install-unattended", (event)=>{
+    var countDown = isTestingMode() ? 0 : 10;
+    var timer = null;
+
     ui.disableContinue();
 
-    prereqCheck()
-    .then(()=>{
-      return installer.begin()
-      .then(postInstall)
-      .then(launcher.launch)
-      .then(()=>{mainWindow.close();})
-      .catch((err)=>{
-        log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
-      });
-    });
+    timer = setInterval(()=>{
+      if(countDown === 0) {
+        clearInterval(timer);
+        ui.startUnattended();
+
+        prereqCheck()
+        .then(installer.begin)
+        .then(postInstall)
+        .then(platform.killExplorer)
+        .then(launcher.launch)
+        .then(()=>{
+          mainWindow.close();
+        })
+        .catch((err)=>{
+          log.setUIWindow(null);
+          log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
+        });        
+      }
+      else {
+        countDown--;
+        if (!event.sender.isDestroyed()) {
+          event.sender.send("set-unattended-countdown", countDown);
+        }
+      }
+    }, isTestingMode() ? 0 : 1000);
   });
 
   ipc.on("launch", ()=>{
-    return launcher.launch().then(()=>{
-      mainWindow.close();
-    });
+    return platform.killExplorer()
+      .then(launcher.launch)
+      .then(()=>{
+        log.setUIWindow(null);
+        mainWindow.close();
+      });
   });
 
   ipc.on("ui-pong", (event)=>{
@@ -135,7 +163,7 @@ app.on("ready", ()=>{
     }
 
     if (isUnattended()) {
-      ui.startUnattended();
+      ui.startUnattendedCountdown();
     }
   });
 

@@ -1,11 +1,17 @@
 const ipc = require("electron").ipcRenderer;
 
-ipc.on("first-ping", ()=> {
+ipc.on("first-ping", (evt, detail)=> {
   ipc.send("ui-pong");
   var closeButton = document.querySelector("#close"),
   cancelButton = document.querySelector("#cancel"),
   addToStartup = document.querySelector("#addToStartup"),
-  continueButton = document.querySelector("#continue");
+  continueButton = document.querySelector("#continue"),
+  restartBlocks = document.querySelectorAll(".restartBlock"),
+  requiresReboot = detail.isWindows && detail.version !== "7";
+
+  for(var i = 0; i < restartBlocks.length; i++) {
+    restartBlocks[i].style.display = requiresReboot ? "block" : "none";
+  }
 
   closeButton.addEventListener("click", ()=>{ipc.send("close");});
   cancelButton.addEventListener("click", ()=>{ipc.send("close");});
@@ -74,7 +80,17 @@ ipc.on("start-unattended", ()=> {
 
   currentSlide.className = "container slide inactive";
   installingSlide.className = "container slide active";
+});
 
+ipc.on("start-unattended-countdown", ()=> {
+  var currentSlide = document.querySelector(".container.slide.active"),
+  unattendedCountdownSlide = document.querySelector("#unattendedCountdown"),
+  playerInstallationHeader = document.querySelector("#playerInstallationHeader");
+
+  currentSlide.className = "container slide inactive";
+  unattendedCountdownSlide.className = "container slide active";
+  playerInstallationHeader.style.display = "none";
+  
   ipc.send("install-unattended");
 });
 
@@ -139,4 +155,10 @@ ipc.on("set-progress", (evt, detail)=>{
   message = document.querySelector("#statusLabel");
   bar.style.width = detail.pct;
   message.innerHTML = detail.msg;
+});
+
+ipc.on("set-unattended-countdown", (evt, detail)=>{
+  var message = document.querySelector("#unattendedCountdownLabel");
+  
+  message.innerHTML = detail;
 });

@@ -24,7 +24,7 @@ if [ $? != 0 ]; then
   exit 0
 fi
 
-if [ $REPLY != y ]; then
+if [ "$REPLY" != y ]; then
   exit 1
 fi
 
