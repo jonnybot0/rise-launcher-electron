@@ -29,7 +29,7 @@ module.exports = {
         var changedNames = changedComponents.map((c)=>{ return c.name; }).toString();
         var installerVersionChanged = compsMap.InstallerElectron.versionChanged;
         
-        if(compsMap.InstallerElectron.versionChanged) {
+        if(installerVersionChanged && component.percentageIsMet()) {
           log.all("upgrading installer", "", "20%");
 
           changedComponents = [compsMap.InstallerElectron];
@@ -70,7 +70,7 @@ module.exports = {
           finalInstallerDir = platform.getInstallerDir(),
           runningInFinalInstallerDir = runningDir.toLowerCase().startsWith(finalInstallerDir.toLowerCase());
 
-          if(installerVersionChanged) {
+          if(changedNames === "installer") {
             log.all("updating installer version", "", "95%");
 
             return module.exports.startInstallerUpdate();
@@ -88,6 +88,7 @@ module.exports = {
         });
       })
       .catch((err)=>{
+        err.userFriendlyMessage = err.userFriendlyMessage || "";
         var componentFailure = (err.userFriendlyMessage === messages.noNetworkConnection) ||
                                err.userFriendlyMessage.startsWith("Error downloading");
 
