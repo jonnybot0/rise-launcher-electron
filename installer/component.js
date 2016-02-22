@@ -1,7 +1,8 @@
 var platform = require("rise-common-electron").platform,
 network = require("rise-common-electron").network,
 config = requireRoot("installer/config.js"),
-latestChannelProb = Math.round(Math.random() * 100),
+latestChannelProb = Math.random() * 100,
+percentageIsMet,
 componentNames = [ "Browser", "Cache", "Java", "Player" ];
 
 function getComponentsUrl() {
@@ -47,6 +48,8 @@ function getTestingVersion() {
 }
 
 function getChannel(components) {
+  percentageIsMet = module.exports.getLatestChannelProb() < components.LatestRolloutPercent;
+
   if(module.exports.forceStableChannel()) {
     return "Stable";
   }
@@ -59,7 +62,7 @@ function getChannel(components) {
   else if(components.ForceStable) {
     return "Stable";
   }
-  else if(module.exports.isPlayerOnLatestChannelVersion(components) || module.exports.getLatestChannelProb() < components.LatestRolloutPercent) {
+  else if(module.exports.isPlayerOnLatestChannelVersion(components) || module.exports.percentageIsMet()) {
     return "Latest";
   }
   else {
@@ -183,6 +186,7 @@ function getComponents() {
 
 module.exports = {
   getLatestChannelProb() { return latestChannelProb; },
+  percentageIsMet() { return percentageIsMet; },
   getComponentNames() { return componentNames; },
   getComponentsUrl,
   forceStableChannel,

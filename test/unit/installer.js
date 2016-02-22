@@ -19,7 +19,9 @@ components = {};
 global.log = require("rise-common-electron").logger();
 global.options = {};
 
-describe("installer", ()=>{
+describe("installer", function() {
+  this.timeout(5000);
+
   beforeEach("setup mocks", ()=>{
     components = {
       "Browser": {
@@ -204,6 +206,8 @@ describe("installer", ()=>{
   });
 
   it("performs an installer restart to overwrite current version", ()=>{
+    mock(component, "percentageIsMet").returnWith(true);
+    installer.setMainWindow({close(){}});
     components.InstallerElectron.versionChanged = true;
 
     return installer.begin().then(()=>{
