@@ -42,7 +42,7 @@ app.on("window-all-closed", ()=>{
   log.external("all closed");
 
   if (!player.isRunning()) {
-    setTimeout(()=>{app.quit();}, 500);
+    setTimeout(()=>{app.quit();}, 5000);
   }
 });
 
