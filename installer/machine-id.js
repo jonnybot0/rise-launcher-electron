@@ -2,18 +2,20 @@ var os = require("os"),
 crypto = require("crypto"),
 totalMem = os.totalmem(),
 interfaces = os.networkInterfaces(),
-macs = "",
+macs = [],
 cpus;
 
 cpus = os.cpus().map((cpu)=>{
   return cpu.model;
-}).join();
+}).sort().join();
 
 Object.keys(interfaces).forEach((interface)=>{
   interfaces[interface].forEach((addr)=>{
-    macs += addr.mac;
+    macs.push(addr.mac);
   });
 });
+
+macs.sort().join();
 
 module.exports = function() {
   try {
