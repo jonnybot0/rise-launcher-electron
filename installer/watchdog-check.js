@@ -2,6 +2,7 @@ var platform = require("rise-common-electron").platform,
 childProcess = require("child_process");
 
 var validationTokens = ["rvplayer", "ilcmohdkjfcfekfmpdppgoaaemgdmhaa", "mfpgpdablffhbfofnhlpgmokokbahooi"];
+var regEditNotFoundResponse = "The system was unable to find the specified registry key or value";
 
 function isWindowsWatchdogRunning() {
   try {
@@ -31,7 +32,7 @@ function isWindowsWatchdogOnStartup() {
     var command = "reg query HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v ApplicationMonitor";
     var output = childProcess.execSync(command, {timeout: 2000}).toString();
 
-    if(output.indexOf("ERROR: The system was unable to find the specified registry key or value.") >= 0) {
+    if(output.indexOf(regEditNotFoundResponse) >= 0) {
       return false;
     }
     else if(output.indexOf("HKEY_CURRENT_USER") >= 0) {
@@ -44,8 +45,12 @@ function isWindowsWatchdogOnStartup() {
     }
   }
   catch (e) {
-    log.debug("error checking if watchdog is on startup", e);
-    log.external("error checking if watchdog is on startup", require("util").inspect(e));
+    var errorString = require("util").inspect(e);
+
+    if(errorString.indexOf(regEditNotFoundResponse) === -1) {
+      log.debug("error checking if watchdog is on startup", e);
+      log.external("error checking if watchdog is on startup", errorString);
+    }
 
     return false;
   }
@@ -68,5 +73,6 @@ module.exports = {
     else {
       return false;
     }
-  }
+  },
+  isWindowsWatchdogOnStartup
 };

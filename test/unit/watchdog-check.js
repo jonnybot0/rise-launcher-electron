@@ -88,6 +88,24 @@ describe("watchdog check", ()=>{
     assert(!watchdogCheck.hasLegacyWatchdog());
   });
 
+  it("checks watchdog on Windows and RegEdit call fails in an expected way", ()=>{
+    mock(platform, "isWindows").returnWith(true);
+    mock(childProcess, "execSync").throwWith({ error: notOnStartup });
+    mock(log, "external").returnWith();
+
+    assert(!watchdogCheck.isWindowsWatchdogOnStartup());
+    assert(!log.external.called);
+  });
+
+  it("checks watchdog on Windows and RegEdit call fails in an unexpected way", ()=>{
+    mock(platform, "isWindows").returnWith(true);
+    mock(childProcess, "execSync").throwWith({ error: "error" });
+    mock(log, "external").returnWith();
+
+    assert(!watchdogCheck.isWindowsWatchdogOnStartup());
+    assert(log.external.called);
+  });
+
   it("checks watchdog is not running on Linux", ()=>{
     mock(platform, "isWindows").returnWith(false);
 
