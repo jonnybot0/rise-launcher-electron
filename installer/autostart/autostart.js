@@ -53,6 +53,9 @@ module.exports = {
     })
     .then(()=>{
       return platform.deleteRecursively(oldShortCutPath);
+    })
+    .catch((err)=>{
+      return Promise.reject({message: "Error creating autostart file", userFriendlyMessage: messages.autostartCreation, error: err});
     });
   },
   createUbuntuAutostart() {
@@ -78,6 +81,9 @@ module.exports = {
     })
     .then(()=>{
       return platform.setFilePermissions(ubuntuAutostartPath, 0755);
+    })
+    .catch((err)=>{
+      return Promise.reject({message: "Error creating autostart file", userFriendlyMessage: messages.autostartCreation, error: err});
     });
   }
 };

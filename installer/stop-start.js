@@ -40,6 +40,8 @@ function createWindowsLinks() {
   })
   .then(()=>{
     return platform.renameFile(startScriptShortcutTemp, startScriptShortcut);
+  }).catch((err)=>{
+      return Promise.reject({message: "Error stop-start files", userFriendlyMessage: messages.stopStart, error: err});
   });
 }
 
@@ -110,11 +112,14 @@ function createLinuxLinks() {
     StartupWMClass=chrome_app_list`;
 
     return platform.writeTextFile(startScriptShortcut, shortcutContent);
+  }).catch((err)=>{
+      return Promise.reject({message: "Error stop-start files", userFriendlyMessage: messages.stopStart, error: err});
   });
 }
 
 module.exports = {
   createStopStartLinks() {
+    log.all("Creating stop / start menu items", "", "35%");
     if(platform.isWindows()) {
       return createWindowsLinks();
     }

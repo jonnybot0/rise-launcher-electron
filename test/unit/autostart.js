@@ -52,10 +52,11 @@ describe("autostart", ()=>{
   it("fails to create shortcuts because containing folder could not be created (Windows)", ()=>{
     mock(platform, "isWindows").returnWith(true);
     mock(platform, "getAutoStartupPath").returnWith("startup");
-    mock(platform, "mkdirRecursively").rejectWith({ error: "mkdir" });
+    mock(platform, "mkdirRecursively").rejectWith("mkdir");
 
     return autostart.setAutostart()
     .catch((err)=>{
+      console.log(err);
       assert.equal(err.error, "mkdir");
     });
   });
@@ -63,7 +64,7 @@ describe("autostart", ()=>{
   it("fails to create shortcuts because containing folder could not be created (Linux)", ()=>{
     mock(platform, "isWindows").returnWith(false);
     mock(platform, "getAutoStartupPath").returnWith("startup");
-    mock(platform, "mkdirRecursively").rejectWith({ error: "mkdir" });
+    mock(platform, "mkdirRecursively").rejectWith("mkdir");
 
     return autostart.setAutostart()
     .catch((err)=>{
