@@ -25,7 +25,7 @@ function checkSite(site, retryCount, timeout) {
       .then(checkSite.bind(null, site, retryCount - 1, timeout));
     }
     promisesPct += 9;
-    log.all("Checking network connectivity - " + site, "", promisesPct + "%");
+    log.progress("Checking network connectivity - " + site, promisesPct + "%");
   });
 }
 
