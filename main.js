@@ -15,7 +15,6 @@ installer = requireRoot("installer/installer.js"),
 prereqs = requireRoot("installer/prereqs.js"),
 uninstall = requireRoot("installer/uninstall.js"),
 stop = requireRoot("installer/stop-start.js"),
-editConfig = requireRoot("installer/edit-config.js"),
 ui = requireRoot("installer/ui/controller.js"),
 displaySettings,
 mainWindow;
@@ -181,7 +180,6 @@ app.on("ready", ()=>{
       autostart.setAutostart();
     })
     .then(uninstall.createUninstallOption)
-    .then(editConfig.createEditConfig)
     .then(stop.createStopStartLinks)
     .then(()=>{log.all("install complete", "", "100%");});
   }
