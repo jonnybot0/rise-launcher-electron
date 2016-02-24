@@ -34,6 +34,8 @@ windowsCommands = {
 
 function updateSettings() {
   if(!platform.isWindows()) {return Promise.resolve();}
+
+  log.all("Optimizing OS Settings", "", "0%");
   return executeCommands(windowsCommands);
 }
 
@@ -42,7 +44,7 @@ function executeCommands(osCommands) {
 
   function onSuccess() {
     promisesPct += (100 / 15); // Currently 15 commands
-    log.all("Optimizing OS Settings", "", promisesPct + "%");
+    log.progress("Optimizing OS Settings", promisesPct + "%");
   }
 
   function onError(err) {

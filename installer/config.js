@@ -1,6 +1,7 @@
 var platform = require("rise-common-electron").platform,
 network = require("rise-common-electron").network,
 proxy = require("rise-common-electron").proxy,
+machineId = requireRoot("installer/machine-id.js"),
 thisInstallerVersion = requireRoot("version.json"),
 electronAppPath = "",
 path = require("path");
@@ -85,7 +86,7 @@ function getDisplaySettingsFileName() {
 }
 
 function getDisplaySettingsSync() {
-  var tempDisplayId = Math.random() + "",
+  var tempDisplayId = "0." + machineId(),
   textFileString = platform.readTextFileSync(getDisplaySettingsFileName());
   if (!textFileString) {textFileString = "";}
   if (textFileString.indexOf("displayid") < 0) {
