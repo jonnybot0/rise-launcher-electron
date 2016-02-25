@@ -41,7 +41,7 @@ function createWindowsLinks() {
   .then(()=>{
     return platform.renameFile(startScriptShortcutTemp, startScriptShortcut);
   }).catch((err)=>{
-      return Promise.reject({message: "Error stop-start files", userFriendlyMessage: messages.stopStart, error: err});
+    log.external("error on stop-start file creation", require("util").inspect(err));
   });
 }
 
@@ -113,7 +113,7 @@ function createLinuxLinks() {
 
     return platform.writeTextFile(startScriptShortcut, shortcutContent);
   }).catch((err)=>{
-      return Promise.reject({message: "Error stop-start files", userFriendlyMessage: messages.stopStart, error: err});
+    log.external("error on stop-start file creation", require("util").inspect(err));
   });
 }
 
