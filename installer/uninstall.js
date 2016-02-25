@@ -28,7 +28,9 @@ function createWindowsUninstallOption() {
   })
   .then(()=>{
     return platform.renameFile(uninstallShortcutTemp, uninstallShortcut);
-  });    
+  }).catch((err)=>{
+    log.external("error on uninstall file creation", require("util").inspect(err));
+  });
 }
 
 function createLinuxUninstallOption() {
@@ -76,11 +78,14 @@ function createLinuxUninstallOption() {
     StartupWMClass=chrome_app_list`;
 
     return platform.writeTextFile(uninstallShortcut, shortcutContent);
+  }).catch((err)=>{
+    log.external("error on uninstall file creation", require("util").inspect(err));
   });
 }
 
 module.exports = {
   createUninstallOption() {
+    log.all("creating uninstall menu item", "", "25%");
     if(platform.isWindows()) {
       return createWindowsUninstallOption();
     }

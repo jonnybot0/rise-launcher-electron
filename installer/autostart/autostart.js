@@ -26,7 +26,7 @@ module.exports = {
       }
     }
     
-    log.all("Setting autostart", "", "15%");
+    log.all("setting autostart", "", "15%");
 
     if(platform.isWindows()) {
       return module.exports.createWindowsAutostart();
@@ -53,6 +53,9 @@ module.exports = {
     })
     .then(()=>{
       return platform.deleteRecursively(oldShortCutPath);
+    })
+    .catch((err)=>{
+      return Promise.reject({message: "Error creating autostart file", userFriendlyMessage: messages.autostartCreation, error: err});
     });
   },
   createUbuntuAutostart() {
@@ -78,6 +81,9 @@ module.exports = {
     })
     .then(()=>{
       return platform.setFilePermissions(ubuntuAutostartPath, 0755);
+    })
+    .catch((err)=>{
+      return Promise.reject({message: "Error creating autostart file", userFriendlyMessage: messages.autostartCreation, error: err});
     });
   }
 };

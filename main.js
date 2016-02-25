@@ -15,7 +15,6 @@ installer = requireRoot("installer/installer.js"),
 prereqs = requireRoot("installer/prereqs.js"),
 uninstall = requireRoot("installer/uninstall.js"),
 stop = requireRoot("installer/stop-start.js"),
-editConfig = requireRoot("installer/edit-config.js"),
 ui = requireRoot("installer/ui/controller.js"),
 displaySettings,
 mainWindow;
@@ -181,14 +180,13 @@ app.on("ready", ()=>{
       autostart.setAutostart();
     })
     .then(uninstall.createUninstallOption)
-    .then(editConfig.createEditConfig)
     .then(stop.createStopStartLinks)
     .then(()=>{log.all("install complete", "", "100%");});
   }
 
   function prereqCheck() {
     return platform.onFirstRun(()=>{
-      log.all("Checking network requirements", "", "25%");
+      log.all("checking network requirements", "", "25%");
       return prereqs.checkNetworkConnectivity();
     })()
     .catch(()=>{
@@ -196,7 +194,7 @@ app.on("ready", ()=>{
       throw new Error();
     })
     .then(()=>{
-      log.all("Checking Chrome App Player", "", "45%");
+      log.all("checking chrome app player", "", "45%");
       return prereqs.checkCAPNotInstalled()
       .catch(()=>{
         log.error("cap found", messages.capInstalled);
@@ -204,7 +202,7 @@ app.on("ready", ()=>{
       });
     })
     .then(()=>{
-      log.all("Checking Application Monitor", "", "75%");
+      log.all("checking application monitor", "", "75%");
       return prereqs.checkNoLegacyWatchdog()
       .catch(()=>{
         log.error("legacy watchdog", messages.legacyWatchdog);

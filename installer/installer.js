@@ -40,7 +40,7 @@ module.exports = {
 
         return downloader.downloadComponents(changedComponents)
         .then(()=>{
-          log.all("extracting", changedNames, "50%");
+          log.all("extracting components", changedNames, "50%");
 
           return downloader.extractComponents(changedComponents);
         })
@@ -61,7 +61,7 @@ module.exports = {
           return downloader.removePreviousVersions(changedComponents);
         })
         .then(()=>{
-          log.all("installing", changedNames, "90%");
+          log.all("installing components", changedNames, "90%");
 
           return downloader.installComponents(changedComponents);
         })
