@@ -186,7 +186,7 @@ app.on("ready", ()=>{
 
   function prereqCheck() {
     return platform.onFirstRun(()=>{
-      log.all("Checking network requirements", "", "25%");
+      log.all("checking network requirements", "", "25%");
       return prereqs.checkNetworkConnectivity();
     })()
     .catch(()=>{
@@ -194,7 +194,7 @@ app.on("ready", ()=>{
       throw new Error();
     })
     .then(()=>{
-      log.all("Checking Chrome App Player", "", "45%");
+      log.all("checking chrome app player", "", "45%");
       return prereqs.checkCAPNotInstalled()
       .catch(()=>{
         log.error("cap found", messages.capInstalled);
@@ -202,7 +202,7 @@ app.on("ready", ()=>{
       });
     })
     .then(()=>{
-      log.all("Checking Application Monitor", "", "75%");
+      log.all("checking application monitor", "", "75%");
       return prereqs.checkNoLegacyWatchdog()
       .catch(()=>{
         log.error("legacy watchdog", messages.legacyWatchdog);

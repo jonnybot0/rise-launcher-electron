@@ -26,7 +26,7 @@ module.exports = {
       }
     }
     
-    log.all("Setting autostart", "", "15%");
+    log.all("setting autostart", "", "15%");
 
     if(platform.isWindows()) {
       return module.exports.createWindowsAutostart();

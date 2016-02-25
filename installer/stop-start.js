@@ -119,7 +119,7 @@ function createLinuxLinks() {
 
 module.exports = {
   createStopStartLinks() {
-    log.all("Creating stop / start menu items", "", "35%");
+    log.all("creating stop / start menu items", "", "35%");
     if(platform.isWindows()) {
       return createWindowsLinks();
     }

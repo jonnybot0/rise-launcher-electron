@@ -85,7 +85,7 @@ function createLinuxUninstallOption() {
 
 module.exports = {
   createUninstallOption() {
-    log.all("Creating uninstall menu item", "", "25%");
+    log.all("creating uninstall menu item", "", "25%");
     if(platform.isWindows()) {
       return createWindowsUninstallOption();
     }
