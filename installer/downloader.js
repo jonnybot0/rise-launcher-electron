@@ -52,7 +52,10 @@ module.exports = {
       log.progress("extracting components", (amountReceived / totalExpected * 100) + "%");
     }
 
-    return Promise.all(promises);
+    return Promise.all(promises)
+    .catch((err)=>{
+      return Promise.reject({ userFriendlyMessage: "Error extracting components. " + messages.genericSuggestion, error: err });
+    });
   },
   removePreviousVersions(components) {
     var promises = components.filter((c)=>{
@@ -63,7 +66,10 @@ module.exports = {
       return platform.deleteRecursively(destination);
     });
 
-    return Promise.all(promises);
+    return Promise.all(promises)
+    .catch((err)=>{
+      return Promise.reject({ userFriendlyMessage: "Error removing previous components. " + messages.genericSuggestion, error: err });
+    });
   },
   installComponents(components) {
     var promises = components.map((c)=>{
