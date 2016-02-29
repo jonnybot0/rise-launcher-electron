@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ "$EUID" -eq 0 ]; then
+  echo "Running Rise Player as root could cause issues during future upgrades. Please run it again as a regular, unprivileged, user."
+  exit 1
+fi
+
 if [ "$1" == "/s" ] || [ "$1" == "/S" ] || [ "$1" == "--unattended" ]; then
   $(dirname $(readlink -f "$0"))/os-unprivileged-optimizations.sh
   $(dirname $(readlink -f "$0"))/installer --unattended
