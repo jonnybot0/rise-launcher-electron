@@ -127,7 +127,10 @@ module.exports = {
   updateInstaller(installerPkgTempPath) {
     var targetDir = path.join(platform.getInstallDir(), config.getComponentInfo("InstallerElectron").copy);
 
-    return platform.copyFolderRecursive(installerPkgTempPath, targetDir);
+    return platform.copyFolderRecursive(installerPkgTempPath, targetDir)
+    .catch((err)=>{
+      return Promise.reject({ userFriendlyMessage: "Error installing launcher into " + targetDir + ". " + messages.genericSuggestion, error: err });
+    });
   },
   removeOldInstaller() {
     return platform.deleteRecursively(platform.getOldInstallerPath());
