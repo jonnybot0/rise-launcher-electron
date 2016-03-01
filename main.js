@@ -105,7 +105,9 @@ app.on("ready", ()=>{
   ipc.on("set-proxy", (event, message)=>{
     proxy.setEndpoint(message);
     prereqCheck()
-    .then(()=>{
+    .then((passed)=>{
+      if (!passed) {return;}
+
       return installer.begin()
       .then(postInstall)
       .then(ui.enableContinue)
@@ -129,7 +131,9 @@ app.on("ready", ()=>{
     ui.disableContinue();
 
     prereqCheck()
-    .then(()=>{
+    .then((passed)=>{
+      if (!passed) {return;}
+
       return installer.begin()
       .then(postInstall)
       .then(ui.enableContinue)
@@ -151,16 +155,20 @@ app.on("ready", ()=>{
         ui.startUnattended();
 
         prereqCheck()
-        .then(installer.begin)
-        .then(postInstall)
-        .then(platform.killExplorer)
-        .then(launcher.launch)
-        .then(()=>{
-          mainWindow.close();
-        })
-        .catch((err)=>{
-          log.setUIWindow(null);
-          log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
+        .then((passed)=>{
+          if (!passed) {return;}
+
+          installer.begin()
+          .then(postInstall)
+          .then(platform.killExplorer)
+          .then(launcher.launch)
+          .then(()=>{
+            mainWindow.close();
+          })
+          .catch((err)=>{
+            log.setUIWindow(null);
+            log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
+          });
         });
       }
       else {
@@ -238,6 +246,12 @@ app.on("ready", ()=>{
         log.error("legacy watchdog", messages.legacyWatchdog);
         throw new Error();
       });
+    })
+    .then(()=>{
+      return true;
+    })
+    .catch(()=>{
+      return false;
     });
   }
 });
