@@ -36,6 +36,8 @@ log.external("started");
 log.debug("Electron " + process.versions.electron);
 log.debug("Chromium " + process.versions.chrome);
 
+logUncaugthErrorToBQ();
+
 app.on("window-all-closed", ()=>{
   log.debug("All windows closed");
   log.external("all closed");
@@ -46,6 +48,16 @@ app.on("window-all-closed", ()=>{
 });
 
 app.on("error", (err)=>{log.error(err, messages.unknown);});
+
+process.on("uncaughtException", (err)=>{
+  platform.writeTextFileSync(platform.getUncaughtErrorFileName(), require("util").inspect(err));
+  app.quit();
+});
+
+process.on("unhandledRejection", (err)=>{
+  platform.writeTextFileSync(platform.getUncaughtErrorFileName(), require("util").inspect(err));
+  app.quit();
+});
 
 function isUnattended() {
   return process.argv.slice(1).some((arg)=>{
@@ -59,8 +71,26 @@ function isTestingMode() {
   });
 }
 
+function logUncaugthErrorToBQ() {
+  if(platform.fileExists(platform.getUncaughtErrorFileName())) {
+    try {
+      var loggedError = platform.readTextFileSync(platform.getUncaughtErrorFileName());
+
+      log.external("uncaught error", loggedError);
+
+      platform.deleteRecursively(platform.getUncaughtErrorFileName())
+      .catch((err)=>{
+        log.file("error", `Error removing uncaught-exception.json file: ${err}`);
+      });
+    }
+    catch (e) {
+      log.file(`Error logging uncaught-exception.json file: ${e}`);
+    }
+  }
+}
+
 app.makeSingleInstance(()=>{
-  log.debug("Another instance was started.  Quitting.");
+  log.debug("Another instance was started. Quitting.");
   app.quit();
 });
 
@@ -82,7 +112,7 @@ app.on("ready", ()=>{
       .catch((err)=>{
         log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
       });
-    })
+    });
   });
 
   ipc.on("set-autostart", ()=>{
@@ -131,7 +161,7 @@ app.on("ready", ()=>{
         .catch((err)=>{
           log.setUIWindow(null);
           log.error(require("util").inspect(err), err.userFriendlyMessage || messages.unknown);
-        });        
+        });
       }
       else {
         countDown--;
