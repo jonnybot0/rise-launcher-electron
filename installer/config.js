@@ -78,7 +78,10 @@ function saveProxySettings(fields) {
     displaySettingsString += `${key}=${displaySettings[key]}\n`;
   });
 
-  platform.writeTextFile(getDisplaySettingsFileName(), displaySettingsString); 
+  platform.writeTextFile(getDisplaySettingsFileName(), displaySettingsString)
+  .catch((err)=>{
+    log.external("error saving proxy settings", require("util").inspect(err));
+  });
 }
 
 function getDisplaySettingsFileName() {
