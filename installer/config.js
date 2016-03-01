@@ -89,13 +89,17 @@ function getDisplaySettingsFileName() {
 }
 
 function getDisplaySettingsSync() {
-  var tempDisplayId = "0." + machineId(),
+  var settings,
+  tempDisplayId = "0." + machineId(),
   textFileString = platform.readTextFileSync(getDisplaySettingsFileName());
-  if (!textFileString) {textFileString = "";}
-  if (textFileString.indexOf("displayid") < 0) {
-    textFileString += "\ntempdisplayid=" + tempDisplayId;
-  }
-  return parsePropertyList(textFileString);
+
+  if (!textFileString) {return {tempdisplayid: tempDisplayId};}
+
+  settings = parsePropertyList(textFileString);
+
+  if (!settings.displayid) {settings.tempdisplayid = tempDisplayId}
+
+  return settings;
 }
 
 function getDisplaySettings() {
